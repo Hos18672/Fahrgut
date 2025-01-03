@@ -111,13 +111,13 @@ const HomeScreen = () => {
       </View>
 
       {/* Background Image (only for non-small screens) */}
-      {Platform.OS != "web" && (
+
         <Image
           source={require("./assets/street.png")}
           style={styles.backgroundStreet}
           resizeMode="cover"
         />
-      )}
+   
 
       {/* Main Content Section */}
       <View style={[styles.mainContent, Platform.OS != "web" && styles.mainContentSmall]}>
@@ -202,11 +202,12 @@ const styles = StyleSheet.create({
   },
   mainContent: {
     flex: 1,
+    maxHeight: "40%",
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
     padding: 16,
-    gap: 16,
+    gap: 20,
   },
   mainContentSmall: { paddingHorizontal: 8, gap: 8 },
   sideMenu: {

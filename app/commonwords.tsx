@@ -125,24 +125,14 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
   },
   searchContainer: {
-    paddingHorizontal: 0,
-    marginBottom: 5,
-    marginTop:5,
-    alignSelf: "center",
-    width: "75%",
+    paddingHorizontal: 16,
+    marginBottom: 16,
   },
-  smSearchContainer: {
-    marginTop:5,
-    paddingHorizontal: 0,
-    alignSelf: "center",
-    width: "95%",
-    height: 55,
-  },
-  searchInput: {
-    backgroundColor: "white",
+  searchInputContainer: {
+    backgroundColor: "#fff",
     borderRadius: 10,
-    paddingHorizontal: 15,
-    margin: 0,
+    borderBottomWidth: 0, // Remove the default underline
+    paddingHorizontal: 10,
   },
   listContainer: {
     alignSelf: "center",

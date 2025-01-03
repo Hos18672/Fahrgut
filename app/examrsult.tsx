@@ -28,9 +28,12 @@ i18n.use(initReactI18next).init({
 interface ExamResultScreenProps {
   examAnsweredQuestions: Array<{
     question: {
-      text: string;
+      question_text: string;
+      question_text_fa: string;
+      category:string;
       question_number: string;
       correct_answers: string[];
+      correct_answers_fa: string[];
     };
     userAnswers: string[];
   }>;
@@ -61,20 +64,20 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({ examAnsweredQuestio
   useEffect(() => {
     const correctList: Array<{ question: string; answers: string[] }> = [];
     const wrongList: WrongAnswer[] = [];
-
+    console.log(examAnsweredQuestions)
     examAnsweredQuestions.forEach((obj) => {
-      const userAnswers = obj.userAnswers;
+      const answers = obj.userAnswers;
       const correctAnswers = obj.question.correct_answers;
 
       const allCorrect =
-        correctAnswers.every((answer) => userAnswers.includes(answer)) &&
-        userAnswers.every((answer) => correctAnswers.includes(answer));
+        correctAnswers.every((answer) => answers.includes(answer)) &&
+        answers.every((answer) => correctAnswers.includes(answer));
 
       if (allCorrect) {
-        correctList.push({ question: obj.question.text, answers: userAnswers });
+        correctList.push({ question: obj.question.question_text, answers: answers });
       } else {
         wrongList.push({
-          question_text: obj.question.text,
+          question_text: obj.question.question_text,
           question_number: obj.question.question_number,
           correctAnswers,
         });
