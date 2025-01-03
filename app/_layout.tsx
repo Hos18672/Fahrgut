@@ -1,39 +1,51 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import { Stack, useRouter } from "expo-router"; // Added useRouter for navigation
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
+import "react-native-reanimated";
+import { ClerkProvider, ClerkLoaded, useAuth } from "@clerk/clerk-expo"; // Added useAuth
+import { Slot } from "expo-router";
+import { tokenCache } from '@/utils/cache';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
+  if (!publishableKey) {
+    throw new Error(
+      "Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env"
+    );
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
+      <ClerkLoaded>
+          <AuthRedirectHandler /> 
+          <StatusBar style="auto" />
+      </ClerkLoaded>
+    </ClerkProvider>
   );
+}
+
+// Component to handle authentication redirects
+function AuthRedirectHandler() {
+  const router = useRouter(); // Use the router for navigation
+  const { isLoaded, isSignedIn } = useAuth(); // Check authentication status
+
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      // Redirect to the Login Screen if the user is not signed in
+      router.replace("/login");
+    } else if (isLoaded && isSignedIn) {
+      // Redirect to the Home Screen if the user is signed in
+      router.replace("/home");
+    }
+  }, [isLoaded, isSignedIn]);
+
+  return <Slot />; // Render the Slot for navigation
 }
