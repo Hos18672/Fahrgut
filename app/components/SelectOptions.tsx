@@ -42,8 +42,8 @@ const SelectOption: React.FC<SelectOptionProps> = ({
   };
 
   const flags: Flags = {
-    en: { name: "En", url: require("../assets/us.png") },
     de: { name: "At", url: require("../assets/at.png") },
+    en: { name: "En", url: require("../assets/us.png") },
     fa: { name: "Fa", url: require("../assets/ir.png") },
   };
 

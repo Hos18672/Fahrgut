@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
+  StatusBar,
   Image,
   View,
   Text,
@@ -12,16 +13,18 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router"; // Use Expo Router
+import { useLocalSearchParams, useRouter } from "expo-router"; // Use Expo Router
 import { SafeAreaView } from "react-native-safe-area-context";
 import ResponsiveQuizImage from "./components/ResponsiveQuizImage";
-import ToggleSwitch from "./components/ToggleSwitch";
 import ExamResultScreen from "./examrsult";
 import CheckboxField from "./components/CheckBoxField";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CustomHeader from "./components/CustomHeader";
-
+import { QuizScreenParams, Question } from "./types";
+import { renderFilters } from "./base";
+import {bgColor} from "./assets/colors"
 import i18n from "i18next";
+import { initI18n } from "./services/initI18n";
 import {
   GetRandomQuestions,
   downloadImage,
@@ -29,23 +32,7 @@ import {
   getKeyCat,
   allQuestions,
 } from "./services/base";
-
-// Define types for route parameters
-interface QuizScreenParams {
-  isExam?: boolean;
-  category?: string;
-  subCategoryQuestions?: any[];
-}
-
-// Define types for the component state
-interface Question {
-  question_number: string;
-  question_text: string;
-  question_text_fa: string;
-  answers: string[];
-  answers_fa: string[];
-  correct_answers: string[];
-}
+initI18n();
 
 const QuizScreen = () => {
   const params = useLocalSearchParams<QuizScreenParams>(); // Use Expo Router
@@ -67,15 +54,18 @@ const QuizScreen = () => {
   const [quizEnded, setQuizEnded] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [examAnsweredNums, setExamAnsweredNums] = useState(0);
+  const question_images_url =
+    "https://osfxlrmxaifoehvxztqv.supabase.co/storage/v1/object/public/question_images";
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const preloadImages = useCallback(
     async (currentNum: string, nextNum: string) => {
       if (currentNum) {
-        const currentURL = await downloadImage(currentNum);
+        const currentURL = `${question_images_url}/${currentNum}.jpg`;
         setImageURL(currentURL);
       }
       if (nextNum) {
-        const nextURL = await downloadImage(nextNum);
+        const nextURL = `${question_images_url}/${nextNum}.jpg`;
         setNextImageURL(nextURL);
       }
     },
@@ -144,8 +134,12 @@ const QuizScreen = () => {
       setSelectedAnswers([]);
       setIsChecked(filterCorrectAnswersOnly);
       setImageURL(nextImageURL);
+      console.log(nextImageURL);
     } else {
       setIsChecked(true);
+    }
+    if (currentQuestion + 2 > questions.length) {
+      router.push(subCategoryQuestions ? "/learn" : "/home");
     }
   };
 
@@ -197,37 +191,30 @@ const QuizScreen = () => {
 
   // Calculate progress based on the current question
   const progress = ((currentQuestion + 1) / questions.length) * 100;
+  const bookMarkHandler =() => {
 
-  const renderFilters = () => (
-    <View style={styles.filterContainer}>
-      <Text style={styles.modalTitle}>Filters</Text>
-      <ToggleSwitch
-        label={i18n.t("showOnlyCorrectAnswers")}
-        value={filterCorrectAnswersOnly}
-        onValueChange={() =>
-          setFilterCorrectAnswersOnly(!filterCorrectAnswersOnly)
-        }
-      />
-      <ToggleSwitch
-        label={i18n.t("alwaysShowTranslation")}
-        value={filterAlwaysShowTranslation}
-        onValueChange={() =>
-          setFilterAlwaysShowTranslation(!filterAlwaysShowTranslation)
-        }
-      />
-    </View>
-  );
-
+  }
   return (
     <SafeAreaView style={[styles.safeArea, { paddingTop: insets.top }]}>
-      <CustomHeader title={isExam ? "Exam" : "Quiz"} showBackButton={true} />
+      <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
+      <CustomHeader
+        title={isExam ? "Exam" : "Quiz"}
+        showBackButton={true}
+        iconRight={"bookmark"}
+        iconRightHandler={bookMarkHandler}
+      />
       <View style={styles.mainContainer}>
-        <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ScrollView
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingHorizontal: quizEnded ? "0%" : "2%" },
+          ]}
+        >
           <View style={category ? {} : { height: 0 }}>
             <Text
               style={{ fontSize: 20, fontWeight: "bold", paddingBottom: 5 }}
             >
-              {i18n.t(getKeyCat(category)) || ""}
+              {i18n.t(getKeyCat(category)) || null}
             </Text>
           </View>
           {quizEnded ? (
@@ -236,42 +223,32 @@ const QuizScreen = () => {
             <View style={styles.mainQuestionContainer}>
               <View style={styles.progressContainer}>
                 <View
-                  style={[
-                    styles.questionContainer,
-                    {
-                      width:
-                        width > 600
-                          ? isExam
-                            ? "92%"
-                            : "100%"
-                          : isExam
-                          ? "80%"
-                          : "100%",
-                    },
-                  ]}
-                >
+                  style={styles.questionContainer } >
+                  <View style={{ width: "99.999%", marginLeft: 10,flexDirection:"row", justifyContent: "space-between"}}>
                   <Text style={styles.questionCount}>{`${
                     currentQuestion + 1
                   } of ${questions.length}`}</Text>
-                  <View style={styles.progressBar}>
-                    <View
-                      style={[styles.progressFill, { width: `${progress}%` }]}
-                    />
-                  </View>
-                </View>
-                {isExam && (
+                  {isExam && (
                   <View style={{ width: 60 }}>
                     <Text
                       style={{
-                        fontSize: 20,
+                        fontSize: 16,
                         fontWeight: "bold",
-                        marginTop: 5,
                       }}
                     >
                       {formatTime(timer)}
                     </Text>
                   </View>
                 )}
+                  </View>
+             
+                  <View style={styles.progressBar}>
+                    <View
+                      style={[styles.progressFill, { width: `${progress}%` }]}
+                    />
+                  </View>
+                </View>
+        
                 {width <= 775 && !isExam && (
                   <TouchableOpacity
                     style={styles.hamburgerButton}
@@ -295,7 +272,11 @@ const QuizScreen = () => {
                     : questions[currentQuestion]?.question_text}
                 </Text>
               </View>
-              <ResponsiveQuizImage imageURL={imageURL} />
+              {imageURL ? (
+                <ResponsiveQuizImage imageURL={imageURL} />
+              ) : (
+                <Text>"Loading.."</Text>
+              )}
               <View>
                 <View style={styles.answersContainer}>
                   {questions[currentQuestion]?.answers.map((option, index) => (
@@ -380,8 +361,15 @@ const QuizScreen = () => {
           )}
         </ScrollView>
         {/* Filter Section */}
-        {width > 775 ? (
-          <View style={styles.sidebar}>{renderFilters()}</View>
+        {width > 775 && !isExam ? (
+          <View style={styles.sidebar}>
+            {renderFilters({
+              filterCorrectAnswersOnly,
+              setFilterCorrectAnswersOnly,
+              filterAlwaysShowTranslation,
+              setFilterAlwaysShowTranslation,
+            })}
+          </View>
         ) : (
           <Modal
             visible={showFilterModal}
@@ -391,7 +379,14 @@ const QuizScreen = () => {
             <TouchableWithoutFeedback onPress={toggleFilterModal}>
               <View style={styles.modalContainer}>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                  <View style={styles.modalContent}>{renderFilters()}</View>
+                  <View style={styles.modalContent}>
+                    {renderFilters({
+                      filterCorrectAnswersOnly,
+                      setFilterCorrectAnswersOnly,
+                      filterAlwaysShowTranslation,
+                      setFilterAlwaysShowTranslation,
+                    })}
+                  </View>
                 </TouchableWithoutFeedback>
               </View>
             </TouchableWithoutFeedback>
@@ -407,11 +402,12 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor:bgColor,
   },
   scrollContent: {
+    width: "100%",
     flexGrow: 1,
-    padding: 16,
+    marginBottom: "5%",
   },
   loadingContainer: {
     flex: 1,
@@ -445,12 +441,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
   },
-
-  questionCount: {
-    color: "black",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
   progressContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -458,17 +448,20 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 0,
   },
-  mainContainer:{
+  mainContainer: {
     display: "flex",
-    flexDirection:"row"
+    flexDirection: "row",
+    marginBottom: 10,
+    paddingBottom: 20,
   },
   questionContainer: {
     flex: 1,
     flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
     paddingBottom: 0,
     borderRadius: 8,
+    marginTop: 0,
+    marginBottom: 10,
+    
   },
   questionCount: {
     fontSize: 16,
@@ -480,7 +473,8 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 8,
     borderRadius: 4,
-    overflow: "hidden",
+    borderWidth: 1,
+    borderColor:  "#4caf50",
     marginTop: 5,
   },
   progressFill: {
@@ -488,23 +482,24 @@ const styles = StyleSheet.create({
     backgroundColor: "#4caf50",
     borderRadius: 4,
   },
-  hamburgerButton: {
-    width: 40,
-  },
   hamburgerIcon: {
     width: 24,
     height: 24,
   },
   mainQuestionContainer: {
+    height: "100%",
     display: "flex",
+    flex: 1,
+    flexGrow: 1,
     flexDirection: "column",
     justifyContent: "flex-start",
     gap: 15,
+    marginBottom: "2%",
+    backgroundColor: "white",
+    padding: Platform.OS === "web"  ? 15 : 10,
+    borderRadius: 10,
   },
-  questionContainer: {
-    marginTop: 0,
-    marginBottom: 10,
-  },
+
   questionNumber: {
     fontSize: 16,
     fontWeight: "bold",
@@ -618,13 +613,10 @@ const styles = StyleSheet.create({
   },
 
   sidebar: {
-    minWidth: 250,
+    width: "10%",
     maxWidth: 400,
     flex: 1,
     padding: 16,
-    backgroundColor: "#f9f9f9",
-    borderLeftWidth: 1,
-    borderColor: "#ddd",
   },
   modalContainer: {
     flex: 1,
@@ -638,18 +630,10 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 5,
   },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  filterContainer: {
-    maxWidth: 600,
-    padding: 16,
-  },
   hamburgerButton: {
     flex: 1,
     minWidth: 40,
+    width: 40,
     position: "absolute",
     top: 0,
     right: 0,

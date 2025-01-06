@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
+  StatusBar,
   View,
   StyleSheet,
   Image,
@@ -8,131 +9,118 @@ import {
   SafeAreaView,
   ActivityIndicator,
   Platform,
-  useWindowDimensions,
-  Dimensions,
   Modal,
-  ScrollView,
 } from "react-native";
+import CustomBottomNav from "./components/CustomNavBar";
 import { Input, Text, Icon } from "react-native-elements";
-import { useRouter } from "expo-router";
 import trafficSigns from "./assets/traffic_signs/traffic_signs.json";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import i18n from "i18next";
-import { initReactI18next } from "react-i18next";
-import * as Localization from "expo-localization";
-import { resources } from "./assets/translations";
-import { lightblueColor, blueColor } from "./assets/colors";
+import { blueColor, bgColor } from "./assets/colors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CustomHeader from "./components/CustomHeader";
-
-// Initialize i18next
-i18n.use(initReactI18next).init({
-  resources,
-  lng: Localization.locale,
-  fallbackLng: "en",
-  interpolation: { escapeValue: false },
-});
-
-// Define the type for a traffic sign
-interface TrafficSign {
-  filename: string;
-  title: string;
-  title_fa: string;
-}
+import { TrafficSign } from "./types";
+import { initI18n } from "./services/initI18n";
+initI18n();
 
 const TrafficSignsScreen = () => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [imageAssets, setImageAssets] = useState<{ [key: string]: string }>({});
   const [visibleSigns, setVisibleSigns] = useState<TrafficSign[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [lastIndex, setLastIndex] = useState<number>(0);
-  const [selectedSign, setSelectedSign] = useState<TrafficSign | null>(null); // Track the selected sign for the modal
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false); // Control modal visibility
-  const { width } = useWindowDimensions();
-  const router = useRouter();
+  const [selectedSign, setSelectedSign] = useState<TrafficSign | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const insets = useSafeAreaInsets();
-  const storage = getStorage();
-  const screenWidth = Dimensions.get("window").width;
-  const SIGNS_BATCH_SIZE = 10;
 
-  // Fetch image URLs for the given batch of signs
-  const fetchImageUrls = async (startIndex: number, batchSize: number) => {
+  const fetchImageUrls = async (signs: TrafficSign[]) => {
     const assets: { [key: string]: string } = {};
-    const endIndex = Math.min(startIndex + batchSize, trafficSigns.length);
-
-    for (let i = startIndex; i < endIndex; i++) {
-      const sign = trafficSigns[i];
-      try {
-        const imageRef = ref(storage, `traffic_signs/${sign.filename}`);
-        const imageUrl = await getDownloadURL(imageRef);
-        assets[sign.filename] = imageUrl;
-      } catch (error) {
-        console.error("Error fetching image URL: ", error);
+    try {
+      for (const sign of signs) {
+        let imagUrl = `https://osfxlrmxaifoehvxztqv.supabase.co/storage/v1/object/public/traffic_signs/${sign.filename}`;
+        assets[sign.filename] = imagUrl;
+        console.log("Signed URL:", imagUrl);
       }
+    } catch (error) {
+      console.error("Error fetching image URLs:", error);
+      setError("Failed to load images. Please check your internet connection.");
     }
     return assets;
   };
 
-  // Load the first 10 signs when the component mounts
   useEffect(() => {
     const loadInitialSigns = async () => {
       setIsLoading(true);
-      const initialAssets = await fetchImageUrls(0, SIGNS_BATCH_SIZE);
-      setImageAssets(initialAssets);
-      setVisibleSigns(trafficSigns.slice(0, SIGNS_BATCH_SIZE));
-      setLastIndex(SIGNS_BATCH_SIZE);
-      setIsLoading(false);
+      try {
+        setVisibleSigns(trafficSigns);
+        const assets = await fetchImageUrls(trafficSigns);
+        setImageAssets(assets);
+      } catch (error) {
+        console.error("Error loading initial signs: ", error);
+        setError("Failed to load traffic signs. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     loadInitialSigns();
   }, []);
 
-  // Handle loading more signs when reaching the end of the list
-  const loadMoreSigns = async () => {
-    if (isLoading || lastIndex >= trafficSigns.length) return;
+  useEffect(() => {
+    const filterSigns = async () => {
+      setIsLoading(true);
+      try {
+        const filteredSigns = trafficSigns.filter(
+          (sign) =>
+            (sign.title &&
+              sign.title.toLowerCase().includes(searchValue.toLowerCase())) ||
+            (sign.title_fa &&
+              sign.title_fa.toLowerCase().includes(searchValue.toLowerCase()))
+        );
+        setVisibleSigns(filteredSigns);
+        const assets = await fetchImageUrls(filteredSigns);
+        setImageAssets((prevAssets) => ({ ...prevAssets, ...assets }));
+      } catch (error) {
+        console.error("Error filtering signs: ", error);
+        setError("Failed to filter traffic signs. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    setIsLoading(true);
-    const nextBatchAssets = await fetchImageUrls(lastIndex, SIGNS_BATCH_SIZE);
-    setImageAssets((prevAssets) => ({ ...prevAssets, ...nextBatchAssets }));
-    setVisibleSigns((prevSigns) => [
-      ...prevSigns,
-      ...trafficSigns.slice(lastIndex, lastIndex + SIGNS_BATCH_SIZE),
-    ]);
-    setLastIndex(lastIndex + SIGNS_BATCH_SIZE);
-    setIsLoading(false);
-  };
+    if (searchValue) {
+      filterSigns();
+    } else {
+      setVisibleSigns(trafficSigns);
+    }
+  }, [searchValue]);
 
-  // Handle opening a traffic sign in a modal
   const handleOpenTrafficSign = (sign: TrafficSign) => {
-    setSelectedSign(sign); // Set the selected sign
-    setIsModalVisible(true); // Show the modal
+    setSelectedSign(sign);
+    setIsModalVisible(true);
   };
 
-  // Handle navigating to the next sign
-  const handleNextSign = () => {
-    if (!selectedSign) return;
-
-    const currentIndex = visibleSigns.findIndex(
-      (sign) => sign.filename === selectedSign.filename
-    );
-    if (currentIndex < visibleSigns.length - 1) {
-      setSelectedSign(visibleSigns[currentIndex + 1]);
-    }
-  };
-
-  // Handle navigating to the previous sign
   const handlePreviousSign = () => {
-    if (!selectedSign) return;
-
-    const currentIndex = visibleSigns.findIndex(
-      (sign) => sign.filename === selectedSign.filename
-    );
-    if (currentIndex > 0) {
-      setSelectedSign(visibleSigns[currentIndex - 1]);
+    if (selectedSign) {
+      const currentIndex = visibleSigns.findIndex(
+        (sign) => sign.filename === selectedSign.filename
+      );
+      if (currentIndex > 0) {
+        setSelectedSign(visibleSigns[currentIndex - 1]);
+      }
     }
   };
 
-  // Render a traffic sign item
+  const handleNextSign = () => {
+    if (selectedSign) {
+      const currentIndex = visibleSigns.findIndex(
+        (sign) => sign.filename === selectedSign.filename
+      );
+      if (currentIndex < visibleSigns.length - 1) {
+        setSelectedSign(visibleSigns[currentIndex + 1]);
+      }
+    }
+  };
+
   const renderTrafficSign = useCallback(
     ({ item }: { item: TrafficSign }) => {
       const imageUri = imageAssets[item.filename];
@@ -143,13 +131,21 @@ const TrafficSignsScreen = () => {
           onPress={() => handleOpenTrafficSign(item)}
         >
           {imageUri ? (
-            <Image source={{ uri: imageUri }} style={styles.signImage} />
+            <Image
+              source={{ uri: imageUri }}
+              style={styles.signImage}
+              onError={() => console.error("Error loading image:", imageUri)}
+            />
           ) : (
             <ActivityIndicator size="small" color={blueColor} />
           )}
           <View style={styles.signTitleContainer}>
-            <Text style={styles.signTitle}>{item.title.split(":")[1]}</Text>
-            <Text style={styles.signTitleFa}>{item.title_fa.split(":")[1]}</Text>
+            <Text style={styles.signTitle}>
+              {item.title ? item.title.split(":")[1] : "No Title"}
+            </Text>
+            <Text style={styles.signTitleFa}>
+              {item.title_fa ? item.title_fa.split(":")[1] : "No Title (FA)"}
+            </Text>
           </View>
         </TouchableOpacity>
       );
@@ -157,23 +153,12 @@ const TrafficSignsScreen = () => {
     [imageAssets]
   );
 
-  // Filter signs based on search value
-  const filteredSigns = visibleSigns.filter((sign) =>
-    sign.title.toLowerCase().includes(searchValue.toLowerCase())
-  );
-
-  // Loading icon component
-  const loadingIcon = () => {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={blueColor} />
-      </View>
-    );
-  };
-
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
-      <CustomHeader title="Traffic Signs" showBackButton={true} />
+      <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
+      {Platform.OS === "web" && (
+        <CustomHeader title="Traffic Signs" showBackButton={true} />
+      )}
       <View style={styles.searchContainer}>
         <Input
           placeholder={i18n.t("Suchen")}
@@ -181,20 +166,35 @@ const TrafficSignsScreen = () => {
           onChangeText={setSearchValue}
           inputContainerStyle={styles.searchInputContainer}
           leftIcon={<Icon name="search" type="material" color="#999" />}
+          rightIcon={
+            searchValue ? (
+              <TouchableOpacity onPress={() => setSearchValue("")}>
+                <Icon name="close" type="material" color="#999" />
+              </TouchableOpacity>
+            ) : null
+          }
         />
       </View>
 
+      {error && (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      )}
+
+      {visibleSigns.length === 0 && !isLoading && (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>No traffic signs found.</Text>
+        </View>
+      )}
+
       <FlatList
-        data={filteredSigns}
+        data={visibleSigns}
         keyExtractor={(item) => item.title}
         renderItem={renderTrafficSign}
-        onEndReached={loadMoreSigns}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={isLoading ? loadingIcon : null}
         contentContainerStyle={styles.listContainer}
       />
 
-      {/* Modal for displaying the selected traffic sign */}
       <Modal
         visible={isModalVisible}
         transparent={true}
@@ -210,10 +210,14 @@ const TrafficSignsScreen = () => {
                   style={styles.modalImage}
                 />
                 <Text style={styles.modalTitle}>
-                  {selectedSign.title.split(":")[1]}
+                  {selectedSign.title
+                    ? selectedSign.title.split(":")[1]
+                    : "No Title"}
                 </Text>
                 <Text style={styles.modalTitleFa}>
-                  {selectedSign.title_fa.split(":")[1]}
+                  {selectedSign.title_fa
+                    ? selectedSign.title_fa.split(":")[1]
+                    : "No Title (FA)"}
                 </Text>
                 <View style={styles.navigationButtons}>
                   <TouchableOpacity
@@ -233,7 +237,8 @@ const TrafficSignsScreen = () => {
                     disabled={
                       visibleSigns.findIndex(
                         (sign) => sign.filename === selectedSign.filename
-                      ) === visibleSigns.length - 1
+                      ) ===
+                      visibleSigns.length - 1
                     }
                   >
                     <Text style={styles.navButtonText}>Next</Text>
@@ -250,6 +255,7 @@ const TrafficSignsScreen = () => {
           </View>
         </View>
       </Modal>
+      {Platform.OS !== "web" && <CustomBottomNav />}
     </SafeAreaView>
   );
 };
@@ -257,21 +263,36 @@ const TrafficSignsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: bgColor,
   },
   searchContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 16,
+    marginBottom: 0,
+    height: 50,
   },
   searchInputContainer: {
     backgroundColor: "#fff",
     borderRadius: 10,
-    borderBottomWidth: 0, // Remove the default underline
+    borderBottomWidth: 0,
     paddingHorizontal: 10,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.4,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 4,
+      },
+      web: {
+        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
+      },
+    }),
   },
   listContainer: {
     paddingHorizontal: 16,
-    paddingBottom: 16,
+    paddingTop: 5,
+    paddingBottom: Platform.OS !== "web" ? "30%" : 20,
   },
   signContainer: {
     flexDirection: "row",
@@ -280,11 +301,20 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.4,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 4,
+      },
+      web: {
+        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
+      },
+    }),
   },
   signImage: {
     width: 80,
@@ -306,27 +336,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
   },
-  loadingContainer: {
-    paddingVertical: 20,
-    alignItems: "center",
-  },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    width: "90%",
-    maxWidth: 400,
+    height: "80%",
+    width: "80%",
+    maxWidth: Math.min(Platform.OS == "web" ? "60%" : "95%"),
     backgroundColor: "#fff",
     borderRadius: 12,
     padding: 20,
     alignItems: "center",
   },
   modalImage: {
-    width: 200,
-    height: 200,
+    height: "50%",
+    width: "50%",
     resizeMode: "contain",
     marginBottom: 16,
   },
@@ -345,7 +372,7 @@ const styles = StyleSheet.create({
   navigationButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: "100%",
+    width: Math.min(Platform.OS == "web" ? 400 : "95%"),
     marginTop: 16,
   },
   navButton: {
@@ -366,13 +393,25 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: blueColor,
     borderRadius: 8,
-    width: "100%",
+    width: Platform.OS == "web" ? 400 : "95%",
     alignItems: "center",
   },
   closeButtonText: {
     fontSize: 16,
     fontWeight: "600",
     color: "#fff",
+  },
+  errorContainer: {
+    backgroundColor: "#ffebee",
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 16,
+    marginHorizontal: 16,
+  },
+  errorText: {
+    color: "#c62828",
+    fontSize: 14,
+    textAlign: "center",
   },
 });
 

@@ -18,7 +18,7 @@ const CustomCheckboxField = ({
 }) => {
   return (
     <TouchableOpacity
-      style={[styles.container, style]}
+      style={[styles.container, style,  checked && styles.checkItem]}
       onPress={onPress}
       disabled={disabled}
       activeOpacity={0.7}
@@ -75,13 +75,14 @@ const styles = StyleSheet.create({
     width: 2,
     height: 8,
     backgroundColor: "#fff",
-    left: 7,
+    left: 6,
+    bottom: -1,
     transform: [{ rotate: "45deg" }],
   },
   checkmarkKick: {
     position: "absolute",
     width: 2,
-    height: 4,
+    height: 5,
     backgroundColor: "#fff",
     left: 2,
     top: 4,
@@ -95,6 +96,9 @@ const styles = StyleSheet.create({
   textDisabled: {
     color: "#000",
   },
+  checkItem:{
+    borderColor: "#07f",
+  }
 });
 
 export default CustomCheckboxField;

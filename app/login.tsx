@@ -10,7 +10,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Alert,
 } from "react-native";
 
 const LoginScreen = () => {
@@ -51,10 +50,14 @@ const LoginScreen = () => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === "ios" ? "padding" : "height"} // Use "height" for Android
       style={styles.container}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0} // Adjust offset if needed
     >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled" // Prevent keyboard dismissal on tap
+      >
         <View style={styles.formContainer}>
           <Text style={styles.title}>Welcome Back</Text>
           <Text style={styles.subtitle}>Sign in to continue</Text>
@@ -74,6 +77,7 @@ const LoginScreen = () => {
             placeholder="Enter email"
             placeholderTextColor="#999"
             onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
+            keyboardType="email-address"
           />
 
           {/* Password Input */}
@@ -113,6 +117,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingVertical: 20, // Add padding to avoid content being cut off
   },
   formContainer: {
     width: "90%",

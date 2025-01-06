@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CustomHeader from "./components/CustomHeader";
 import {
+  StatusBar,
   Text,
   View,
   StyleSheet,
@@ -11,13 +12,23 @@ import {
   Image,
   ScrollView,
   SafeAreaView,
+  Dimensions, 
+  Platform,
 } from "react-native";
+import {bgColor} from "./assets/colors"
+import CustomBottomNav from "./components/CustomNavBar";
+import { initI18n } from "./services/initI18n";
+initI18n();
 
 const ProfileScreen = () => {
   const insets = useSafeAreaInsets();
   const { user } = useUser();
   const { signOut } = useAuth();
   const router = useRouter();
+
+  // Get screen dimensions
+  const screenWidth = Dimensions.get("window").width;
+  const screenHeight = Dimensions.get("window").height;
 
   const handleSignOut = async () => {
     try {
@@ -30,14 +41,27 @@ const ProfileScreen = () => {
 
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
-       <CustomHeader title="Profile" showBackButton={true} />
-      <ScrollView contentContainerStyle={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
+      {Platform.OS === "web" && <CustomHeader title="Profile" showBackButton={true} />}
+      <View
+        style={[
+          styles.scrollContent,
+          { minHeight: screenHeight - insets.top - insets.bottom },
+        ]}
+      >
         <View style={styles.profileContainer}>
           {/* Profile Picture */}
           {user?.imageUrl && (
             <Image
               source={{ uri: user.imageUrl }}
-              style={styles.profileImage}
+              style={[
+                styles.profileImage,
+                {
+                  width: screenWidth * 0.3, // 30% of screen width
+                  height: screenWidth * 0.3, // Maintain a square aspect ratio
+                  borderRadius: (screenWidth * 0.3) / 2, // Make it circular
+                },
+              ]}
             />
           )}
 
@@ -57,22 +81,26 @@ const ProfileScreen = () => {
             <Text style={styles.signOutButtonText}>Sign Out</Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
+      </View>
+      {Platform.OS !== "web" && <CustomBottomNav screenName={"profile"} />}
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: bgColor
+  },
+  scrollContent: {
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
     padding: 20,
   },
   profileContainer: {
-    width: "100%",
-    maxWidth: 400,
+    width: "90%", // Use 90% of screen width
+    maxWidth: 400, // Limit maximum width for larger screens
     backgroundColor: "#fff",
     borderRadius: 10,
     padding: 20,
@@ -84,9 +112,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    maxWidth: 300,
+    maxHeight: 300,
     marginBottom: 20,
   },
   name: {
@@ -94,11 +121,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
     marginBottom: 10,
+    textAlign: "center", // Center text for smaller screens
   },
   email: {
     fontSize: 16,
     color: "#666",
     marginBottom: 20,
+    textAlign: "center", // Center text for smaller screens
   },
   signOutButton: {
     width: "100%",

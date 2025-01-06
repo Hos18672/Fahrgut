@@ -1,88 +1,24 @@
 import React, { useState, useEffect } from "react";
 import {
+  StatusBar,
   View,
-  Text,
-  TouchableOpacity,
   ScrollView,
   StyleSheet,
   Platform,
-  Dimensions,
-  Pressable,
   SafeAreaView,
   BackHandler, // Add BackHandler
 } from "react-native";
+import CustomBottomNav from "./components/CustomNavBar";
 import { useRouter } from "expo-router"; // Use Expo Router
-import i18n from "i18next";
-import { initReactI18next } from "react-i18next";
-import * as Localization from "expo-localization"; // Use expo-localization
-import { resources } from "./assets/translations";
 import BQuestions from "./assets/Questions/B.json";
 import GWQuestions from "./assets/Questions/GW.json";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CustomHeader from "./components/CustomHeader";
-
-// Initialize i18next
-i18n.use(initReactI18next).init({
-  resources,
-  lng: Localization.locale, // Use expo-localization
-  fallbackLng: "en",
-  interpolation: { escapeValue: false },
-});
-
-const groupByCategory = (questions: any[]) => {
-  const categories: { [key: string]: any[] } = {};
-  questions.forEach((question) => {
-    if (!categories[question.category]) {
-      categories[question.category] = [];
-    }
-    categories[question.category].push(question);
-  });
-  return Object.entries(categories).map(([category, questions]) => ({
-    category,
-    questions,
-  }));
-};
-
-interface CustomTabProps {
-  title: string;
-  active: boolean;
-  onPress: () => void;
-}
-
-const CustomTab: React.FC<CustomTabProps> = ({ title, active, onPress }) => (
-  <Pressable
-    onPress={onPress}
-    style={({ pressed }) => [
-      styles.tab,
-      active && styles.activeTab,
-      Platform.OS === "web" && pressed && styles.tabPressed,
-    ]}
-  >
-    <Text style={[styles.tabText, active && styles.activeTabText]}>
-      {title}
-    </Text>
-  </Pressable>
-);
-
-interface SubCategoryItemProps {
-  item: { category: string; questions: any[] };
-  onPress: () => void;
-}
-
-const SubCategoryItem: React.FC<SubCategoryItemProps> = ({ item, onPress }) => (
-  <Pressable
-    onPress={onPress}
-    style={({ pressed }) => [
-      styles.subCategory,
-      pressed && styles.subCategoryPressed,
-    ]}
-  >
-    <View style={styles.subCategoryContent}>
-      <Text style={styles.subCategoryText}>{i18n.t(item.category)}</Text>
-      <Text style={styles.subCategoryCount}>{item.questions.length}</Text>
-    </View>
-  </Pressable>
-);
+import { groupByCategory, CustomTab, SubCategoryItem } from "./base";
+import i18n from "i18next";
+import { initI18n } from "./services/initI18n";
+import { blueColor,bgColor } from "./assets/colors";
+initI18n();
 
 const LearnScreen = () => {
   const insets = useSafeAreaInsets();
@@ -91,35 +27,11 @@ const LearnScreen = () => {
   const grundwissenCategories = groupByCategory(GWQuestions);
   const basiswissenCategories = groupByCategory(BQuestions);
 
-  // Handle Android hardware back button
-  useEffect(() => {
-    const backAction = () => {
-      if (router.canGoBack()) {
-        router.back(); // Navigate back to the previous screen
-        return true; // Prevent default behavior (closing the app)
-      } else {
-        // If no screens to go back to, allow the app to close
-        return false;
-      }
-    };
-
-    // Add event listener for hardware back button
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-
-    // Clean up the event listener
-    return () => backHandler.remove();
-  }, [router]);
-
   const handleSubCategorySelect = (subCategory: string, cat: string) => {
     const questions = cat === "GW" ? GWQuestions : BQuestions;
     const subCategoryQuestions = questions.filter(
       (q) => q.category === subCategory
     );
-
-    // Navigate to the Quiz screen using Expo Router
     router.push({
       pathname: "/question",
       params: {
@@ -152,7 +64,8 @@ const LearnScreen = () => {
 
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
-      <CustomHeader title="Learn" showBackButton={true} />
+      <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
+      {Platform.OS === "web" && <CustomHeader title="Learn" showBackButton={true} />}
       <View style={[styles.tabsContainer]}>
         <CustomTab
           style={{ flex: 1 }}
@@ -168,6 +81,7 @@ const LearnScreen = () => {
         />
       </View>
       {renderContent()}
+      {Platform.OS !== "web" && <CustomBottomNav screenName={"learn"} />}
     </SafeAreaView>
   );
 };
@@ -175,40 +89,19 @@ const LearnScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: bgColor,
   },
   tabsContainer: {
     flexDirection: "row",
     backgroundColor: "#fff",
-    padding: 8,
-    width: "100%",
-    marginHorizontal: "auto",
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 4,
-      },
-      web: {
-        boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-      },
-    }),
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: 4,
-  },
-  activeTab: {
-    backgroundColor: "#e6f3ff",
+    padding: 4,
+    width: "95%",
+    alignSelf: "center",
+    marginHorizontal: 10,
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor: "#0084ff",
+    marginTop: 10,
   },
   tabPressed: {
     opacity: 0.8,
@@ -216,56 +109,18 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#666",
+    color: "#000000",
   },
   activeTabText: {
-    color: "#0066cc",
+    color: "#0080ff",
   },
   contentContainer: {
     padding: 16,
-    paddingBottom: 32,
+    paddingBottom: Platform.OS !=="web"? "30%" : 20,
   },
   tabContent: {
     flex: 1,
-    backgroundColor: "#fff",
-  },
-  subCategory: {
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 12,
-    backgroundColor: "#fff",
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 2,
-      },
-      web: {
-        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-      },
-    }),
-  },
-  subCategoryPressed: {
-    opacity: 0.7,
-  },
-  subCategoryContent: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  subCategoryText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-  },
-  subCategoryCount: {
-    fontSize: 14,
-    color: "#666",
-    fontWeight: "500",
+    backgroundColor: bgColor,
   },
 });
 

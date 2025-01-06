@@ -1,1042 +1,1007 @@
 [
     {
-        "title": "1: Querrinne oder Aufwölbung",
-        "filename": "./assets/traffic_signs/signs/1_Querrinne_oder_Aufwölbung.jpg",
-        "title_fa": "۱: پستی و بلندی یا برآمدگی"
+      "title": "1: Querrinne oder Aufwölbung",
+      "filename": "1_Querrinne_oder_Aufwoelbung.jpg",
+      "title_fa": "۱: پستی و بلندی یا برآمدگی"
     },
     {
-        "title": "2a: Gefährliche Kurve (Rechtskurve)",
-        "filename": "./assets/traffic_signs/signs/./assets/traffic_signs/signs/2a_Gefährliche_Kurve_Rechtskurve.jpg",
-        "title_fa": "۲a: پیچ خطرناک (پیچ به راست)"
+      "title": "2a: Gefährliche Kurve (Rechtskurve)",
+      "filename": "2a_Gefaehrliche_Kurve_Rechtskurve.jpg",
+      "title_fa": "۲a: پیچ خطرناک (پیچ به راست)"
     },
     {
-        "title": "2b: Gefährliche Kurve (Linkskurve)",
-        "filename": "./assets/traffic_signs/signs/2b_Gefährliche_Kurve_Linkskurve.jpg",
-        "title_fa": "۲b: پیچ خطرناک (پیچ به چپ)"
+      "title": "2b: Gefährliche Kurve (Linkskurve)",
+      "filename": "2b_Gefaehrliche_Kurve_Linkskurve.jpg",
+      "title_fa": "۲b: پیچ خطرناک (پیچ به چپ)"
     },
-    
     {
-        "title": "2c: Gefährliche Kurven (Doppelkurve rechts beginnend)",
-        "filename": "./assets/traffic_signs/signs/2c_Gefährliche_Kurven_Doppelkurve_rechts_beginnend.jpg",
-        "title_fa": "۲c: پیچ‌های خطرناک (دوگانه به راست شروع می‌شود)"
+      "title": "2c: Gefährliche Kurven (Doppelkurve rechts beginnend)",
+      "filename": "2c_Gefaehrliche_Kurven_Doppelkurve_rechts_beginnend.jpg",
+      "title_fa": "۲c: پیچ‌های خطرناک (دوگانه به راست شروع می‌شود)"
     },
     {
-        "title": "2d: Gefährliche Kurven (Doppelkurve links beginnend)",
-        "filename": "./assets/traffic_signs/signs/2d_Gefährliche_Kurven_Doppelkurve_links_beginnend.jpg",
-        "title_fa": "۲d: پیچ‌های خطرناک (دوگانه به چپ شروع می‌شود)"
+      "title": "2d: Gefährliche Kurven (Doppelkurve links beginnend)",
+      "filename": "2d_Gefaehrliche_Kurven_Doppelkurve_links_beginnend.jpg",
+      "title_fa": "۲d: پیچ‌های خطرناک (دوگانه به چپ شروع می‌شود)"
     },
     {
-        "title": "3: Kreuzung",
-        "filename": "./assets/traffic_signs/signs/3_Kreuzung.jpg",
-        "title_fa": "۳: چهارراه"
+      "title": "3: Kreuzung",
+      "filename": "3_Kreuzung.jpg",
+      "title_fa": "۳: چهارراه"
     },
     {
-        "title": "3a: Kreuzung mit Kreisverkehr",
-        "filename": "./assets/traffic_signs/signs/3a_Kreuzung_mit_Kreisverkehr.jpg",
-        "title_fa": "۳a: چهارراه با میدان"
+      "title": "3a: Kreuzung mit Kreisverkehr",
+      "filename": "3a_Kreuzung_mit_Kreisverkehr.jpg",
+      "title_fa": "۳a: چهارراه با میدان"
     },
     {
-        "title": "4: Kreuzung mit Straße ohne Vorrang",
-        "filename": "./assets/traffic_signs/signs/4_Kreuzung_mit_Straße_ohne_Vorrang.jpg",
-        "title_fa": "۴: چهارراه با جاده بدون حق تقدم"
+      "title": "4: Kreuzung mit Straße ohne Vorrang",
+      "filename": "4_Kreuzung_mit_Strasse_ohne_Vorrang.jpg",
+      "title_fa": "۴: چهارراه با جاده بدون حق تقدم"
     },
     {
-        "title": "6a: Bahnübergang mit Schranken",
-        "filename": "./assets/traffic_signs/signs/6a_Bahnübergang_mit_Schranken.jpg",
-        "title_fa": "۶a: عبور قطار با راهبند"
+      "title": "6a: Bahnübergang mit Schranken",
+      "filename": "6a_Bahnuebergang_mit_Schranken.jpg",
+      "title_fa": "۶a: عبور قطار با راهبند"
     },
     {
-        "title": "6b: Bahnübergang ohne Schranken",
-        "filename": "./assets/traffic_signs/signs/6b_Bahnübergang_ohne_Schranken.jpg",
-        "title_fa": "۶b: عبور قطار بدون راهبند"
+      "title": "6b: Bahnübergang ohne Schranken",
+      "filename": "6b_Bahnuebergang_ohne_Schranken.jpg",
+      "title_fa": "۶b: عبور قطار بدون راهبند"
     },
     {
-        "title": "6c: Bake links mit drei Balken – Entfernung zum Bahnübergang ca. 240 m",
-        "filename": "./assets/traffic_signs/signs/6c_Bake_links_mit_drei_Balken__Entfernung_zum_Bahnübergang_ca_240_m.jpg",
-        "title_fa": "۶c: تخته علامت چپ با سه خط – فاصله تا عبور قطار حدود ۲۴۰ متر"
+      "title": "6c: Bake links mit drei Balken – Entfernung zum Bahnübergang ca. 240 m",
+      "filename": "6c_Bake_links_mit_drei_Balken__Entfernung_zum_Bahnuebergang_ca_240_m.jpg",
+      "title_fa": "۶c: تخته علامت چپ با سه خط – فاصله تا عبور قطار حدود ۲۴۰ متر"
     },
     {
-        "title": "6c: Bake rechts mit drei Balken – Entfernung zum Bahnübergang ca. 240 m",
-        "filename": "./assets/traffic_signs/signs/6c_Bake_rechts_mit_drei_Balken__Entfernung_zum_Bahnübergang_ca_240_m.jpg",
-        "title_fa": "۶c: تخته علامت راست با سه خط – فاصله تا عبور قطار حدود ۲۴۰ متر"
+      "title": "6c: Bake rechts mit drei Balken – Entfernung zum Bahnübergang ca. 240 m",
+      "filename": "6c_Bake_rechts_mit_drei_Balken__Entfernung_zum_Bahnuebergang_ca_240_m.jpg",
+      "title_fa": "۶c: تخته علامت راست با سه خط – فاصله تا عبور قطار حدود ۲۴۰ متر"
     },
     {
-        "title": "6c: Bake links mit zwei Balken – Entfernung zum Bahnübergang ca. 160 m",
-        "filename": "./assets/traffic_signs/signs/6c_Bake_links_mit_zwei_Balken__Entfernung_zum_Bahnübergang_ca_160_m.jpg",
-        "title_fa": "۶c: تخته علامت چپ با دو خط – فاصله تا عبور قطار حدود ۱۶۰ متر"
+      "title": "6c: Bake links mit zwei Balken – Entfernung zum Bahnübergang ca. 160 m",
+      "filename": "6c_Bake_links_mit_zwei_Balken__Entfernung_zum_Bahnuebergang_ca_160_m.jpg",
+      "title_fa": "۶c: تخته علامت چپ با دو خط – فاصله تا عبور قطار حدود ۱۶۰ متر"
     },
     {
-        "title": "6c: Bake rechts mit zwei Balken – Entfernung zum Bahnübergang ca. 160 m",
-        "filename": "./assets/traffic_signs/signs/6c_Bake_rechts_mit_zwei_Balken__Entfernung_zum_Bahnübergang_ca_160_m.jpg",
-        "title_fa": "۶c: تخته علامت راست با دو خط – فاصله تا عبور قطار حدود ۱۶۰ متر"
+      "title": "6c: Bake rechts mit zwei Balken – Entfernung zum Bahnübergang ca. 160 m",
+      "filename": "6c_Bake_rechts_mit_zwei_Balken__Entfernung_zum_Bahnuebergang_ca_160_m.jpg",
+      "title_fa": "۶c: تخته علامت راست با دو خط – فاصله تا عبور قطار حدود ۱۶۰ متر"
     },
     {
-        "title": "6c: Bake links mit einem Balken – Entfernung zum Bahnübergang ca. 80 m",
-        "filename": "./assets/traffic_signs/signs/6c_Bake_links_mit_einem_Balken__Entfernung_zum_Bahnübergang_ca_80_m.jpg",
-        "title_fa": "۶c: تخته علامت چپ با یک خط – فاصله تا عبور قطار حدود ۸۰ متر"
+      "title": "6c: Bake links mit einem Balken – Entfernung zum Bahnübergang ca. 80 m",
+      "filename": "6c_Bake_links_mit_einem_Balken__Entfernung_zum_Bahnuebergang_ca_80_m.jpg",
+      "title_fa": "۶c: تخته علامت چپ با یک خط – فاصله تا عبور قطار حدود ۸۰ متر"
     },
     {
-        "title": "6c: Bake rechts mit einem Balken – Entfernung zum Bahnübergang ca. 80 m",
-        "filename": "./assets/traffic_signs/signs/6c_Bake_rechts_mit_einem_Balken__Entfernung_zum_Bahnübergang_ca_80_m.jpg",
-        "title_fa": "۶c: تخته علامت راست با یک خط – فاصله تا عبور قطار حدود ۸۰ متر"
+      "title": "6c: Bake rechts mit einem Balken – Entfernung zum Bahnübergang ca. 80 m",
+      "filename": "6c_Bake_rechts_mit_einem_Balken__Entfernung_zum_Bahnuebergang_ca_80_m.jpg",
+      "title_fa": "۶c: تخته علامت راست با یک خط – فاصله تا عبور قطار حدود ۸۰ متر"
     },
     {
-        "title": "6d: Andreaskreuz als Tafelschild (eingleisig)",
-        "filename": "./assets/traffic_signs/signs/6d_Andreaskreuz_als_Tafelschild_eingleisig.jpg",
-        "title_fa": "۶d: صلیب اندریاس به صورت تخته‌ای (یک‌خطه)"
+      "title": "6d: Andreaskreuz als Tafelschild (eingleisig)",
+      "filename": "6d_Andreaskreuz_als_Tafelschild_eingleisig.jpg",
+      "title_fa": "۶d: صلیب اندریاس به صورت تخته‌ای (یک‌خطه)"
     },
     {
-        "title": "6d: Andreaskreuz als Doppeltafel (mehrgleisig)",
-        "filename": "./assets/traffic_signs/signs/6d_Andreaskreuz_als_Doppeltafel_mehrgleisig.jpg",
-        "title_fa": "۶d: صلیب اندریاس به صورت دوگانه (چندخطه)"
+      "title": "6d: Andreaskreuz als Doppeltafel (mehrgleisig)",
+      "filename": "6d_Andreaskreuz_als_Doppeltafel_mehrgleisig.jpg",
+      "title_fa": "۶d: صلیب اندریاس به صورت دوگانه (چندخطه)"
     },
     {
-        "title": "6d: Andreaskreuz (eingleisig)",
-        "filename": "./assets/traffic_signs/signs/6d_Andreaskreuz_eingleisig.jpg",
-        "title_fa": "۶d: صلیب اندریاس (یک‌خطه)"
+      "title": "6d: Andreaskreuz (eingleisig)",
+      "filename": "6d_Andreaskreuz_eingleisig.jpg",
+      "title_fa": "۶d: صلیب اندریاس (یک‌خطه)"
     },
     {
-        "title": "6d: Andreaskreuz doppelt (mehrgleisig)",
-        "filename": "./assets/traffic_signs/signs/6d_Andreaskreuz_doppelt_mehrgleisig.jpg",
-        "title_fa": "۶d: صلیب اندریاس دوگانه (چندخطه)"
+      "title": "6d: Andreaskreuz doppelt (mehrgleisig)",
+      "filename": "6d_Andreaskreuz_doppelt_mehrgleisig.jpg",
+      "title_fa": "۶d: صلیب اندریاس دوگانه (چندخطه)"
     },
     {
-        "title": "6d: Andreaskreuz liegend (eingleisig)",
-        "filename": "./assets/traffic_signs/signs/6d_Andreaskreuz_liegend_eingleisig.jpg",
-        "title_fa": "۶d: صلیب اندریاس به صورت افقی (یک‌خطه)"
+      "title": "6d: Andreaskreuz liegend (eingleisig)",
+      "filename": "6d_Andreaskreuz_liegend_eingleisig.jpg",
+      "title_fa": "۶d: صلیب اندریاس به صورت افقی (یک‌خطه)"
     },
     {
-        "title": "6d: Andreaskreuz doppelt, liegend (mehrgleisig)",
-        "filename": "./assets/traffic_signs/signs/6d_Andreaskreuz_doppelt_liegend_mehrgleisig.jpg",
-        "title_fa": "۶d: صلیب اندریاس دوگانه به صورت افقی (چندخطه)"
+      "title": "6d: Andreaskreuz doppelt, liegend (mehrgleisig)",
+      "filename": "6d_Andreaskreuz_doppelt_liegend_mehrgleisig.jpg",
+      "title_fa": "۶d: صلیب اندریاس دوگانه به صورت افقی (چندخطه)"
     },
     {
-        "title": "7: Gefährliches Gefälle",
-        "filename": "./assets/traffic_signs/signs/7_Gefährliches_Gefälle.jpg",
-        "title_fa": "۷: سرازیری خطرناک"
+      "title": "7: Gefährliches Gefälle",
+      "filename": "7_Gefaehrliches_Gefaelle.jpg",
+      "title_fa": "۷: سرازیری خطرناک"
     },
     {
-        "title": "7a: Starke Steigung",
-        "filename": "./assets/traffic_signs/signs/7a_Starke_Steigung.jpg",
-        "title_fa": "۷a: سربالایی تند"
+      "title": "7a: Starke Steigung",
+      "filename": "7a_Starke_Steigung.jpg",
+      "title_fa": "۷a: سربالایی تند"
     },
     {
-        "title": "8a: Fahrbahnverengung (beidseitig)",
-        "filename": "./assets/traffic_signs/signs/8a_Fahrbahnverengung_beidseitig.jpg",
-        "title_fa": "۸a: باریک شدن جاده (دو طرفه)"
+      "title": "8a: Fahrbahnverengung (beidseitig)",
+      "filename": "8a_Fahrbahnverengung_beidseitig.jpg",
+      "title_fa": "۸a: باریک شدن جاده (دو طرفه)"
     },
     {
-        "title": "8b: Fahrbahnverengung (linksseitig)",
-        "filename": "./assets/traffic_signs/signs/8b_Fahrbahnverengung_linksseitig.jpg",
-        "title_fa": "۸b: باریک شدن جاده (سمت چپ)"
+      "title": "8b: Fahrbahnverengung (linksseitig)",
+      "filename": "8b_Fahrbahnverengung_linksseitig.jpg",
+      "title_fa": "۸b: باریک شدن جاده (سمت چپ)"
     },
     {
-        "title": "8c: Fahrbahnverengung (rechtsseitig)",
-        "filename": "./assets/traffic_signs/signs/8c_Fahrbahnverengung_rechtsseitig.jpg",
-        "title_fa": "۸c: باریک شدن جاده (سمت راست)"
+      "title": "8c: Fahrbahnverengung (rechtsseitig)",
+      "filename": "8c_Fahrbahnverengung_rechtsseitig.jpg",
+      "title_fa": "۸c: باریک شدن جاده (سمت راست)"
     },
     {
-        "title": "9: Baustelle",
-        "filename": "./assets/traffic_signs/signs/9_Baustelle.jpg",
-        "title_fa": "۹: کارگاه ساختمانی"
+      "title": "9: Baustelle",
+      "filename": "9_Baustelle.jpg",
+      "title_fa": "۹: کارگاه ساختمانی"
     },
     {
-        "title": "10: Schleudergefahr",
-        "filename": "./assets/traffic_signs/signs/10_Schleudergefahr.jpg",
-        "title_fa": "۱۰: خطر لغزش"
+      "title": "10: Schleudergefahr",
+      "filename": "10_Schleudergefahr.jpg",
+      "title_fa": "۱۰: خطر لغزش"
     },
     {
-        "title": "10a: Seitenwind",
-        "filename": "./assets/traffic_signs/signs/10a_Seitenwind.jpg",
-        "title_fa": "۱۰a: باد جانبی"
+      "title": "10a: Seitenwind",
+      "filename": "10a_Seitenwind.jpg",
+      "title_fa": "۱۰a: باد جانبی"
     },
     {
-        "title": "10b: Steinschlag",
-        "filename": "./assets/traffic_signs/signs/10b_Steinschlag.jpg",
-        "title_fa": "۱۰b: ریزش سنگ"
+      "title": "10b: Steinschlag",
+      "filename": "10b_Steinschlag.jpg",
+      "title_fa": "۱۰b: ریزش سنگ"
     },
     {
-        "title": "10c: Flugbetrieb",
-        "filename": "./assets/traffic_signs/signs/10c_Flugbetrieb.jpg",
-        "title_fa": "۱۰c: پرواز هواپیما"
+      "title": "10c: Flugbetrieb",
+      "filename": "10c_Flugbetrieb.jpg",
+      "title_fa": "۱۰c: پرواز هواپیما"
     },
     {
-        "title": "11: Fußgängerübergang",
-        "filename": "./assets/traffic_signs/signs/11_Fußgängerübergang.jpg",
-        "title_fa": "۱۱: گذر عابر پیاده"
+      "title": "11: Fußgängerübergang",
+      "filename": "11_Fussgaengeruebergang.jpg",
+      "title_fa": "۱۱: گذر عابر پیاده"
     },
     {
-        "title": "11a: Radfahrerüberfahrt",
-        "filename": "./assets/traffic_signs/signs/11a_Radfahrerüberfahrt.jpg",
-        "title_fa": "۱۱a: عبور دوچرخه‌سوار"
+      "title": "11a: Radfahrerüberfahrt",
+      "filename": "11a_Radfahrerueberfahrt.jpg",
+      "title_fa": "۱۱a: عبور دوچرخه‌سوار"
     },
     {
-        "title": "12: Kinder",
-        "filename": "./assets/traffic_signs/signs/12_Kinder.jpg",
-        "title_fa": "۱۲: کودکان"
+      "title": "12: Kinder",
+      "filename": "12_Kinder.jpg",
+      "title_fa": "۱۲: کودکان"
     },
     {
-        "title": "13a: Achtung Tiere",
-        "filename": "./assets/traffic_signs/signs/13a_Achtung_Tiere.jpg",
-        "title_fa": "۱۳a: توجه به حیوانات"
+      "title": "13a: Achtung Tiere",
+      "filename": "13a_Achtung_Tiere.jpg",
+      "title_fa": "۱۳a: توجه به حیوانات"
     },
     {
-        "title": "13b: Achtung Wildwechsel",
-        "filename": "./assets/traffic_signs/signs/13b_Achtung_Wildwechsel.jpg",
-        "title_fa": "۱۳b: عبور حیوانات وحشی"
+      "title": "13b: Achtung Wildwechsel",
+      "filename": "13b_Achtung_Wildwechsel.jpg",
+      "title_fa": "۱۳b: عبور حیوانات وحشی"
     },
     {
-        "title": "14: Achtung Gegenverkehr",
-        "filename": "./assets/traffic_signs/signs/14_Achtung_Gegenverkehr.jpg",
-        "title_fa": "۱۴: توجه به ترافیک در جهت مخالف"
+      "title": "14: Achtung Gegenverkehr",
+      "filename": "14_Achtung_Gegenverkehr.jpg",
+      "title_fa": "۱۴: توجه به ترافیک در جهت مخالف"
     },
     {
-        "title": "14a: Achtung Falschfahrer",
-        "filename": "./assets/traffic_signs/signs/14a_____Achtung_Falschfahrer.jpg",
-        "title_fa": "۱۴a: توجه به راننده در جهت اشتباه"
+      "title": "14a: Achtung Falschfahrer",
+      "filename": "14a_Achtung_Falschfahrer.jpg",
+      "title_fa": "۱۴a: توجه به راننده در جهت اشتباه"
     },
     {
-        "title": "15: Vorankündigung eines Lichtzeichens",
-        "filename": "./assets/traffic_signs/signs/15_Vorankündigung_eines_Lichtzeichens.jpg",
-        "title_fa": "۱۵: اعلان پیش از چراغ راهنما"
+      "title": "15: Vorankündigung eines Lichtzeichens",
+      "filename": "15_Vorankuendigung_eines_Lichtzeichens.jpg",
+      "title_fa": "۱۵: اعلان پیش از چراغ راهنما"
     },
     {
-        "title": "16: Andere Gefahren",
-        "filename": "./assets/traffic_signs/signs/16_Andere_Gefahren.jpg",
-        "title_fa": "۱۶: خطرات دیگر"
+      "title": "16: Andere Gefahren",
+      "filename": "16_Andere_Gefahren.jpg",
+      "title_fa": "۱۶: خطرات دیگر"
     },
     {
-        "title": "1: Fahrverbot (in beiden Richtungen)",
-        "filename": "./assets/traffic_signs/signs/1_Fahrverbot_in_beiden_Richtungen.jpg",
-        "title_fa": "۱: ممنوعیت تردد (در هر دو جهت)"
+      "title": "1: Fahrverbot (in beiden Richtungen)",
+      "filename": "1_Fahrverbot_in_beiden_Richtungen.jpg",
+      "title_fa": "۱: ممنوعیت تردد (در هر دو جهت)"
     },
     {
-        "title": "2: Einfahrt verboten",
-        "filename": "./assets/traffic_signs/signs/2_Einfahrt_verboten.jpg",
-        "title_fa": "۲: ورود ممنوع"
+      "title": "2: Einfahrt verboten",
+      "filename": "2_Einfahrt_verboten.jpg",
+      "title_fa": "۲: ورود ممنوع"
     },
     {
-        "title": "3a: Einbiegen nach links verboten",
-        "filename": "./assets/traffic_signs/signs/3a_Einbiegen_nach_links_verboten.jpg",
-        "title_fa": "۳a: پیچیدن به چپ ممنوع"
+      "title": "3a: Einbiegen nach links verboten",
+      "filename": "3a_Einbiegen_nach_links_verboten.jpg",
+      "title_fa": "۳a: پیچیدن به چپ ممنوع"
     },
     {
-        "title": "3b: Einbiegen nach rechts verboten",
-        "filename": "./assets/traffic_signs/signs/3b_Einbiegen_nach_rechts_verboten.jpg",
-        "title_fa": "۳b: پیچیدن به راست ممنوع"
+      "title": "3b: Einbiegen nach rechts verboten",
+      "filename": "3b_Einbiegen_nach_rechts_verboten.jpg",
+      "title_fa": "۳b: پیچیدن به راست ممنوع"
     },
     {
-        "title": "3c: Umkehren verboten",
-        "filename": "./assets/traffic_signs/signs/3c_Umkehren_verboten.jpg",
-        "title_fa": "۳c: دور زدن ممنوع"
+      "title": "3c: Umkehren verboten",
+      "filename": "3c_Umkehren_verboten.jpg",
+      "title_fa": "۳c: دور زدن ممنوع"
     },
     {
-        "title": "4a: Überholen von mehrspurigen KFZ verboten",
-        "filename": "./assets/traffic_signs/signs/4a_Überholen_von_mehrspurigen_KFZ_verboten.jpg",
-        "title_fa": "۴a: سبقت گرفتن از وسایل نقلیه چند محوره ممنوع"
+      "title": "4a: Überholen von mehrspurigen KFZ verboten",
+      "filename": "4a_Ueberholen_von_mehrspurigen_KFZ_verboten.jpg",
+      "title_fa": "۴a: سبقت گرفتن از وسایل نقلیه چند محوره ممنوع"
     },
     {
-        "title": "4b: Ende des Überholverbotes",
-        "filename": "./assets/traffic_signs/signs/4b_Ende_des_Überholverbotes.jpg",
-        "title_fa": "۴b: پایان ممنوعیت سبقت"
+      "title": "4b: Ende des Überholverbotes",
+      "filename": "4b_Ende_des_Ueberholverbotes.jpg",
+      "title_fa": "۴b: پایان ممنوعیت سبقت"
     },
     {
-        "title": "4c: Überholen für Lastkraftfahrzeuge verboten",
-        "filename": "./assets/traffic_signs/signs/4c_Überholen_für_Lastkraftfahrzeuge_verboten.jpg",
-        "title_fa": "۴c: سبقت گرفتن برای کامیون‌ها ممنوع"
+      "title": "4c: Überholen für Lastkraftfahrzeuge verboten",
+      "filename": "4c_Ueberholen_fuer_Lastkraftfahrzeuge_verboten.jpg",
+      "title_fa": "۴c: سبقت گرفتن برای کامیون‌ها ممنوع"
     },
     {
-        "title": "4d: Ende des Überholverbotes für Lastkraftfahrzeuge",
-        "filename": "./assets/traffic_signs/signs/4d_Ende_des_Überholverbotes_für_Lastkraftfahrzeuge.jpg",
-        "title_fa": "۴d: پایان ممنوعیت سبقت برای کامیون‌ها"
+      "title": "4d: Ende des Überholverbotes für Lastkraftfahrzeuge",
+      "filename": "4d_Ende_des_Ueberholverbotes_fuer_Lastkraftfahrzeuge.jpg",
+      "title_fa": "۴d: پایان ممنوعیت سبقت برای کامیون‌ها"
     },
     {
-        "title": "5: Wartepflicht bei Gegenverkehr",
-        "filename": "./assets/traffic_signs/signs/5_Wartepflicht_bei_Gegenverkehr.jpg",
-        "title_fa": "۵: الزام به توقف هنگام ترافیک در جهت مخالف"
+      "title": "5: Wartepflicht bei Gegenverkehr",
+      "filename": "5_Wartepflicht_bei_Gegenverkehr.jpg",
+      "title_fa": "۵: الزام به توقف هنگام ترافیک در جهت مخالف"
     },
     {
-        "title": "6a: Fahrverbot für alle Kraftfahrzeuge außer einspurigen Motorrädern",
-        "filename": "./assets/traffic_signs/signs/6a_Fahrverbot_für_alle_Kraftfahrzeuge_außer_einspurigen_Motorrädern.jpg",
-        "title_fa": "۶a: ممنوعیت تردد برای تمامی وسایل نقلیه به جز موتورسیکلت‌های تک محور"
+      "title": "6a: Fahrverbot für alle Kraftfahrzeuge außer einspurigen Motorrädern",
+      "filename": "6a_Fahrverbot_fuer_alle_Kraftfahrzeuge_ausser_einspurigen_Motorraedern.jpg",
+      "title_fa": "۶a: ممنوعیت تردد برای تمامی وسایل نقلیه به جز موتورسیکلت‌های تک محور"
     },
     {
-        "title": "6b: Fahrverbot für Motorräder",
-        "filename": "./assets/traffic_signs/signs/6b_Fahrverbot_für_Motorräder.jpg",
-        "title_fa": "۶b: ممنوعیت تردد برای موتورسیکلت‌ها"
+      "title": "6b: Fahrverbot für Motorräder",
+      "filename": "6b_Fahrverbot_fuer_Motorraeder.jpg",
+      "title_fa": "۶b: ممنوعیت تردد برای موتورسیکلت‌ها"
     },
     {
-        "title": "6c: Fahrverbot für alle Kraftfahrzeuge",
-        "filename": "./assets/traffic_signs/signs/6c_Fahrverbot_für_alle_Kraftfahrzeuge.jpg",
-        "title_fa": "۶c: ممنوعیت تردد برای تمامی وسایل نقلیه موتوری"
+      "title": "6c: Fahrverbot für alle Kraftfahrzeuge",
+      "filename": "6c_Fahrverbot_fuer_alle_Kraftfahrzeuge.jpg",
+      "title_fa": "۶c: ممنوعیت تردد برای تمامی وسایل نقلیه موتوری"
     },
     {
-        "title": "6d: Fahrverbot für Kraftfahrzeuge mit Anhänger",
-        "filename": "./assets/traffic_signs/signs/6d_Fahrverbot_für_Kraftfahrzeuge_mit_Anhänger.jpg",
-        "title_fa": "۶d: ممنوعیت تردد برای وسایل نقلیه با تریلر"
+      "title": "6d: Fahrverbot für Kraftfahrzeuge mit Anhänger",
+      "filename": "6d_Fahrverbot_fuer_Kraftfahrzeuge_mit_Anhaenger.jpg",
+      "title_fa": "۶d: ممنوعیت تردد برای وسایل نقلیه با تریلر"
     },
     {
-        "title": "7a: Fahrverbot für Lastkraftfahrzeuge",
-        "filename": "./assets/traffic_signs/signs/7a_Fahrverbot_für_Lastkraftfahrzeuge.jpg",
-        "title_fa": "۷a: ممنوعیت تردد برای کامیون‌ها"
+      "title": "7a: Fahrverbot für Lastkraftfahrzeuge",
+      "filename": "7a_Fahrverbot_fuer_Lastkraftfahrzeuge.jpg",
+      "title_fa": "۷a: ممنوعیت تردد برای کامیون‌ها"
     },
     {
-        "title": "7a: Fahrverbot für Last­kraftfahrzeuge bzw. Anhänger mit mehr als ... Tonnen höchst­zu­lässigem Gesamtgewicht",
-        "filename": "./assets/traffic_signs/signs/7a_Fahrverbot_für_Last_____kraftfahrzeuge_bzw_Anhänger_mit_mehr_als__Tonnen_höchst_____zu_____lässigem_Gesamtgewicht.jpg",
-        "title_fa": "۷a: ممنوعیت تردد برای کامیون‌ها و یا تریلرها با بیش از ... تن وزن کل مجاز"
+      "title": "7a: Fahrverbot für Last­kraftfahrzeuge bzw. Anhänger mit mehr als ... Tonnen höchst­zu­lässigem Gesamtgewicht",
+      "filename": "7a_Fahrverbot_fuer_Lastkraftfahrzeuge_bzw_Anhaenger_mit_mehr_als__Tonnen_hoechstzulaessigem_Gesamtgewicht.jpg",
+      "title_fa": "۷a: ممنوعیت تردد برای کامیون‌ها و یا تریلرها با بیش از ... تن وزن کل مجاز"
     },
     {
-        "title": "7a: Fahrverbot für Lastkraftfahrzeuge (bzw. inklusive Anhänger) über ... Meter Gesamtlänge",
-        "filename": "./assets/traffic_signs/signs/7a_Fahrverbot_für_Lastkraftfahrzeuge_bzw_inklusive_Anhänger_über__Meter_Gesamtlänge.jpg",
-        "title_fa": "۷a: ممنوعیت تردد برای کامیون‌ها (و یا همراه با تریلر) با طول کلی بیش از ... متر"
+      "title": "7a: Fahrverbot für Lastkraftfahrzeuge (bzw. inklusive Anhänger) über ... Meter Gesamtlänge",
+      "filename": "7a_Fahrverbot_fuer_Lastkraftfahrzeuge_bzw_inklusive_Anhaenger_ueber__Meter_Gesamtlaenge.jpg",
+      "title_fa": "۷a: ممنوعیت تردد برای کامیون‌ها (و یا همراه با تریلر) با طول کلی بیش از ... متر"
     },
     {
-        "title": "7b: Fahrverbot für Lastkraftfahrzeuge mit Anhänger",
-        "filename": "./assets/traffic_signs/signs/7b_Fahrverbot_für_Lastkraftfahrzeuge_mit_Anhänger.jpg",
-        "title_fa": "۷b: ممنوعیت تردد برای کامیون‌ها با تریلر"
+      "title": "7b: Fahrverbot für Lastkraftfahrzeuge mit Anhänger",
+      "filename": "7b_Fahrverbot_fuer_Lastkraftfahrzeuge_mit_Anhaenger.jpg",
+      "title_fa": "۷b: ممنوعیت تردد برای کامیون‌ها با تریلر"
     },
     {
-        "title": "7c: Fahrverbot für Fuhrwerke",
-        "filename": "./assets/traffic_signs/signs/7c_Fahrverbot_für_Fuhrwerke.jpg",
-        "title_fa": "۷c: ممنوعیت تردد برای وسایل نقلیه باربری"
+      "title": "7c: Fahrverbot für Fuhrwerke",
+      "filename": "7c_Fahrverbot_fuer_Fuhrwerke.jpg",
+      "title_fa": "۷c: ممنوعیت تردد برای وسایل نقلیه باربری"
     },
     {
-        "title": "7e: Fahrverbot für Kraftfahrzeuge mit gefährlichen Gütern",
-        "filename": "./assets/traffic_signs/signs/7e_Fahrverbot_für_Kraftfahrzeuge_mit_gefährlichen_Gütern.jpg",
-        "title_fa": "۷e: ممنوعیت تردد برای وسایل نقلیه حامل کالاهای خطرناک"
+      "title": "7e: Fahrverbot für Kraftfahrzeuge mit gefährlichen Gütern",
+      "filename": "7e_Fahrverbot_fuer_Kraftfahrzeuge_mit_gefaehrlichen_Guetern.jpg",
+      "title_fa": "۷e: ممنوعیت تردد برای وسایل نقلیه حامل کالاهای خطرناک"
     },
     {
-        "title": "7f: Fahrverbot für Autobusse",
-        "filename": "./assets/traffic_signs/signs/7f_Fahrverbot_für_Autobusse.jpg",
-        "title_fa": "۷f: ممنوعیت تردد برای اتوبوس‌ها"
+      "title": "7f: Fahrverbot für Autobusse",
+      "filename": "7f_Fahrverbot_fuer_Autobusse.jpg",
+      "title_fa": "۷f: ممنوعیت تردد برای اتوبوس‌ها"
     },
     {
-        "title": "8a: Fahrverbot für Fahrräder und Motorfahrräder",
-        "filename": "./assets/traffic_signs/signs/8a_Fahrverbot_für_Fahrräder_und_Motorfahrräder.jpg",
-        "title_fa": "۸a: ممنوعیت تردد برای دوچرخه‌ها و موتور سیکلت‌های کوچک"
+      "title": "8a: Fahrverbot für Fahrräder und Motorfahrräder",
+      "filename": "8a_Fahrverbot_fuer_Fahrraeder_und_Motorfahrraeder.jpg",
+      "title_fa": "۸a: ممنوعیت تردد برای دوچرخه‌ها و موتور سیکلت‌های کوچک"
     },
     {
-        "title": "8b: Fahrverbot für Motorfahrräder",
-        "filename": "./assets/traffic_signs/signs/8b_Fahrverbot_für_Motorfahrräder.jpg",
-        "title_fa": "۸b: ممنوعیت تردد برای موتور سیکلت‌های کوچک"
+      "title": "8b: Fahrverbot für Motorfahrräder",
+      "filename": "8b_Fahrverbot_fuer_Motorfahrraeder.jpg",
+      "title_fa": "۸b: ممنوعیت تردد برای موتور سیکلت‌های کوچک"
     },
     {
-        "title": "8c: Fahrverbot für Fahrräder",
-        "filename": "./assets/traffic_signs/signs/8c_Fahrverbot_für_Fahrräder.jpg",
-        "title_fa": "۸c: ممنوعیت تردد برای دوچرخه‌ها"
+      "title": "8c: Fahrverbot für Fahrräder",
+      "filename": "8c_Fahrverbot_fuer_Fahrraeder.jpg",
+      "title_fa": "۸c: ممنوعیت تردد برای دوچرخه‌ها"
     },
     {
-        "title": "9a: Fahrverbot für über ... Meter breite Fahrzeuge",
-        "filename": "./assets/traffic_signs/signs/9a_Fahrverbot_für_über__Meter_breite_Fahrzeuge.jpg",
-        "title_fa": "۹a: ممنوعیت تردد برای وسایل نقلیه با عرض بیش از ... متر"
+      "title": "9a: Fahrverbot für über ... Meter breite Fahrzeuge",
+      "filename": "9a_Fahrverbot_fuer_ueber__Meter_breite_Fahrzeuge.jpg",
+      "title_fa": "۹a: ممنوعیت تردد برای وسایل نقلیه با عرض بیش از ... متر"
     },
     {
-        "title": "9b: Fahrverbot für über ... Meter hohe Fahrzeuge",
-        "filename": "./assets/traffic_signs/signs/9b_Fahrverbot_für_über__Meter_hohe_Fahrzeuge.jpg",
-        "title_fa": "۹b: ممنوعیت تردد برای وسایل نقلیه با ارتفاع بیش از ... متر"
+      "title": "9b: Fahrverbot für über ... Meter hohe Fahrzeuge",
+      "filename": "9b_Fahrverbot_fuer_ueber__Meter_hohe_Fahrzeuge.jpg",
+      "title_fa": "۹b: ممنوعیت تردد برای وسایل نقلیه با ارتفاع بیش از ... متر"
     },
     {
-        "title": "9c: Fahrverbot für Fahrzeuge mit über ... Tonnen Gesamtgewicht",
-        "filename": "./assets/traffic_signs/signs/9c_Fahrverbot_für_Fahrzeuge_mit_über__Tonnen_Gesamtgewicht.jpg",
-        "title_fa": "۹c: ممنوعیت تردد برای وسایل نقلیه با وزن کل بیش از ... تن"
+      "title": "9c: Fahrverbot für Fahrzeuge mit über ... Tonnen Gesamtgewicht",
+      "filename": "9c_Fahrverbot_fuer_Fahrzeuge_mit_ueber__Tonnen_Gesamtgewicht.jpg",
+      "title_fa": "۹c: ممنوعیت تردد برای وسایل نقلیه با وزن کل بیش از ... تن"
     },
     {
-        "title": "9d: Fahrverbot für alle Fahrzeuge mit über ... Tonnen Achslast",
-        "filename": "./assets/traffic_signs/signs/9d_Fahrverbot_für_alle_Fahrzeuge_mit_über__Tonnen_Achslast.jpg",
-        "title_fa": "۹d: ممنوعیت تردد برای تمامی وسایل نقلیه با بیش از ... تن بار محوری"
+      "title": "9d: Fahrverbot für alle Fahrzeuge mit über ... Tonnen Achslast",
+      "filename": "9d_Fahrverbot_fuer_alle_Fahrzeuge_mit_ueber__Tonnen_Achslast.jpg",
+      "title_fa": "۹d: ممنوعیت تردد برای تمامی وسایل نقلیه با بیش از ... تن بار محوری"
     },
     {
-        "title": "10a: Geschwindigkeitsbeschränkung (erlaubte Höchstgeschwindigkeit)",
-        "filename": "./assets/traffic_signs/signs/10a_Geschwindigkeits_____beschränkung_erlaubte_Höchstgeschwindigkeit.jpg",
-        "title_fa": "۱۰a: محدودیت سرعت (حداکثر سرعت مجاز)"
+      "title": "10a: Geschwindigkeitsbeschränkung (erlaubte Höchstgeschwindigkeit)",
+      "filename": "10a_Geschwindigkeitsbeschraenkung_erlaubte_Hoechstgeschwindigkeit.jpg",
+      "title_fa": "۱۰a: محدودیت سرعت (حداکثر سرعت مجاز)"
     },
     {
-        "title": "10b: Ende der Geschwindigkeits­beschränkung",
-        "filename": "./assets/traffic_signs/signs/10b_Ende_der_Geschwindigkeits_____beschränkung.jpg",
-        "title_fa": "۱۰b: پایان محدودیت سرعت"
+      "title": "10b: Ende der Geschwindigkeits­beschränkung",
+      "filename": "10b_Ende_der_Geschwindigkeitsbeschraenkung.jpg",
+      "title_fa": "۱۰b: پایان محدودیت سرعت"
     },
     {
-        "title": "11: Ende von Überhol­verboten und Geschwindigkeits­beschränkungen",
-        "filename": "./assets/traffic_signs/signs/11_Ende_von_Überhol_____verboten_und_Geschwindigkeits_____beschränkungen.jpg",
-        "title_fa": "۱۱: پایان ممنوعیت سبقت و محدودیت‌های سرعت"
+      "title": "11: Ende von Überhol­verboten und Geschwindigkeits­beschränkungen",
+      "filename": "11_Ende_von_Ueberholverboten_und_Geschwindigkeitsbeschraenkungen.jpg",
+      "title_fa": "۱۱: پایان ممنوعیت سبقت و محدودیت‌های سرعت"
     },
     {
-        "title": "11a: Zonenbeschränkung",
-        "filename": "./assets/traffic_signs/signs/11a_Zonenbeschränkung.jpg",
-        "title_fa": "۱۱a: محدودیت منطقه‌ای"
+      "title": "11a: Zonenbeschränkung",
+      "filename": "11a_Zonenbeschraenkung.jpg",
+      "title_fa": "۱۱a: محدودیت منطقه‌ای"
     },
     {
-        "title": "11b: Ende der Zonenbeschränkung",
-        "filename": "./assets/traffic_signs/signs/11b_Ende_der_Zonenbeschränkung.jpg",
-        "title_fa": "۱۱b: پایان محدودیت منطقه‌ای"
+      "title": "11b: Ende der Zonenbeschränkung",
+      "filename": "11b_Ende_der_Zonenbeschraenkung.jpg",
+      "title_fa": "۱۱b: پایان محدودیت منطقه‌ای"
     },
     {
-        "title": "12: Halt Zoll",
-        "filename": "./assets/traffic_signs/signs/12_Halt_Zoll.jpg",
-        "title_fa": "۱۲: توقف گمرک"
+      "title": "12: Halt Zoll",
+      "filename": "12_Halt_Zoll.jpg",
+      "title_fa": "۱۲: توقف گمرک"
     },
     {
-        "title": "13a: Parken verboten",
-        "filename": "./assets/traffic_signs/signs/13a_Parken_verboten.jpg",
-        "title_fa": "۱۳a: پارک ممنوع"
+      "title": "13a: Parken verboten",
+      "filename": "13a_Parken_verboten.jpg",
+      "title_fa": "۱۳a: پارک ممنوع"
     },
     {
-        "title": "13b: Halten und Parken verboten",
-        "filename": "./assets/traffic_signs/signs/13b_Halten_und_Parken_verboten.jpg",
-        "title_fa": "۱۳b: توقف و پارک ممنوع"
+      "title": "13b: Halten und Parken verboten",
+      "filename": "13b_Halten_und_Parken_verboten.jpg",
+      "title_fa": "۱۳b: توقف و پارک ممنوع"
     },
     {
-        "title": "13c/a: Wechselseitiges Parkverbot (ungerade Tage)",
-        "filename": "./assets/traffic_signs/signs/13ca_Wechselseitiges_Parkverbot_ungerade_Tage.jpg",
-        "title_fa": "۱۳c/a: ممنوعیت پارک متناوب (روزهای فرد)"
+      "title": "13c/a: Wechselseitiges Parkverbot (ungerade Tage)",
+      "filename": "13ca_Wechselseitiges_Parkverbot_ungerade_Tage.jpg",
+      "title_fa": "۱۳c/a: ممنوعیت پارک متناوب (روزهای فرد)"
     },
     {
-        "title": "13c/b: Wechselseitiges Parkverbot (gerade Tage)",
-        "filename": "./assets/traffic_signs/signs/13cb_Wechselseitiges_Parkverbot_gerade_Tage.jpg",
-        "title_fa": "۱۳c/b: ممنوعیت پارک متناوب (روزهای زوج)"
+      "title": "13c/b: Wechselseitiges Parkverbot (gerade Tage)",
+      "filename": "13cb_Wechselseitiges_Parkverbot_gerade_Tage.jpg",
+      "title_fa": "۱۳c/b: ممنوعیت پارک متناوب (روزهای زوج)"
     },
     {
-        "title": "13d: Beginn einer Kurzparkzone",
-        "filename": "./assets/traffic_signs/signs/13d_Beginn_einer______Kurzparkzone.jpg",
-        "title_fa": "۱۳d: آغاز یک منطقه پارک کوتاه مدت"
+      "title": "13d: Beginn einer Kurzparkzone",
+      "filename": "13d_Beginn_einer_Kurzparkzone.jpg",
+      "title_fa": "۱۳d: آغاز یک منطقه پارک کوتاه مدت"
     },
     {
-        "title": "13e: Ende der Kurzparkzone",
-        "filename": "./assets/traffic_signs/signs/13e_Ende_der_Kurzparkzone.jpg",
-        "title_fa": "۱۳e: پایان منطقه پارک کوتاه مدت"
+      "title": "13e: Ende der Kurzparkzone",
+      "filename": "13e_Ende_der_Kurzparkzone.jpg",
+      "title_fa": "۱۳e: پایان منطقه پارک کوتاه مدت"
     },
     {
-        "title": "14: Hupverbot",
-        "filename": "./assets/traffic_signs/signs/14_Hupverbot.jpg",
-        "title_fa": "۱۴: بوق زدن ممنوع"
+      "title": "14: Hupverbot",
+      "filename": "14_Hupverbot.jpg",
+      "title_fa": "۱۴: بوق زدن ممنوع"
     },
     {
-        "title": "14a: Reitverbot",
-        "filename": "./assets/traffic_signs/signs/14a_Reitverbot.jpg",
-        "title_fa": "۱۴a: ممنوعیت سوارکاری"
+      "title": "14a: Reitverbot",
+      "filename": "14a_Reitverbot.jpg",
+      "title_fa": "۱۴a: ممنوعیت سوارکاری"
     },
     {
-        "title": "14b: Verbot für Fußgänger",
-        "filename": "./assets/traffic_signs/signs/14b_Verbot_für_Fußgänger.jpg",
-        "title_fa": "۱۴b: ممنوعیت برای عابران پیاده"
+      "title": "14b: Verbot für Fußgänger",
+      "filename": "14b_Verbot_fuer_Fussgaenger.jpg",
+      "title_fa": "۱۴b: ممنوعیت برای عابران پیاده"
     },
     {
-        "title": "15: Vorgeschriebene Fahrtrichtung: Links",
-        "filename": "./assets/traffic_signs/signs/15_Vorgeschriebene_Fahrtrichtung_Links.jpg",
-        "title_fa": "۱۵: جهت رانندگی اجباری: چپ"
+      "title": "15: Vorgeschriebene Fahrtrichtung: Links",
+      "filename": "15_Vorgeschriebene_Fahrtrichtung_Links.jpg",
+      "title_fa": "۱۵: جهت رانندگی اجباری: چپ"
     },
     {
-        "title": "15: Vorgeschriebene Fahrtrichtung: Rechts",
-        "filename": "./assets/traffic_signs/signs/15_Vorgeschriebene_Fahrtrichtung_Rechts.jpg",
-        "title_fa": "۱۵: جهت رانندگی اجباری: راست"
+      "title": "15: Vorgeschriebene Fahrtrichtung: Rechts",
+      "filename": "15_Vorgeschriebene_Fahrtrichtung_Rechts.jpg",
+      "title_fa": "۱۵: جهت رانندگی اجباری: راست"
     },
     {
-        "title": "15: Vorgeschriebene Fahrtrichtung: Geradeaus",
-        "filename": "./assets/traffic_signs/signs/15_Vorgeschriebene_Fahrtrichtung_Geradeaus.jpg",
-        "title_fa": "۱۵: جهت رانندگی اجباری: مستقیم"
+      "title": "15: Vorgeschriebene Fahrtrichtung: Geradeaus",
+      "filename": "15_Vorgeschriebene_Fahrtrichtung_Geradeaus.jpg",
+      "title_fa": "۱۵: جهت رانندگی اجباری: مستقیم"
     },
     {
-        "title": "15: Vorgeschriebene Fahrtrichtung: Links abbiegen",
-        "filename": "./assets/traffic_signs/signs/15_Vorgeschriebene_Fahrtrichtung_Links_abbiegen.jpg",
-        "title_fa": "۱۵: جهت رانندگی اجباری: به چپ بپیچید"
+      "title": "15: Vorgeschriebene Fahrtrichtung: Links abbiegen",
+      "filename": "15_Vorgeschriebene_Fahrtrichtung_Links_abbiegen.jpg",
+      "title_fa": "۱۵: جهت رانندگی اجباری: به چپ بپیچید"
     },
     {
-        "title": "15: Vorgeschriebene Fahrtrichtung: Rechts abbiegen",
-        "filename": "./assets/traffic_signs/signs/15_Vorgeschriebene_Fahrtrichtung_Rechts_abbiegen.jpg",
-        "title_fa": "۱۵: جهت رانندگی اجباری: به راست بپیچید"
+      "title": "15: Vorgeschriebene Fahrtrichtung: Rechts abbiegen",
+      "filename": "15_Vorgeschriebene_Fahrtrichtung_Rechts_abbiegen.jpg",
+      "title_fa": "۱۵: جهت رانندگی اجباری: به راست بپیچید"
     },
     {
-        "title": "15: Vorgeschriebene Fahrtrichtung: Geradeaus fahren oder links abbiegen",
-        "filename": "./assets/traffic_signs/signs/15_Vorgeschriebene_Fahrtrichtung_Geradeaus_fahren_oder_links_abbiegen.jpg",
-        "title_fa": "۱۵: جهت رانندگی اجباری: مستقیم بروید یا به چپ بپیچید"
+      "title": "15: Vorgeschriebene Fahrtrichtung: Geradeaus fahren oder links abbiegen",
+      "filename": "15_Vorgeschriebene_Fahrtrichtung_Geradeaus_fahren_oder_links_abbiegen.jpg",
+      "title_fa": "۱۵: جهت رانندگی اجباری: مستقیم بروید یا به چپ بپیچید"
     },
     {
-        "title": "15: Vorgeschriebene Fahrtrichtung: Geradeaus fahren oder rechts abbiegen",
-        "filename": "./assets/traffic_signs/signs/15_Vorgeschriebene_Fahrtrichtung_Geradeaus_fahren_oder_rechts_abbiegen.jpg",
-        "title_fa": "۱۵: جهت رانندگی اجباری: مستقیم بروید یا به راست بپیچید"
+      "title": "15: Vorgeschriebene Fahrtrichtung: Geradeaus fahren oder rechts abbiegen",
+      "filename": "15_Vorgeschriebene_Fahrtrichtung_Geradeaus_fahren_oder_rechts_abbiegen.jpg",
+      "title_fa": "۱۵: جهت رانندگی اجباری: مستقیم بروید یا به راست بپیچید"
     },
     {
-        "title": "15: Vorgeschriebene Fahrtrichtung: Links oder rechts abbiegen",
-        "filename": "./assets/traffic_signs/signs/15_Vorgeschriebene_Fahrtrichtung_Links_oder_rechts_abbiegen.jpg",
-        "title_fa": "۱۵: جهت رانندگی اجباری: به چپ یا راست بپیچید"
+      "title": "15: Vorgeschriebene Fahrtrichtung: Links oder rechts abbiegen",
+      "filename": "15_Vorgeschriebene_Fahrtrichtung_Links_oder_rechts_abbiegen.jpg",
+      "title_fa": "۱۵: جهت رانندگی اجباری: به چپ یا راست بپیچید"
     },
     {
-        "title": "15: Den zu benützenden Fahrstreifen: Links",
-        "filename": "./assets/traffic_signs/signs/15_Den_zu_benützenden_Fahrstreifen_Links.jpg",
-        "title_fa": "۱۵: لاین اجباری برای استفاده: چپ"
+      "title": "15: Den zu benützenden Fahrstreifen: Links",
+      "filename": "15_Den_zu_benuetzenden_Fahrstreifen_Links.jpg",
+      "title_fa": "۱۵: لاین اجباری برای استفاده: چپ"
     },
     {
-        "title": "15: Den zu benützenden Fahrstreifen: Rechts",
-        "filename": "./assets/traffic_signs/signs/15_Den_zu_benützenden_Fahrstreifen_Rechts.jpg",
-        "title_fa": "۱۵: لاین اجباری برای استفاده: راست"
+      "title": "15: Den zu benützenden Fahrstreifen: Rechts",
+      "filename": "15_Den_zu_benuetzenden_Fahrstreifen_Rechts.jpg",
+      "title_fa": "۱۵: لاین اجباری برای استفاده: راست"
     },
     {
-        "title": "15a: Vorgeschriebene Fahrtrichtung für Kraftfahrzeuge mit gefährlichen Gütern: Rechts abbiegen",
-        "filename": "./assets/traffic_signs/signs/15a_Vorgeschriebene_Fahrtrichtung_für_Kraftfahrzeuge_mit_gefährlichen_Gütern_Rechts_abbiegen.jpg",
-        "title_fa": "۱۵a: جهت رانندگی اجباری برای وسایل نقلیه حامل مواد خطرناک: به راست بپیچید"
+      "title": "15a: Vorgeschriebene Fahrtrichtung für Kraftfahrzeuge mit gefährlichen Gütern: Rechts abbiegen",
+      "filename": "15a_Vorgeschriebene_Fahrtrichtung_fuer_Kraftfahrzeuge_mit_gefaehrlichen_Guetern_Rechts_abbiegen.jpg",
+      "title_fa": "۱۵a: جهت رانندگی اجباری برای وسایل نقلیه حامل مواد خطرناک: به راست بپیچید"
     },
     {
-        "title": "16: Radweg",
-        "filename": "./assets/traffic_signs/signs/16_Radweg.jpg",
-        "title_fa": "۱۶: مسیر دوچرخه"
+      "title": "16: Radweg",
+      "filename": "16_Radweg.jpg",
+      "title_fa": "۱۶: مسیر دوچرخه"
     },
     {
-        "title": "16a: Ende des Radweges",
-        "filename": "./assets/traffic_signs/signs/16a_Ende_des_Radweges.jpg",
-        "title_fa": "۱۶a: پایان مسیر دوچرخه"
+      "title": "16a: Ende des Radweges",
+      "filename": "16a_Ende_des_Radweges.jpg",
+      "title_fa": "۱۶a: پایان مسیر دوچرخه"
     },
     {
-        "title": "17: Gehweg",
-        "filename": "./assets/traffic_signs/signs/17_Gehweg.jpg",
-        "title_fa": "۱۷: پیاده‌رو"
+      "title": "17: Gehweg",
+      "filename": "17_Gehweg.jpg",
+      "title_fa": "۱۷: پیاده‌رو"
     },
     {
-        "title": "17a: Geh- und Radweg \n     (gemeinsam geführter Weg)",
-        "filename": "./assets/traffic_signs/signs/17a_Geh_und_Radweg______gemeinsam_geführter_Weg.jpg",
-        "title_fa": "۱۷a: مسیر پیاده‌رو و دوچرخه‌رو (مسیر مشترک)"
+      "title": "17a: Geh- und Radweg   (gemeinsam geführter Weg)",
+      "filename": "17a_Geh_und_Radweg_gemeinsam_gefuehrter_Weg.jpg",
+      "title_fa": "۱۷a: مسیر پیاده‌رو و دوچرخه‌رو (مسیر مشترک)"
     },
     {
-        "title": "17a-b: Geh- und Radweg \n     (getrennt geführter Weg)",
-        "filename": "./assets/traffic_signs/signs/17ab_Geh_und_Radweg______getrennt_geführter_Weg.jpg",
-        "title_fa": "۱۷a-b: مسیر پیاده‌رو و دوچرخه‌رو (مسیر جداگانه)"
+      "title": "17a-b: Geh- und Radweg   (getrennt geführter Weg)",
+      "filename": "17ab_Geh_und_Radweg_getrennt_gefuehrter_Weg.jpg",
+      "title_fa": "۱۷a-b: مسیر پیاده‌رو و دوچرخه‌رو (مسیر جداگانه)"
     },
     {
-        "title": "17a-c: Ende des Geh- und Radweges \n     (gemein­sam geführter Weg)",
-        "filename": "./assets/traffic_signs/signs/17ac_Ende_des_Geh_und_Radweges______gemeinsam_geführter_Weg.jpg",
-        "title_fa": "۱۷a-c: پایان مسیر پیاده‌رو و دوچرخه‌رو (مسیر مشترک)"
+      "title": "17a-c: Ende des Geh- und Radweges   (gemein­sam geführter Weg)",
+      "filename": "17ac_Ende_des_Geh_und_Radweges_gemeinsam_gefuehrter_Weg.jpg",
+      "title_fa": "۱۷a-c: پایان مسیر پیاده‌رو و دوچرخه‌رو (مسیر مشترک)"
     },
     {
-        "title": "17a-d: Ende des Geh- und Radweges \n     (getrennt geführter Weg)",
-        "filename": "./assets/traffic_signs/signs/17ad_Ende_des_Geh_und_Radweges______getrennt_geführter_Weg.jpg",
-        "title_fa": "۱۷a-d: پایان مسیر پیاده‌رو و دوچرخه‌رو (مسیر جداگانه)"
+      "title": "17a-d: Ende des Geh- und Radweges   (getrennt geführter Weg)",
+      "filename": "17ad_Ende_des_Geh_und_Radweges_getrennt_gefuehrter_Weg.jpg",
+      "title_fa": "۱۷a-d: پایان مسیر پیاده‌رو و دوچرخه‌رو (مسیر جداگانه)"
     },
     {
-        "title": "17b: Reitweg",
-        "filename": "./assets/traffic_signs/signs/17b_Reitweg.jpg",
-        "title_fa": "۱۷b: مسیر سوارکاری"
+      "title": "17b: Reitweg",
+      "filename": "17b_Reitweg.jpg",
+      "title_fa": "۱۷b: مسیر سوارکاری"
     },
     {
-        "title": "17c: Ende des Gehweges",
-        "filename": "./assets/traffic_signs/signs/17c_Ende_des_Gehweges.jpg",
-        "title_fa": "۱۷c: پایان پیاده‌رو"
+      "title": "17c: Ende des Gehweges",
+      "filename": "17c_Ende_des_Gehweges.jpg",
+      "title_fa": "۱۷c: پایان پیاده‌رو"
     },
     {
-        "title": "18: Unterführung",
-        "filename": "./assets/traffic_signs/signs/18_Unterführung.jpg",
-        "title_fa": "۱۸: زیرگذر"
+      "title": "18: Unterführung",
+      "filename": "18_Unterfuehrung.jpg",
+      "title_fa": "۱۸: زیرگذر"
     },
     {
-        "title": "19: Vorgeschriebene Mindestgeschwindigkeit",
-        "filename": "./assets/traffic_signs/signs/19_Vorgeschriebene_Mindestgeschwindigkeit.jpg",
-        "title_fa": "۱۹: حداقل سرعت اجباری"
+      "title": "19: Vorgeschriebene Mindestgeschwindigkeit",
+      "filename": "19_Vorgeschriebene_Mindestgeschwindigkeit.jpg",
+      "title_fa": "۱۹: حداقل سرعت اجباری"
     },
     {
-        "title": "19a: Ende der vorgeschriebenen Mindestgeschwindigkeit",
-        "filename": "./assets/traffic_signs/signs/19a_Ende_der_vorgeschriebenen_Mindestgeschwindigkeit.jpg",
-        "title_fa": "۱۹a: پایان حداقل سرعت اجباری"
+      "title": "19a: Ende der vorgeschriebenen Mindestgeschwindigkeit",
+      "filename": "19a_Ende_der_vorgeschriebenen_Mindestgeschwindigkeit.jpg",
+      "title_fa": "۱۹a: پایان حداقل سرعت اجباری"
     },
     {
-        "title": "21: Umkehrgebot",
-        "filename": "./assets/traffic_signs/signs/21_Umkehrgebot.jpg",
-        "title_fa": "۲۱: الزام به بازگشت"
+      "title": "21: Umkehrgebot",
+      "filename": "21_Umkehrgebot.jpg",
+      "title_fa": "۲۱: الزام به بازگشت"
     },
     {
-        "title": "22: Schneeketten vorgeschrieben",
-        "filename": "./assets/traffic_signs/signs/22_Schneeketten_vorgeschrieben.jpg",
-        "title_fa": "۲۲: زنجیر چرخ الزامی است"
+      "title": "22: Schneeketten vorgeschrieben",
+      "filename": "22_Schneeketten_vorgeschrieben.jpg",
+      "title_fa": "۲۲: زنجیر چرخ الزامی است"
     },
     {
-        "title": "22a: Ende der Schneekettenpflicht",
-        "filename": "./assets/traffic_signs/signs/22a_Ende_der_Schneekettenpflicht.jpg",
-        "title_fa": "۲۲a: پایان الزام زنجیر چرخ"
+      "title": "22a: Ende der Schneekettenpflicht",
+      "filename": "22a_Ende_der_Schneekettenpflicht.jpg",
+      "title_fa": "۲۲a: پایان الزام زنجیر چرخ"
     },
     {
-        "title": "23: Vorrang geben",
-        "filename": "./assets/traffic_signs/signs/23_Vorrang_geben.jpg",
-        "title_fa": "۲۳: اولویت بدهید"
+      "title": "23: Vorrang geben",
+      "filename": "23_Vorrang_geben.jpg",
+      "title_fa": "۲۳: اولویت بدهید"
     },
     {
-        "title": "24: Halt",
-        "filename": "./assets/traffic_signs/signs/24_Halt.jpg",
-        "title_fa": "۲۴: توقف"
+      "title": "24: Halt",
+      "filename": "24_Halt.jpg",
+      "title_fa": "۲۴: توقف"
     },
     {
-        "title": "25a: Beginn der Vorrangstraße",
-        "filename": "./assets/traffic_signs/signs/25a_Beginn_der_Vorrangstraße.jpg",
-        "title_fa": "۲۵a: آغاز خیابان اولویت‌دار"
+      "title": "25a: Beginn der Vorrangstraße",
+      "filename": "25a_Beginn_der_Vorrangstrasse.jpg",
+      "title_fa": "۲۵a: آغاز خیابان اولویت‌دار"
     },
     {
-        "title": "25b: Ende der Vorrangstraße",
-        "filename": "./assets/traffic_signs/signs/25b_Ende_der_Vorrangstraße.jpg",
-        "title_fa": "۲۵b: پایان خیابان اولویت‌دار"
+      "title": "25b: Ende der Vorrangstraße",
+      "filename": "25b_Ende_der_Vorrangstrasse.jpg",
+      "title_fa": "۲۵b: پایان خیابان اولویت‌دار"
     },
     {
-        "title": "1a: Parken",
-        "filename": "./assets/traffic_signs/signs/1a_Parken.jpg",
-        "title_fa": "۱a: پارک کردن"
+      "title": "1a: Parken",
+      "filename": "1a_Parken.jpg",
+      "title_fa": "۱a: پارک کردن"
     },
     {
-        "title": "1b: Zum Parkplatz",
-        "filename": "./assets/traffic_signs/signs/1b_Zum_Parkplatz.jpg",
-        "title_fa": "۱b: به سمت پارکینگ"
+      "title": "1b: Zum Parkplatz",
+      "filename": "1b_Zum_Parkplatz.jpg",
+      "title_fa": "۱b: به سمت پارکینگ"
     },
     {
-        "title": "1c: Pannenbucht",
-        "filename": "./assets/traffic_signs/signs/1c_Pannenbucht.jpg",
-        "title_fa": "۱c: منطقه اضطراری"
+      "title": "1c: Pannenbucht",
+      "filename": "1c_Pannenbucht.jpg",
+      "title_fa": "۱c: منطقه اضطراری"
     },
     {
-        "title": "2: Spital",
-        "filename": "./assets/traffic_signs/signs/2_Spital.jpg",
-        "title_fa": "۲: بیمارستان"
+      "title": "2: Spital",
+      "filename": "2_Spital.jpg",
+      "title_fa": "۲: بیمارستان"
     },
     {
-        "title": "2a: Kennzeichnung eines \n    Schutzweges",
-        "filename": "./assets/traffic_signs/signs/2a_Kennzeichnung_eines_____Schutzweges.jpg",
-        "title_fa": "۲a: علامت‌گذاری یک مسیر محافظت‌شده"
+      "title": "2a: Kennzeichnung eines  Schutzweges",
+      "filename": "2a_Kennzeichnung_eines_Schutzweges.jpg",
+      "title_fa": "۲a: علامت‌گذاری یک مسیر محافظت‌شده"
     },
     {
-        "title": "2b: Kennzeichnung einer Radfahrerüberfahrt",
-        "filename": "./assets/traffic_signs/signs/2b_Kennzeichnung_einer_Radfahrerüberfahrt.jpg",
-        "title_fa": "۲b: علامت‌گذاری مسیر عبور دوچرخه‌سواران"
+      "title": "2b: Kennzeichnung einer Radfahrerüberfahrt",
+      "filename": "2b_Kennzeichnung_einer_Radfahrerueberfahrt.jpg",
+      "title_fa": "۲b: علامت‌گذاری مسیر عبور دوچرخه‌سواران"
     },
     {
-        "title": "2c: Kennzeichnung eines Schutzweges und einer Radfahrerüberfahrt",
-        "filename": "./assets/traffic_signs/signs/2c_Kennzeichnung_eines_Schutzweges_und_einer_Radfahrerüberfahrt.jpg",
-        "title_fa": "۲c: علامت‌گذاری یک مسیر محافظت‌شده و مسیر عبور دوچرخه‌سواران"
+      "title": "2c: Kennzeichnung eines Schutzweges und einer Radfahrerüberfahrt",
+      "filename": "2c_Kennzeichnung_eines_Schutzweges_und_einer_Radfahrerueberfahrt.jpg",
+      "title_fa": "۲c: علامت‌گذاری یک مسیر محافظت‌شده و مسیر عبور دوچرخه‌سواران"
     },
     {
-        "title": "2c: Kennzeichnung einer Radfahrerüberfahrt und eines Schutzweges",
-        "filename": "./assets/traffic_signs/signs/2c_Kennzeichnung_einer_Radfahrerüberfahrt_und_eines_Schutzweges.jpg",
-        "title_fa": "۲c: علامت‌گذاری مسیر عبور دوچرخه‌سواران و یک مسیر محافظت‌شده"
+      "title": "2c: Kennzeichnung einer Radfahrerüberfahrt und eines Schutzweges",
+      "filename": "2c_Kennzeichnung_einer_Radfahrerueberfahrt_und_eines_Schutzweges.jpg",
+      "title_fa": "۲c: علامت‌گذاری مسیر عبور دوچرخه‌سواران و یک مسیر محافظت‌شده"
     },
     {
-        "title": "3: Erste Hilfe",
-        "filename": "./assets/traffic_signs/signs/3_Erste_Hilfe.jpg",
-        "title_fa": "۳: کمک‌های اولیه"
+      "title": "3: Erste Hilfe",
+      "filename": "3_Erste_Hilfe.jpg",
+      "title_fa": "۳: کمک‌های اولیه"
     },
     {
-        "title": "3a: Gottesdienste",
-        "filename": "./assets/traffic_signs/signs/3a_Gottesdienste.jpg",
-        "title_fa": "۳a: خدمات مذهبی"
+      "title": "3a: Gottesdienste",
+      "filename": "3a_Gottesdienste.jpg",
+      "title_fa": "۳a: خدمات مذهبی"
     },
     {
-        "title": "4: Pannenhilfe",
-        "filename": "./assets/traffic_signs/signs/4_Pannenhilfe.jpg",
-        "title_fa": "۴: کمک‌های اضطراری"
+      "title": "4: Pannenhilfe",
+      "filename": "4_Pannenhilfe.jpg",
+      "title_fa": "۴: کمک‌های اضطراری"
     },
     {
-        "title": "4a: Verkehrsfunk",
-        "filename": "./assets/traffic_signs/signs/4a_Verkehrsfunk.jpg",
-        "title_fa": "۴a: رادیو ترافیک"
+      "title": "4a: Verkehrsfunk",
+      "filename": "4a_Verkehrsfunk.jpg",
+      "title_fa": "۴a: رادیو ترافیک"
     },
     {
-        "title": "5: Telefon",
-        "filename": "./assets/traffic_signs/signs/5_Telefon.jpg",
-        "title_fa": "۵: تلفن"
+      "title": "5: Telefon",
+      "filename": "5_Telefon.jpg",
+      "title_fa": "۵: تلفن"
     },
     {
-        "title": "6: Tankstelle",
-        "filename": "./assets/traffic_signs/signs/6_Tankstelle.jpg",
-        "title_fa": "۶: پمپ بنزین"
+      "title": "6: Tankstelle",
+      "filename": "6_Tankstelle.jpg",
+      "title_fa": "۶: پمپ بنزین"
     },
     {
-        "title": "6a: Taxistandplatz",
-        "filename": "./assets/traffic_signs/signs/6a_Taxistandplatz.jpg",
-        "title_fa": "۶a: ایستگاه تاکسی"
+      "title": "6a: Taxistandplatz",
+      "filename": "6a_Taxistandplatz.jpg",
+      "title_fa": "۶a: ایستگاه تاکسی"
     },
     {
-        "title": "7: Ende des Gegenverkehrs",
-        "filename": "./assets/traffic_signs/signs/7_Ende_des_Gegenverkehrs.jpg",
-        "title_fa": "۷: پایان ترافیک مخالف"
+      "title": "7: Ende des Gegenverkehrs",
+      "filename": "7_Ende_des_Gegenverkehrs.jpg",
+      "title_fa": "۷: پایان ترافیک مخالف"
     },
     {
-        "title": "7a: Wartepflicht für Gegenverkehr",
-        "filename": "./assets/traffic_signs/signs/7a_Wartepflicht_für_Gegenverkehr.jpg",
-        "title_fa": "۷a: الزام به انتظار برای ترافیک مخالف"
+      "title": "7a: Wartepflicht für Gegenverkehr",
+      "filename": "7a_Wartepflicht_fuer_Gegenverkehr.jpg",
+      "title_fa": "۷a: الزام به انتظار برای ترافیک مخالف"
     },
     {
-        "title": "8a: Autobahn",
-        "filename": "./assets/traffic_signs/signs/8a_Autobahn.jpg",
-        "title_fa": "۸a: بزرگراه"
+      "title": "8a: Autobahn",
+      "filename": "8a_Autobahn.jpg",
+      "title_fa": "۸a: بزرگراه"
     },
     {
-        "title": "8b: Ende der Autobahn",
-        "filename": "./assets/traffic_signs/signs/8b_Ende_der_Autobahn.jpg",
-        "title_fa": "۸b: پایان بزرگراه"
+      "title": "8b: Ende der Autobahn",
+      "filename": "8b_Ende_der_Autobahn.jpg",
+      "title_fa": "۸b: پایان بزرگراه"
     },
     {
-        "title": "8c: Autostraße",
-        "filename": "./assets/traffic_signs/signs/8c_Autostraße.jpg",
-        "title_fa": "۸c: جاده خودرو"
+      "title": "8c: Autostraße",
+      "filename": "8c_Autostrasse.jpg",
+      "title_fa": "۸c: جاده خودرو"
     },
     {
-        "title": "8d: Ende der Autostraße",
-        "filename": "./assets/traffic_signs/signs/8d_Ende_der_Autostraße.jpg",
-        "title_fa": "۸d: پایان جاده خودرو"
+      "title": "8d: Ende der Autostraße",
+      "filename": "8d_Ende_der_Autostrasse.jpg",
+      "title_fa": "۸d: پایان جاده خودرو"
     },
     {
-        "title": "9a: Fußgängerzone",
-        "filename": "./assets/traffic_signs/signs/9a_Fußgängerzone.jpg",
-        "title_fa": "۹a: منطقه عابر پیاده"
+      "title": "9a: Fußgängerzone",
+      "filename": "9a_Fussgaengerzone.jpg",
+      "title_fa": "۹a: منطقه عابر پیاده"
     },
     {
-        "title": "9b: Ende einer Fußgängerzone",
-        "filename": "./assets/traffic_signs/signs/9b_Ende_einer_Fußgängerzone.jpg",
-        "title_fa": "۹b: پایان منطقه عابر پیاده"
+      "title": "9b: Ende einer Fußgängerzone",
+      "filename": "9b_Ende_einer_Fussgaengerzone.jpg",
+      "title_fa": "۹b: پایان منطقه عابر پیاده"
     },
     {
-        "title": "9c: Wohnstraße",
-        "filename": "./assets/traffic_signs/signs/9c_Wohnstraße.jpg",
-        "title_fa": "۹c: خیابان مسکونی"
+      "title": "9c: Wohnstraße",
+      "filename": "9c_Wohnstrasse.jpg",
+      "title_fa": "۹c: خیابان مسکونی"
     },
     {
-        "title": "9d: Ende einer Wohnstraße",
-        "filename": "./assets/traffic_signs/signs/9d_Ende_einer_Wohnstraße.jpg",
-        "title_fa": "۹d: پایان خیابان مسکونی"
+      "title": "9d: Ende einer Wohnstraße",
+      "filename": "9d_Ende_einer_Wohnstrasse.jpg",
+      "title_fa": "۹d: پایان خیابان مسکونی"
     },
     {
-        "title": "9e: \n    Begegnungszone",
-        "filename": "./assets/traffic_signs/signs/9e_____Begegnungszone.jpg",
-        "title_fa": "۹e: منطقه ملاقات"
+      "title": "9e:  Begegnungszone",
+      "filename": "9e_Begegnungszone.jpg",
+      "title_fa": "۹e: منطقه ملاقات"
     },
     {
-        "title": "9f: Ende einer Begegnungszone",
-        "filename": "./assets/traffic_signs/signs/9f_Ende_einer_Begegnungszone.jpg",
-        "title_fa": "۹f: پایان منطقه ملاقات"
+      "title": "9f: Ende einer Begegnungszone",
+      "filename": "9f_Ende_einer_Begegnungszone.jpg",
+      "title_fa": "۹f: پایان منطقه ملاقات"
     },
     {
-        "title": "9g: Tunnel",
-        "filename": "./assets/traffic_signs/signs/9g_Tunnel.jpg",
-        "title_fa": "۹g: تونل"
+      "title": "9g: Tunnel",
+      "filename": "9g_Tunnel.jpg",
+      "title_fa": "۹g: تونل"
     },
     {
-        "title": "10: \n    Einbahnstraße (Fahrtrichtung links)",
-        "filename": "./assets/traffic_signs/signs/10_____Einbahnstraße_Fahrtrichtung_links.jpg",
-        "title_fa": "۱۰: خیابان یک‌طرفه (جهت حرکت به چپ)"
+      "title": "10:  Einbahnstraße (Fahrtrichtung links)",
+      "filename": "10_Einbahnstrasse_Fahrtrichtung_links.jpg",
+      "title_fa": "۱۰: خیابان یک‌طرفه (جهت حرکت به چپ)"
     },
     {
-        "title": "10: Einbahnstraße (Fahrtrichtung rechts)",
-        "filename": "./assets/traffic_signs/signs/10_Einbahnstraße_Fahrtrichtung_rechts.jpg",
-        "title_fa": "۱۰: خیابان یک‌طرفه (جهت حرکت به راست)"
+      "title": "10: Einbahnstraße (Fahrtrichtung rechts)",
+      "filename": "10_Einbahnstrasse_Fahrtrichtung_rechts.jpg",
+      "title_fa": "۱۰: خیابان یک‌طرفه (جهت حرکت به راست)"
     },
     {
-        "title": "10a: Straßenbahn biegt bei gelb oder rot ein",
-        "filename": "./assets/traffic_signs/signs/10a_Straßenbahn_biegt_bei_gelb_oder_rot_ein.jpg",
-        "title_fa": "۱۰a: تراموا در هنگام زرد یا قرمز پیچ می‌زند"
+      "title": "10a: Straßenbahn biegt bei gelb oder rot ein",
+      "filename": "10a_Strassenbahn_biegt_bei_gelb_oder_rot_ein.jpg",
+      "title_fa": "۱۰a: تراموا در هنگام زرد یا قرمز پیچ می‌زند"
     },
     {
-        "title": "11: Sackgasse",
-        "filename": "./assets/traffic_signs/signs/11_Sackgasse.jpg",
-        "title_fa": "۱۱: بن‌بست"
+      "title": "11: Sackgasse",
+      "filename": "11_Sackgasse.jpg",
+      "title_fa": "۱۱: بن‌بست"
     },
     {
-        "title": "12: Laternen, die nicht die ganze Nacht über leuchten",
-        "filename": "./assets/traffic_signs/signs/12_Laternen_die_nicht_die_ganze_Nacht_über_leuchten.jpg",
-        "title_fa": "۱۲: چراغ‌هایی که تمام شب روشن نمی‌مانند"
+      "title": "12: Laternen, die nicht die ganze Nacht über leuchten",
+      "filename": "12_Laternen_die_nicht_die_ganze_Nacht_ueber_leuchten.jpg",
+      "title_fa": "۱۲: چراغ‌هایی که تمام شب روشن نمی‌مانند"
     },
     {
-        "title": "13a groß: Vorwegweiser",
-        "filename": "./assets/traffic_signs/signs/13a_groß_Vorwegweiser.jpg",
-        "title_fa": "۱۳a بزرگ: پیش‌نشانگر"
+      "title": "13a groß: Vorwegweiser",
+      "filename": "13a_gross_Vorwegweiser.jpg",
+      "title_fa": "۱۳a بزرگ: پیش‌نشانگر"
     },
     {
-        "title": "13a klein: Vorwegweiser",
-        "filename": "./assets/traffic_signs/signs/13a_klein_Vorwegweiser.jpg",
-        "title_fa": "۱۳a کوچک: پیش‌نشانگر"
+      "title": "13a klein: Vorwegweiser",
+      "filename": "13a_klein_Vorwegweiser.jpg",
+      "title_fa": "۱۳a کوچک: پیش‌نشانگر"
     },
     {
-        "title": "13b: Wegweiser",
-        "filename": "./assets/traffic_signs/signs/13b_Wegweiser.jpg",
-        "title_fa": "۱۳b: نشانگر مسیر"
+      "title": "13b: Wegweiser",
+      "filename": "13b_Wegweiser.jpg",
+      "title_fa": "۱۳b: نشانگر مسیر"
     },
     {
-        "title": "13b: Wegweiser",
-        "filename": "./assets/traffic_signs/signs/13b_Wegweiser.jpg",
-        "title_fa": "۱۳b: نشانگر مسیر"
+      "title": "13c: Wegweiser zu anderen Verkehrseinrichtungen",
+      "filename": "13c_Wegweiser_zu_anderen_Verkehrseinrichtungen.jpg",
+      "title_fa": "۱۳c: نشانگر مسیر به سایر تأسیسات ترافیکی"
     },
     {
-        "title": "13b: Wegweiser",
-        "filename": "./assets/traffic_signs/signs/13b_Wegweiser.jpg",
-        "title_fa": "۱۳b: نشانگر مسیر"
+      "title": "13d: Wegweiser zu Lokal- oder Bereichszielen",
+      "filename": "13d_Wegweiser_zu_Lokal_oder_Bereichszielen.jpg",
+      "title_fa": "۱۳d: نشانگر مسیر به اهداف محلی یا منطقه‌ای"
     },
     {
-        "title": "13c: Wegweiser zu anderen Verkehrseinrichtungen",
-        "filename": "./assets/traffic_signs/signs/13c_Wegweiser_zu_anderen_Verkehrseinrichtungen.jpg",
-        "title_fa": "۱۳c: نشانگر مسیر به سایر تأسیسات ترافیکی"
+      "title": "14a: Vorwegweiser zur Autobahn oder Autostraße",
+      "filename": "14a_Vorwegweiser_zur_Autobahn_oder_Autostrasse.jpg",
+      "title_fa": "۱۴a: پیش‌نشانگر به بزرگراه یا جاده"
     },
     {
-        "title": "13d: Wegweiser zu Lokal- oder Bereichszielen",
-        "filename": "./assets/traffic_signs/signs/13d_Wegweiser_zu_Lokal_oder_Bereichszielen.jpg",
-        "title_fa": "۱۳d: نشانگر مسیر به اهداف محلی یا منطقه‌ای"
+      "title": "14b: Wegweiser zur Autobahn oder Autostraße (rechts)",
+      "filename": "14b_Wegweiser_zur_Autobahn_oder_Autostrasse_rechts.jpg",
+      "title_fa": "۱۴b: نشانگر مسیر به بزرگراه یا جاده (سمت راست)"
     },
     {
-        "title": "14a: Vorwegweiser zur Autobahn oder Autostraße",
-        "filename": "./assets/traffic_signs/signs/14a_Vorwegweiser_zur_Autobahn_oder_Autostraße.jpg",
-        "title_fa": "۱۴a: پیش‌نشانگر به بزرگراه یا جاده"
+      "title": "14b: Wegweiser zur Autobahn oder Auto ­straße (schräg rechts)",
+      "filename": "14b_Wegweiser_zur_Autobahn_oder_Autostrasse_schraeg_rechts.jpg",
+      "title_fa": "۱۴b: نشانگر مسیر به بزرگراه یا جاده (به سمت راست)"
     },
     {
-        "title": "14b: Wegweiser zur Autobahn oder Autostraße (rechts)",
-        "filename": "./assets/traffic_signs/signs/14b_Wegweiser_zur_Autobahn_oder_Autostraße_rechts.jpg",
-        "title_fa": "۱۴b: نشانگر مسیر به بزرگراه یا جاده (سمت راست)"
+      "title": "15a-a: Vorwegweiser – Autobahn oder Autostraße",
+      "filename": "15aa_Vorwegweiser_Autobahn_oder_Autostrasse.jpg",
+      "title_fa": "۱۵a-a: پیش‌نشانگر – بزرگراه یا جاده"
     },
     {
-        "title": "14b: Wegweiser zur Autobahn oder Auto\n    ­straße (schräg rechts)",
-        "filename": "./assets/traffic_signs/signs/14b_Wegweiser_zur_Autobahn_oder_Auto____straße_schräg_rechts.jpg",
-        "title_fa": "۱۴b: نشانگر مسیر به بزرگراه یا جاده (به سمت راست)"
+      "title": "15a-b: Vorwegweiser – Autobahn oder Autostraße",
+      "filename": "15ab_Vorwegweiser_Autobahn_oder_Autostrasse.jpg",
+      "title_fa": "۱۵a-b: پیش‌نشانگر – بزرگراه یا جاده"
     },
     {
-        "title": "15a-a: Vorwegweiser – Autobahn oder Autostraße",
-        "filename": "./assets/traffic_signs/signs/15aa_Vorwegweiser__Autobahn_oder_Autostraße.jpg",
-        "title_fa": "۱۵a-a: پیش‌نشانگر – بزرگراه یا جاده"
+      "title": "15a-c: Vorwegweiser – Autobahn oder Autostraße",
+      "filename": "15ac_Vorwegweiser_Autobahn_oder_Autostrasse.jpg",
+      "title_fa": "۱۵a-c: پیش‌نشانگر – بزرگراه یا جاده"
     },
     {
-        "title": "15a-b: Vorwegweiser – Autobahn oder Autostraße",
-        "filename": "./assets/traffic_signs/signs/15ab_Vorwegweiser__Autobahn_oder_Autostraße.jpg",
-        "title_fa": "۱۵a-b: پیش‌نشانگر – بزرگراه یا جاده"
+      "title": "15a-d: Vorwegweiser – Autobahn oder Autostraße",
+      "filename": "15ad_Vorwegweiser_Autobahn_oder_Autostrasse.jpg",
+      "title_fa": "۱۵a-d: پیش‌نشانگر – بزرگراه یا جاده"
     },
     {
-        "title": "15a-c: Vorwegweiser – Autobahn oder Autostraße",
-        "filename": "./assets/traffic_signs/signs/15ac_Vorwegweiser__Autobahn_oder_Autostraße.jpg",
-        "title_fa": "۱۵a-c: پیش‌نشانگر – بزرگراه یا جاده"
+      "title": "15b-a: Ausfahrts ­wegweiser – Autobahn oder Autostraße",
+      "filename": "15ba_Ausfahrtswegweiser_Autobahn_oder_Autostrasse.jpg",
+      "title_fa": "۱۵b-a: نشانگر خروج – بزرگراه یا جاده"
     },
     {
-        "title": "15a-d: Vorwegweiser – Autobahn oder Autostraße",
-        "filename": "./assets/traffic_signs/signs/15ad_Vorwegweiser__Autobahn_oder_Autostraße.jpg",
-        "title_fa": "۱۵a-d: پیش‌نشانگر – بزرگراه یا جاده"
+      "title": "15b-b hoch: Ausfahrts ­wegweiser – Autobahn oder Autostraße",
+      "filename": "15bb_hoch_Ausfahrtswegweiser_Autobahn_oder_Autostrasse.jpg",
+      "title_fa": "۱۵b-b بزرگ: نشانگر خروج – بزرگراه یا جاده"
     },
     {
-        "title": "15b-a: Ausfahrts\n    ­wegweiser – Autobahn oder Autostraße",
-        "filename": "./assets/traffic_signs/signs/15ba_Ausfahrts____wegweiser__Autobahn_oder_Autostraße.jpg",
-        "title_fa": "۱۵b-a: نشانگر خروج – بزرگراه یا جاده"
+      "title": "15b-b quer: Ausfahrts ­wegweiser – Autobahn oder Autostraße",
+      "filename": "15bb_quer_Ausfahrtswegweiser_Autobahn_oder_Autostrasse.jpg",
+      "title_fa": "۱۵b-b افقی: نشانگر خروج – بزرگراه یا جاده"
     },
     {
-        "title": "15b-b hoch: Ausfahrts\n    ­wegweiser – Autobahn oder Autostraße",
-        "filename": "./assets/traffic_signs/signs/15bb_hoch_Ausfahrts____wegweiser__Autobahn_oder_Autostraße.jpg",
-        "title_fa": "۱۵b-b بزرگ: نشانگر خروج – بزرگراه یا جاده"
+      "title": "15c: Orientierungstafel – Autobahn oder Autostraße",
+      "filename": "15c_Orientierungstafel_Autobahn_oder_Autostrasse.jpg",
+      "title_fa": "۱۵c: تابلوی جهت‌یابی – بزرگراه یا جاده"
     },
     {
-        "title": "15b-b quer: Ausfahrts\n    ­wegweiser – Autobahn oder Autostraße",
-        "filename": "./assets/traffic_signs/signs/15bb_quer_Ausfahrts____wegweiser__Autobahn_oder_Autostraße.jpg",
-        "title_fa": "۱۵b-b افقی: نشانگر خروج – بزرگراه یا جاده"
+      "title": "16a: Vorankündigung einer Umleitung",
+      "filename": "16a_Vorankuendigung_einer_Umleitung.jpg",
+      "title_fa": "۱۶a: اعلام پیش از موعد یک مسیر انحرافی"
     },
     {
-        "title": "15c: Orientierungstafel – Autobahn oder Autostraße",
-        "filename": "./assets/traffic_signs/signs/15c_Orientierungstafel__Autobahn_oder_Autostraße.jpg",
-        "title_fa": "۱۵c: تابلوی جهت‌یابی – بزرگراه یا جاده"
+      "title": "16b: Umleitung",
+      "filename": "16b_Umleitung.jpg",
+      "title_fa": "۱۶b: مسیر انحرافی"
     },
     {
-        "title": "16a: Vorankündigung einer Umleitung",
-        "filename": "./assets/traffic_signs/signs/16a_Vorankündigung_einer_Umleitung.jpg",
-        "title_fa": "۱۶a: اعلام پیش از موعد یک مسیر انحرافی"
+      "title": "16c-a: Wechsel der Richtungsfahrbahn – Gegenverkehrsbereich beginnt in 500 m",
+      "filename": "16ca_Wechsel_der_Richtungsfahrbahn_Gegenverkehrsbereich_beginnt_in_500_m.jpg",
+      "title_fa": "۱۶c-a: تغییر مسیر – منطقه ترافیک مخالف در ۵۰۰ متر آغاز می‌شود"
     },
     {
-        "title": "16b: Umleitung",
-        "filename": "./assets/traffic_signs/signs/16b_Umleitung.jpg",
-        "title_fa": "۱۶b: مسیر انحرافی"
+      "title": "16c-b: Wechsel der Richtungsfahrbahn – Gegenverkehrsbereich endet in 500 m",
+      "filename": "16cb_Wechsel_der_Richtungsfahrbahn_Gegenverkehrsbereich_endet_in_500_m.jpg",
+      "title_fa": "۱۶c-b: تغییر مسیر – منطقه ترافیک مخالف در ۵۰۰ متر پایان می‌یابد"
     },
     {
-        "title": "16b: Umleitung",
-        "filename": "./assets/traffic_signs/signs/16b_Umleitung.jpg",
-        "title_fa": "۱۶b: مسیر انحرافی"
+      "title": "17a:  Ortstafel",
+      "filename": "17a_Ortstafel.jpg",
+      "title_fa": "۱۷a: تابلوی شهر"
     },
     {
-        "title": "16b: Umleitung",
-        "filename": "./assets/traffic_signs/signs/16b_Umleitung.jpg",
-        "title_fa": "۱۶b: مسیر انحرافی"
+      "title": "17b: Ortsende",
+      "filename": "17b_Ortsende.jpg",
+      "title_fa": "۱۷b: پایان شهر"
     },
     {
-        "title": "16c-a: Wechsel der Richtungsfahrbahn – Gegenverkehrsbereich beginnt in 500 m",
-        "filename": "./assets/traffic_signs/signs/16ca_Wechsel_der_Richtungsfahrbahn__Gegenverkehrsbereich_beginnt_in_500_m.jpg",
-        "title_fa": "۱۶c-a: تغییر مسیر – منطقه ترافیک مخالف در ۵۰۰ متر آغاز می‌شود"
+      "title": "18: Internationaler Hauptverkehrsweg",
+      "filename": "18_Internationaler_Hauptverkehrsweg.jpg",
+      "title_fa": "۱۸: مسیر ترافیک بین‌المللی اصلی"
     },
     {
-        "title": "16c-b: Wechsel der Richtungsfahrbahn – Gegenverkehrsbereich endet in 500 m",
-        "filename": "./assets/traffic_signs/signs/16cb_Wechsel_der_Richtungsfahrbahn__Gegenverkehrsbereich_endet_in_500_m.jpg",
-        "title_fa": "۱۶c-b: تغییر مسیر – منطقه ترافیک مخالف در ۵۰۰ متر پایان می‌یابد"
+      "title": "19: Straße mit Vorrang",
+      "filename": "19_Strasse_mit_Vorrang.jpg",
+      "title_fa": "۱۹: خیابان با حق تقدم"
     },
     {
-        "title": "17a: \n    Ortstafel",
-        "filename": "./assets/traffic_signs/signs/17a_____Ortstafel.jpg",
-        "title_fa": "۱۷a: تابلوی شهر"
+      "title": "21: Straße ohne Vorrang",
+      "filename": "21_Strasse_ohne_Vorrang.jpg",
+      "title_fa": "۲۱: خیابان بدون حق تقدم"
     },
     {
-        "title": "17b: Ortsende",
-        "filename": "./assets/traffic_signs/signs/17b_Ortsende.jpg",
-        "title_fa": "۱۷b: پایان شهر"
+      "title": "22: Allgemeine Geschwindigkeits ­beschränkung",
+      "filename": "22_Allgemeine_Geschwindigkeitsbeschraenkung.jpg",
+      "title_fa": "۲۲: محدودیت سرعت عمومی"
     },
     {
-        "title": "18: Internationaler Hauptverkehrsweg",
-        "filename": "./assets/traffic_signs/signs/18_Internationaler_Hauptverkehrsweg.jpg",
-        "title_fa": "۱۸: مسیر ترافیک بین‌المللی اصلی"
+      "title": "23: Bodenmarkierungen/ Voranzeiger für Einordnen",
+      "filename": "23_Bodenmarkierungen_Voranzeiger_fuer_Einordnen.jpg",
+      "title_fa": "۲۳: علائم سطحی/ نشانگر برای مرتب‌سازی"
     },
     {
-        "title": "19: Straße mit Vorrang",
-        "filename": "./assets/traffic_signs/signs/19_Straße_mit_Vorrang.jpg",
-        "title_fa": "۱۹: خیابان با حق تقدم"
+      "title": "23a: Voranzeiger für Einbiegen",
+      "filename": "23a_Voranzeiger_fuer_Einbiegen.jpg",
+      "title_fa": "۲۳a: نشانگر برای پیچیدن"
     },
     {
-        "title": "21: Straße ohne Vorrang",
-        "filename": "./assets/traffic_signs/signs/21_Straße_ohne_Vorrang.jpg",
-        "title_fa": "۲۱: خیابان بدون حق تقدم"
+      "title": "23b: Voranzeiger für Fahrstreifenverlauf",
+      "filename": "23b_Voranzeiger_fuer_Fahrstreifenverlauf.jpg",
+      "title_fa": "۲۳b: نشانگر برای جریان خطوط رانندگی"
     },
     {
-        "title": "22: Allgemeine Geschwindigkeits\n    ­beschränkung",
-        "filename": "./assets/traffic_signs/signs/22_Allgemeine_Geschwindigkeits____beschränkung.jpg",
-        "title_fa": "۲۲: محدودیت سرعت عمومی"
+      "title": "23c: Fahrstreifen ­verminderung",
+      "filename": "23c_Fahrstreifenverminderung.jpg",
+      "title_fa": "۲۳c: کاهش خطوط رانندگی"
     },
     {
-        "title": "23: Bodenmarkierungen/ Voranzeiger für Einordnen",
-        "filename": "./assets/traffic_signs/signs/23_Bodenmarkierungen_Voranzeiger_für_Einordnen.jpg",
-        "title_fa": "۲۳: علائم سطحی/ نشانگر برای مرتب‌سازی"
+      "title": "24: Straße für Omnibusse",
+      "filename": "24_Strasse_fuer_Omnibusse.jpg",
+      "title_fa": "۲۴: خیابان برای اتوبوس‌ها"
     },
     {
-        "title": "23a: Voranzeiger für Einbiegen",
-        "filename": "./assets/traffic_signs/signs/23a_Voranzeiger_für_Einbiegen.jpg",
-        "title_fa": "۲۳a: نشانگر برای پیچیدن"
+      "title": "25: Fahrstreifen für Omnibusse",
+      "filename": "25_Fahrstreifen_fuer_Omnibusse.jpg",
+      "title_fa": "۲۵: خط رانندگی برای اتوبوس‌ها"
     },
     {
-        "title": "23a: Voranzeiger für Einbiegen",
-        "filename": "./assets/traffic_signs/signs/23a_Voranzeiger_für_Einbiegen.jpg",
-        "title_fa": "۲۳a: نشانگر برای پیچیدن"
+      "title": "26:  Fahrradstraße",
+      "filename": "26_Fahrradstrasse.jpg",
+      "title_fa": "۲۶: خیابان دوچرخه‌سواری"
     },
     {
-        "title": "23b: Voranzeiger für Fahrstreifenverlauf",
-        "filename": "./assets/traffic_signs/signs/23b_Voranzeiger_für_Fahrstreifenverlauf.jpg",
-        "title_fa": "۲۳b: نشانگر برای جریان خطوط رانندگی"
+      "title": "27: Radweg ohne Benützungspflicht",
+      "filename": "27_Radweg_ohne_Benuetzungspflicht.jpg",
+      "title_fa": "۲۷: مسیر دوچرخه بدون الزام استفاده"
     },
     {
-        "title": "23b: Voranzeiger für Fahrstreifenverlauf",
-        "filename": "./assets/traffic_signs/signs/23b_Voranzeiger_für_Fahrstreifenverlauf.jpg",
-        "title_fa": "۲۳b: نشانگر برای جریان خطوط رانندگی"
+      "title": "28a: Geh- und Radweg ohne Benützungspflicht (gemeinsam)",
+      "filename": "28a_Geh_und_Radweg_ohne_Benuetzungspflicht_gemeinsam.jpg",
+      "title_fa": "۲۸a: مسیر پیاده‌رو و دوچرخه بدون الزام استفاده (مشترک)"
     },
     {
-        "title": "23c: Fahrstreifen\n    ­verminderung",
-        "filename": "./assets/traffic_signs/signs/23c_Fahrstreifen____verminderung.jpg",
-        "title_fa": "۲۳c: کاهش خطوط رانندگی"
+      "title": "28b: Geh- und Radweg ohne Benützungspflicht (getrennt)",
+      "filename": "28b_Geh_und_Radweg_ohne_Benuetzungspflicht_getrennt.jpg",
+      "title_fa": "۲۸b: مسیر پیاده‌رو و دوچرخه بدون الزام استفاده (جداگانه)"
     },
     {
-        "title": "24: Straße für Omnibusse",
-        "filename": "./assets/traffic_signs/signs/24_Straße_für_Omnibusse.jpg",
-        "title_fa": "۲۴: خیابان برای اتوبوس‌ها"
+      "title": "a: Entfernung",
+      "filename": "a_Entfernung.jpg",
+      "title_fa": "a: فاصله"
     },
     {
-        "title": "25: Fahrstreifen für Omnibusse",
-        "filename": "./assets/traffic_signs/signs/25_Fahrstreifen_für_Omnibusse.jpg",
-        "title_fa": "۲۵: خط رانندگی برای اتوبوس‌ها"
+      "title": "b: Länge",
+      "filename": "b_Laenge.jpg",
+      "title_fa": "b: طول"
     },
     {
-        "title": "26: \n    Fahrradstraße",
-        "filename": "./assets/traffic_signs/signs/26_____Fahrradstraße.jpg",
-        "title_fa": "۲۶: خیابان دوچرخه‌سواری"
+      "title": "c: Ankündigung des Zeichens Halt",
+      "filename": "c_Ankuendigung_des_Zeichens_Halt.jpg",
+      "title_fa": "c: اعلام تابلوی توقف"
     },
     {
-        "title": "27: Radweg ohne Benützungspflicht",
-        "filename": "./assets/traffic_signs/signs/27_Radweg_ohne_Benützungspflicht.jpg",
-        "title_fa": "۲۷: مسیر دوچرخه بدون الزام استفاده"
+      "title": "d: Querstraße ist Vorrangstraße",
+      "filename": "d_Querstrasse_ist_Vorrangstrasse.jpg",
+      "title_fa": "d: خیابان متقاطع خیابان دارای حق تقدم است"
     },
     {
-        "title": "28a: Geh- und Radweg ohne Benützungspflicht (gemeinsam)",
-        "filename": "./assets/traffic_signs/signs/28a_Geh_und_Radweg_ohne_Benützungspflicht_gemeinsam.jpg",
-        "title_fa": "۲۸a: مسیر پیاده‌رو و دوچرخه بدون الزام استفاده (مشترک)"
+      "title": "e: besonderer Verlauf der Straße mit Vorrang",
+      "filename": "e_besonderer_Verlauf_der_Strasse_mit_Vorrang.jpg",
+      "title_fa": "e: مسیر خاص خیابان با حق تقدم"
     },
     {
-        "title": "28b: Geh- und Radweg ohne Benützungspflicht (getrennt)",
-        "filename": "./assets/traffic_signs/signs/28b_Geh_und_Radweg_ohne_Benützungspflicht_getrennt.jpg",
-        "title_fa": "۲۸b: مسیر پیاده‌رو و دوچرخه بدون الزام استفاده (جداگانه)"
+      "title": "f: bei Schneelage oder Eisbildung",
+      "filename": "f_bei_Schneelage_oder_Eisbildung.jpg",
+      "title_fa": "f: در شرایط برف یا یخ"
     },
     {
-        "title": "a: Entfernung",
-        "filename": "./assets/traffic_signs/signs/a_Entfernung.jpg",
-        "title_fa": "a: فاصله"
+      "title": "g: bei nasser Fahrbahn",
+      "filename": "g_bei_nasser_Fahrbahn.jpg",
+      "title_fa": "g: در جاده مرطوب"
     },
     {
-        "title": "b: Länge",
-        "filename": "./assets/traffic_signs/signs/b_Länge.jpg",
-        "title_fa": "b: طول"
+      "title": "h: außer dargestellte Fahrzeuge (hier: Behinderte)",
+      "filename": "h_ausser_dargestellte_Fahrzeuge_hier_Behinderte.jpg",
+      "title_fa": "h: به جز وسایل نقلیه نمایش داده شده (اینجا: معلولین)"
     },
     {
-        "title": "c: Ankündigung des Zeichens Halt",
-        "filename": "./assets/traffic_signs/signs/c_Ankündigung_des_Zeichens_Halt.jpg",
-        "title_fa": "c: اعلام تابلوی توقف"
+      "title": "i: Zugmaschinen, Motorkarren, selbst ­fahrende Arbeits ­maschinen und vierrädrige Leicht ­kraftfahrzeuge dürfen überholt werden",
+      "filename": "i_Zugmaschinen_Motorkarren_selbstfahrende_Arbeitsmaschinen_und_vierraedrige_Leichtkraftfahrzeuge_duerfen_ueberholt_werden.jpg",
+      "title_fa": "i: ماشین‌های کشش، موتورسیکلت‌ها، ماشین‌های کار خودران و وسایل نقلیه سبک چهارچرخ مجاز به سبقت گرفتن هستند"
     },
     {
-        "title": "d: Querstraße ist Vorrangstraße",
-        "filename": "./assets/traffic_signs/signs/d_Querstraße_ist_Vorrangstraße.jpg",
-        "title_fa": "d: خیابان متقاطع خیابان دارای حق تقدم است"
+      "title": "j: Abschleppzone",
+      "filename": "j_Abschleppzone.jpg",
+      "title_fa": "j: منطقه جرثقیل"
     },
     {
-        "title": "e: besonderer Verlauf der Straße mit Vorrang",
-        "filename": "./assets/traffic_signs/signs/e_besonderer_Verlauf_der_Straße_mit_Vorrang.jpg",
-        "title_fa": "e: مسیر خاص خیابان با حق تقدم"
+      "title": "k: nur für diesen Fahrstreifen",
+      "filename": "k_nur_fuer_diesen_Fahrstreifen.jpg",
+      "title_fa": "k: فقط برای این خط رانندگی"
     },
     {
-        "title": "f: bei Schneelage oder Eisbildung",
-        "filename": "./assets/traffic_signs/signs/f_bei_Schneelage_oder_Eisbildung.jpg",
-        "title_fa": "f: در شرایط برف یا یخ"
+      "title": "l: nur für den Fahr ­streifen, der links an der Trennungs ­einrichtung vorbeiführt",
+      "filename": "l_nur_fuer_den_Fahrstreifen_der_links_an_der_Trennungseinrichtung_vorbeifuehrt.jpg",
+      "title_fa": "l: فقط برای خط رانندگی که به سمت چپ از جداکننده عبور می‌کند"
     },
     {
-        "title": "g: bei nasser Fahrbahn",
-        "filename": "./assets/traffic_signs/signs/g_bei_nasser_Fahrbahn.jpg",
-        "title_fa": "g: در جاده مرطوب"
+      "title": "m: ausgenommen Elektrofahrzeuge während des Ladevorgangs",
+      "filename": "m_ausgenommen_Elektrofahrzeuge_waehrend_des_Ladevorgangs.jpg",
+      "title_fa": "m: به جز وسایل نقلیه برقی در حال شارژ"
     },
     {
-        "title": "h: außer dargestellte Fahrzeuge (hier: Behinderte)",
-        "filename": "./assets/traffic_signs/signs/h_außer_dargestellte_Fahrzeuge_hier_Behinderte.jpg",
-        "title_fa": "h: به جز وسایل نقلیه نمایش داده شده (اینجا: معلولین)"
+      "title": "24: Stop",
+      "filename": "24_Stop.jpg",
+      "title_fa": "۲۴: توقف"
     },
     {
-        "title": "i: Zugmaschinen, Motorkarren, selbst\n    ­fahrende Arbeits\n    ­maschinen und vierrädrige Leicht\n    ­kraftfahrzeuge dürfen überholt werden",
-        "filename": "./assets/traffic_signs/signs/i_Zugmaschinen_Motorkarren_selbst____fahrende_Arbeits____maschinen_und_vierrädrige_Leicht____kraftfahrzeuge_dürfen_überholt_werden.jpg",
-        "title_fa": "i: ماشین‌های کشش، موتورسیکلت‌ها، ماشین‌های کار خودران و وسایل نقلیه سبک چهارچرخ مجاز به سبقت گرفتن هستند"
+      "title": "10: Einbahn (links)",
+      "filename": "10_Einbahn_links.jpg",
+      "title_fa": "۱۰: خیابان یک‌طرفه (چپ)"
     },
     {
-        "title": "j: Abschleppzone",
-        "filename": "./assets/traffic_signs/signs/j_Abschleppzone.jpg",
-        "title_fa": "j: منطقه جرثقیل"
+      "title": "10: Einbahn (rechts)",
+      "filename": "10_Einbahn_rechts.jpg",
+      "title_fa": "۱۰: خیابان یک‌طرفه (راست)"
     },
     {
-        "title": "k: nur für diesen Fahrstreifen",
-        "filename": "./assets/traffic_signs/signs/k_nur_für_diesen_Fahrstreifen.jpg",
-        "title_fa": "k: فقط برای این خط رانندگی"
+      "title": "7d: Fahrverbot für Tankkraftfahrzeuge",
+      "filename": "7d_Fahrverbot_fuer_Tankkraftfahrzeuge.jpg",
+      "title_fa": "۷d: ممنوعیت رانندگی برای کامیون‌های سوختی"
     },
     {
-        "title": "l: nur für den Fahr\n    ­streifen, der links an der Trennungs\n    ­einrichtung vorbeiführt",
-        "filename": "./assets/traffic_signs/signs/l_nur_für_den_Fahr____streifen_der_links_an_der_Trennungs____einrichtung_vorbeiführt.jpg",
-        "title_fa": "l: فقط برای خط رانندگی که به سمت چپ از جداکننده عبور می‌کند"
-    },
-    {
-        "title": "m: ausgenommen Elektrofahrzeuge während des Ladevorgangs",
-        "filename": "./assets/traffic_signs/signs/m_ausgenommen_Elektrofahrzeuge_während_des_Ladevorgangs.jpg",
-        "title_fa": "m: به جز وسایل نقلیه برقی در حال شارژ"
-    },
-    {
-        "title": "",
-        "filename": "./assets/traffic_signs/signs/.jpg"
-    },
-    {
-        "title": "24: Stop",
-        "filename": "./assets/traffic_signs/signs/24_Stop.jpg",
-        "title_fa": "۲۴: توقف"
-    },
-    {
-        "title": "10: Einbahn (links)",
-        "filename": "./assets/traffic_signs/signs/10_Einbahn_links.jpg",
-        "title_fa": "۱۰: خیابان یک‌طرفه (چپ)"
-    },
-    {
-        "title": "10: Einbahn (rechts)",
-        "filename": "./assets/traffic_signs/signs/10_Einbahn_rechts.jpg",
-        "title_fa": "۱۰: خیابان یک‌طرفه (راست)"
-    },
-    {
-        "title": "7d: Fahrverbot für Tankkraftfahrzeuge",
-        "filename": "./assets/traffic_signs/signs/7d_Fahrverbot_für_Tankkraftfahrzeuge.jpg",
-        "title_fa": "۷d: ممنوعیت رانندگی برای کامیون‌های سوختی"
-    },
-    {
-        "title": "10a: Geschwindigkeits\n    beschränkung (erlaubte Höchstgeschwindigkeit)",
-        "filename": "./assets/traffic_signs/signs/10a_Geschwindigkeits____beschränkung_erlaubte_Höchstgeschwindigkeit.jpg",
-        "title_fa": "۱۰a: محدودیت سرعت (حداکثر سرعت مجاز)"
+      "title": "10a: Geschwindigkeits beschränkung (erlaubte Höchstgeschwindigkeit)",
+      "filename": "10a_Geschwindigkeitsbeschraenkung_erlaubte_Hoechstgeschwindigkeit.jpg",
+      "title_fa": "۱۰a: محدودیت سرعت (حداکثر سرعت مجاز)"
     }
-]
+  ]

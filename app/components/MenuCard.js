@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Dimensions,
 } from "react-native";
+
 import Icon from "react-native-vector-icons/FontAwesome";
 import { lightblueColor } from "../assets/colors";
 import { resources } from "../assets/translations";
@@ -55,28 +56,25 @@ const MenuCard = ({ icon, title, route, isWeb }) => {
 
 const styles = StyleSheet.create({
   card: {
-    width: Platform.OS === "web" ? "20%" : "45%",
-    height: Platform.OS === "web" ? "70%" : "45%",
-    minWidth: 200,
-    maxHeight: Platform.OS === "web" ? "40%" : "45%",
+    width: Platform.OS === "web" ? "20%" : "40%",
+    minWidth: 150,
+    minHeight: 100,
+    maxHeight: Platform.OS === "web" ? "40%" : "40%",
     aspectRatio: 4 / 3,
     backgroundColor: "#fff",
     borderRadius: 12,
     padding: 16,
     justifyContent: "center",
     alignItems: "center",
-    borderLeftWidth: 3,
+    borderLeftWidth: 5,
     borderLeftColor: lightblueColor,
-    shadowColor: "#000",
     shadowOffset: {
         width: 0,
         height: 4, // Vertical shadow
     },
     shadowOpacity: 0.2, // Subtle shadow visibility
     shadowRadius: 6, // Soft edge
-    elevation: 8, // Shadow depth for Android
   },
-  cardSmallScreen: { width: "100%", aspectRatio: 16 / 9 },
   cardText: {
     marginTop: 12,
     fontSize: 16,

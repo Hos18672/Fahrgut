@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Switch, StyleSheet } from 'react-native';
+import { View, Text, Switch, StyleSheet,Platform } from 'react-native';
 
 const ToggleSwitch = ({ label, value, onValueChange }) => {
   return (
@@ -18,14 +18,16 @@ const ToggleSwitch = ({ label, value, onValueChange }) => {
 
 const styles = StyleSheet.create({
   container: {
+    alignSelf: 'right',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingVertical: 5,
+    paddingHorizontal: 5,
     gap: 10
   },
   label: {
+    width: Platform.OS === 'web' ? 200 : 150,
     fontSize: 16,
     color: '#333',
   },

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
+  StatusBar,
   View,
   Text,
   StyleSheet,
@@ -12,24 +13,14 @@ import {
 import { Input, Icon } from "react-native-elements";
 import { useRouter } from "expo-router"; // Expo Router's navigation hook
 import wordsData from "./assets/words.json"; // Ensure the path is correct
-import i18n from "i18next";
-import { initReactI18next } from "react-i18next";
-import * as Localization from "expo-localization"; // Replace react-native-localize
 import CustomHeader from "./components/CustomHeader";
-import { resources } from "./assets/translations";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-i18n.use(initReactI18next).init({
-  resources,
-  lng: Localization.locale, // Use expo-localization
-  fallbackLng: "en",
-  interpolation: { escapeValue: false },
-});
-
-interface WordItem {
-  word: string;
-  translation: string;
-}
+import i18n from "i18next";
+import { initI18n } from "./services/initI18n";
+import { WordItem } from "./types";
+import CustomBottomNav from "./components/CustomNavBar";
+import { bgColor } from "./assets/colors";
+initI18n();
 
 const WordsScreen: React.FC = () => {
   const [searchValue, setSearchValue] = useState<string>("");
@@ -37,49 +28,59 @@ const WordsScreen: React.FC = () => {
   const router = useRouter(); // Expo Router's navigation hook
   const screenWidth = Dimensions.get("window").width;
   const insets = useSafeAreaInsets();
+
   // Load words into an array when component mounts
   useEffect(() => {
-    const wordsArray = Object.keys(wordsData).reduce<WordItem[]>((result, key) => {
-      if (!key.endsWith("_fa")) {
-        result.push({
-          word: wordsData[key],
-          translation: wordsData[`${key}_fa`],
-        });
-      }
-      return result;
-    }, []);
+    const wordsArray = Object.keys(wordsData).reduce<WordItem[]>(
+      (result, key) => {
+        if (!key.endsWith("_fa")) {
+          result.push({
+            word: wordsData[key],
+            translation: wordsData[`${key}_fa`],
+          });
+        }
+        return result;
+      },
+      []
+    );
     setFilteredWords(wordsArray);
   }, []);
 
   // Function to filter words based on the search value
   const handleSearch = (text: string) => {
-    setSearchValue(text);
-
     const seenWords = new Set<string>(); // Use a Set to track processed words and prevent duplicates
 
-    const filtered = Object.keys(wordsData).reduce<WordItem[]>((result, key) => {
-      const isFaKey = key.endsWith("_fa");
-      const originalKey = isFaKey ? key.replace("_fa", "") : key;
-      const originalWord = wordsData[originalKey];
-      const translation = wordsData[`${originalKey}_fa`];
+    const filtered = Object.keys(wordsData).reduce<WordItem[]>(
+      (result, key) => {
+        const isFaKey = key.endsWith("_fa");
+        const originalKey = isFaKey ? key.replace("_fa", "") : key;
+        const originalWord = wordsData[originalKey];
+        const translation = wordsData[`${originalKey}_fa`];
 
-      if (
-        !seenWords.has(originalKey) &&
-        (originalWord.toLowerCase().includes(text.toLowerCase()) ||
-          translation?.toLowerCase().includes(text.toLowerCase()))
-      ) {
-        result.push({
-          word: originalWord,
-          translation: translation,
-        });
-        seenWords.add(originalKey); // Mark this word as processed
-      }
+        if (
+          !seenWords.has(originalKey) &&
+          (originalWord.toLowerCase().includes(text.toLowerCase()) ||
+            translation?.toLowerCase().includes(text.toLowerCase()))
+        ) {
+          result.push({
+            word: originalWord,
+            translation: translation,
+          });
+          seenWords.add(originalKey); // Mark this word as processed
+        }
 
-      return result;
-    }, []);
+        return result;
+      },
+      []
+    );
 
     setFilteredWords(filtered);
   };
+
+  // Call handleSearch whenever searchValue changes
+  useEffect(() => {
+    handleSearch(searchValue);
+  }, [searchValue]);
 
   // Render each word and its translation
   const renderWord: ListRenderItem<WordItem> = ({ item }) => (
@@ -91,14 +92,15 @@ const WordsScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
-      <CustomHeader title="Words" showBackButton={true} />
-      <View style={screenWidth >= 768 ? styles.searchContainer : styles.smSearchContainer}>
+      <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
+      {Platform.OS === "web" && <CustomHeader title="Words" showBackButton={true} />}
+      <View style={styles.searchContainer}>
         <Input
           placeholder={i18n.t("Suchen")}
           value={searchValue}
-          onChangeText={handleSearch}
-          leftIcon={<Icon name="search" type="material" color="#517fa4" />}
-          inputContainerStyle={styles.searchInput}
+          onChangeText={setSearchValue}
+          inputContainerStyle={styles.searchInputContainer}
+          leftIcon={<Icon name="search" type="material" color="#999" />}
         />
       </View>
 
@@ -106,8 +108,11 @@ const WordsScreen: React.FC = () => {
         data={filteredWords}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderWord}
-        contentContainerStyle={screenWidth >= 768 ? styles.listContainer : styles.smListContainer}
+        contentContainerStyle={
+          screenWidth >= 768 ? styles.listContainer : styles.smListContainer
+        }
       />
+        {Platform.OS !== "web" && <CustomBottomNav screenName={"commonwords"} />}
     </SafeAreaView>
   );
 };
@@ -115,8 +120,8 @@ const WordsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
     paddingTop: Platform.OS === "web" ? 10 : 5,
+    backgroundColor: bgColor,
   },
   backButton: {
     flexDirection: "row",
@@ -125,23 +130,38 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
   },
   searchContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 16,
+    marginTop: 10,
+    marginBottom: 0,
+    height: 50,
   },
   searchInputContainer: {
     backgroundColor: "#fff",
     borderRadius: 10,
     borderBottomWidth: 0, // Remove the default underline
     paddingHorizontal: 10,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.4,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 4,
+      },
+      web: {
+        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
+      },
+    }),
   },
   listContainer: {
     alignSelf: "center",
-    width: "73%",
-    paddingTop: 1,
+    width: "98%",
+    paddingTop: 5,
   },
   smListContainer: {
     alignSelf: "center",
-    width: "90%",
+    width: "95%",
     padding: 5,
   },
   wordContainer: {
@@ -152,11 +172,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 10,
     marginBottom: 10,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+
   },
   word: {
     fontSize: 18,

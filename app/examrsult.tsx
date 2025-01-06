@@ -4,55 +4,28 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  FlatList,
   ScrollView,
   SafeAreaView,
 } from "react-native";
 import { Icon } from "react-native-elements";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import ResponsiveQuizImage from "./components/ResponsiveQuizImage";
+import { ExamResultScreenProps, WrongAnswer } from "./types";
 import i18n from "i18next";
-import { initReactI18next } from "react-i18next";
-import * as Localization from "expo-localization"; // Use expo-localization
-import { resources } from "./assets/translations";
-
-// Initialize i18next
-i18n.use(initReactI18next).init({
-  resources,
-  lng: Localization.locale, // Use expo-localization
-  fallbackLng: "en",
-  interpolation: { escapeValue: false },
-});
-
-// Define types for the component props
-interface ExamResultScreenProps {
-  examAnsweredQuestions: Array<{
-    question: {
-      question_text: string;
-      question_text_fa: string;
-      category:string;
-      question_number: string;
-      correct_answers: string[];
-      correct_answers_fa: string[];
-    };
-    userAnswers: string[];
-  }>;
-}
-
-// Define types for the component state
-interface WrongAnswer {
-  question_text: string;
-  question_number: string;
-  correctAnswers: string[];
-}
-
-const ExamResultScreen: React.FC<ExamResultScreenProps> = ({ examAnsweredQuestions }) => {
+import { initI18n } from "./services/initI18n";
+initI18n();
+const question_images_url =
+"https://osfxlrmxaifoehvxztqv.supabase.co/storage/v1/object/public/question_images";
+const ExamResultScreen: React.FC<ExamResultScreenProps> = ({
+  examAnsweredQuestions,
+}) => {
   const [wrongAnswersList, setWrongAnswersList] = useState<WrongAnswer[]>([]);
-  const [correctAnswersList, setCorrectAnswersList] = useState<Array<{ question: string; answers: string[] }>>([]);
-  const [expandedItems, setExpandedItems] = useState<{ [key: number]: boolean }>({});
+  const [correctAnswersList, setCorrectAnswersList] = useState<
+    Array<{ question: string; answers: string[] }>
+  >([]);
+  const [expandedItems, setExpandedItems] = useState<{ [key: number]: boolean }>(
+    {}
+  );
   const [imageURLs, setImageURLs] = useState<{ [key: string]: string }>({});
-  const storage = getStorage(); // Initialize Firebase Storage
-
   if (!examAnsweredQuestions || !Array.isArray(examAnsweredQuestions)) {
     return (
       <View style={styles.resultsContainer}>
@@ -64,7 +37,7 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({ examAnsweredQuestio
   useEffect(() => {
     const correctList: Array<{ question: string; answers: string[] }> = [];
     const wrongList: WrongAnswer[] = [];
-    console.log(examAnsweredQuestions)
+    console.log(examAnsweredQuestions);
     examAnsweredQuestions.forEach((obj) => {
       const answers = obj.userAnswers;
       const correctAnswers = obj.question.correct_answers;
@@ -91,8 +64,7 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({ examAnsweredQuestio
   const loadImageURL = async (questionNumber: string) => {
     if (questionNumber && !imageURLs[questionNumber]) {
       try {
-        const imageRef = ref(storage, `question_images/${questionNumber}.jpg`);
-        const url = await getDownloadURL(imageRef);
+        const url = `${question_images_url}/${questionNumber}.jpg`; 
         setImageURLs((prev) => ({ ...prev, [questionNumber]: url }));
       } catch (error) {
         console.error("Error fetching image URL:", error);
@@ -117,7 +89,10 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({ examAnsweredQuestio
 
   return (
     <SafeAreaView style={styles.safeContainer}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent} // Use contentContainerStyle
+        style={styles.scrollView} // Ensure ScrollView takes up full height
+      >
         <View style={styles.resultsContainer}>
           <Text style={styles.title}>{i18n.t("ExamResults")}</Text>
 
@@ -136,57 +111,55 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({ examAnsweredQuestio
             </Text>
           </View>
 
-          <ScrollView style={styles.listContainer}>
+          <View style={styles.listContainer}>
             <Text style={styles.listHeader}>{i18n.t("WrongAnswers")}:</Text>
             {wrongAnswersList.length > 0 ? (
-              <FlatList
-                data={wrongAnswersList}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item, index }) => (
-                  <TouchableOpacity
-                    style={styles.listItem}
-                    onPress={() => toggleExpand(index, item.question_number)}
-                  >
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.questionText}>
-                        {item.question_text}
-                      </Text>
-                      {expandedItems[index] ? (
-                        <View style={styles.correctAnswerContainer}>
-                          {imageURLs[item.question_number] && (
-                            <ResponsiveQuizImage
-                              imageURL={imageURLs[item.question_number] || ""}
-                            />
-                          )}
+              wrongAnswersList.map((item, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.listItem}
+                  onPress={() => toggleExpand(index, item.question_number)}
+                >
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.questionText}>
+                      {item.question_text}
+                    </Text>
+                    {expandedItems[index] ? (
+                      <View style={styles.correctAnswerContainer}>
+                        {imageURLs[item.question_number] && (
+                          <ResponsiveQuizImage
+                            imageURL={imageURLs[item.question_number] || ""}
+                            maxWidth={250}
+                          />
+                        )}
 
-                          <Text style={styles.correctAnswerHeader}>
-                            Correct Answer(s):
+                        <Text style={styles.correctAnswerHeader}>
+                          Correct Answer(s):
+                        </Text>
+                        {item.correctAnswers.map((answer, idx) => (
+                          <Text key={idx} style={styles.correctAnswerText}>
+                            {idx + 1}) {answer}
                           </Text>
-                          {item.correctAnswers.map((answer, idx) => (
-                            <Text key={idx} style={styles.correctAnswerText}>
-                              {idx + 1}) {answer}
-                            </Text>
-                          ))}
-                        </View>
-                      ) : (
-                        ""
-                      )}
-                    </View>
-                    <Icon
-                      name={expandedItems[index] ? "expand-less" : "expand-more"}
-                      type="material"
-                      color="#333"
-                      size={24}
-                    />
-                  </TouchableOpacity>
-                )}
-              />
+                        ))}
+                      </View>
+                    ) : (
+                      ""
+                    )}
+                  </View>
+                  <Icon
+                    name={expandedItems[index] ? "expand-less" : "expand-more"}
+                    type="material"
+                    color="#333"
+                    size={24}
+                  />
+                </TouchableOpacity>
+              ))
             ) : (
               <Text style={styles.noWrongAnswers}>
                 {i18n.t("GreatNoWrongAnswers")}.
               </Text>
             )}
-          </ScrollView>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -197,17 +170,19 @@ const styles = StyleSheet.create({
   safeContainer: {
     flex: 1,
     backgroundColor: "#f9f9f9",
+    marginBottom: "15%"
+  },
+  scrollView: {
+    flex: 1, // Ensure ScrollView takes up the full height
   },
   scrollContent: {
-    flexGrow: 1,
-    padding: 20,
+    flexGrow: 1, // Allow content to grow and scroll
   },
   resultsContainer: {
     flex: 1,
     backgroundColor: "#f9f9f9",
     alignItems: "center",
     borderRadius: 10,
-    marginBottom: 10,
   },
   title: {
     fontSize: 24,
@@ -236,6 +211,7 @@ const styles = StyleSheet.create({
   listContainer: {
     width: "100%",
     marginTop: 20,
+    padding: 5,
   },
   listHeader: {
     fontSize: 18,
@@ -277,7 +253,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     margin: 5,
-    borderColor: "#00c02d",
   },
   noWrongAnswers: {
     fontSize: 16,

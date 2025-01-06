@@ -7,25 +7,33 @@ import {
   Platform,
   BackHandler,
 } from "react-native";
+import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router"; // Expo Router's navigation hook
 import { Ionicons } from "@expo/vector-icons"; // For the back button icon
 
 interface CustomHeaderProps {
   title: string; // Title to display in the header
   showBackButton?: boolean; // Whether to show the back button
+  iconRight?: string;
+  iconRightHandler?: void;
 }
 
-const CustomHeader: React.FC<CustomHeaderProps> = ({ title, showBackButton = true }) => {
+const CustomHeader: React.FC<CustomHeaderProps> = ({
+  title,
+  showBackButton = true,
+  iconRight = "",
+  iconRightHandler,
+}) => {
   const router = useRouter(); // Expo Router's navigation hook
 
   const handleBack = () => {
-        router.replace("/home")  // Navigate back to the previous screen
+    router.replace("/home"); // Navigate back to the previous screen
   };
 
   // Handle Android hardware back button
   useEffect(() => {
     const backAction = () => {
-        router.replace("/home") // Navigate back to the previous screen
+      router.replace("/home"); // Navigate back to the previous screen
     };
 
     // Add event listener for hardware back button
@@ -40,12 +48,19 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({ title, showBackButton = tru
 
   return (
     <View style={styles.header}>
-      {showBackButton && (
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#000" />
+      <View style={styles.titleContainer}>
+        {showBackButton && (
+          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={24} color="#000" />
+          </TouchableOpacity>
+        )}
+        <Text style={styles.title}>{title}</Text>
+      </View>
+      {iconRight && (
+        <TouchableOpacity onPress={iconRightHandler}>
+          <Feather name={iconRight} size={24} color={"black"} />
         </TouchableOpacity>
       )}
-      <Text style={styles.title}>{title}</Text>
     </View>
   );
 };
@@ -54,9 +69,16 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingTop: Platform.OS === "ios" ? 50 : 20, // Adjust for iOS status bar
+    justifyContent: "space-between",
+    paddingTop: Platform.OS === "web" ? 10 : 5, // Adjust for iOS status bar
     paddingBottom: 15,
     paddingHorizontal: 16,
+  },
+  titleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "15%",
+    minWidth: 100,
   },
   backButton: {
     marginRight: 16,

@@ -77,3 +77,8 @@ export const downloadImage = async (questionNumber) => {
     { label: "Deutsch", value: "de", flag: require("../assets/at.png") },
     { label: "Persisch", value: "fa", flag: require("../assets/ir.png") },
   ];
+
+
+  
+
+
