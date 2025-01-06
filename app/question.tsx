@@ -22,9 +22,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CustomHeader from "./components/CustomHeader";
 import { QuizScreenParams, Question } from "./types";
 import { renderFilters } from "./base";
-import {bgColor} from "./assets/colors"
+import { bgColor } from "./assets/colors";
 import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
+import { useUser } from "@clerk/clerk-expo";
+import { createClient } from "@supabase/supabase-js";
 import {
   GetRandomQuestions,
   downloadImage,
@@ -34,7 +36,13 @@ import {
 } from "./services/base";
 initI18n();
 
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+const supabase = createClient(`${supabaseUrl}`, `${supabaseKey}`);
+
 const QuizScreen = () => {
+  const { user } = useUser();
+  const cureentUserEmail = user?.emailAddresses[0].emailAddress;
   const params = useLocalSearchParams<QuizScreenParams>(); // Use Expo Router
   const { isExam, category, subCategoryQuestions } = params;
   const { width } = useWindowDimensions();
@@ -54,6 +62,7 @@ const QuizScreen = () => {
   const [quizEnded, setQuizEnded] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [examAnsweredNums, setExamAnsweredNums] = useState(0);
+  const [bookmarked, setBookmarked] = useState(false);
   const question_images_url =
     "https://osfxlrmxaifoehvxztqv.supabase.co/storage/v1/object/public/question_images";
   const insets = useSafeAreaInsets();
@@ -72,6 +81,7 @@ const QuizScreen = () => {
     []
   );
 
+
   useEffect(() => {
     const initQuestions = () => {
       let questionSet = allQuestions || [];
@@ -88,8 +98,21 @@ const QuizScreen = () => {
     initQuestions();
   }, [isExam, subCategoryQuestions]);
 
+  const getBookmarked = async () =>{
+    const { data: user, error: userError } = await supabase
+    .from("bookmarks")
+    .select("*")
+    .eq("question_nr", questions[currentQuestion]?.question_number)
+    .single();
+    setBookmarked(user ? true : false)
+    if (userError) {
+      throw userError;
+    }
+  }
+
   useEffect(() => {
     if (questions.length > 0) {
+      getBookmarked();
       const currentNum = questions[currentQuestion]?.question_number;
       const nextNum = questions[currentQuestion + 1]?.question_number;
       preloadImages(currentNum, nextNum);
@@ -134,7 +157,6 @@ const QuizScreen = () => {
       setSelectedAnswers([]);
       setIsChecked(filterCorrectAnswersOnly);
       setImageURL(nextImageURL);
-      console.log(nextImageURL);
     } else {
       setIsChecked(true);
     }
@@ -144,6 +166,7 @@ const QuizScreen = () => {
   };
 
   const handleNextQuestion = () => {
+    getBookmarked();
     if (isExam) {
       const currentQuestionData = {
         question: questions[currentQuestion],
@@ -191,16 +214,31 @@ const QuizScreen = () => {
 
   // Calculate progress based on the current question
   const progress = ((currentQuestion + 1) / questions.length) * 100;
-  const bookMarkHandler =() => {
-
-  }
+  const bookMarkHandler = async () => {
+    const { data: user, error: userError } = await supabase
+    .from("bookmarks")
+    .select("*")
+    .eq("question_nr", questions[currentQuestion]?.question_number)
+    .single();
+    if (!user) {
+      const { error: insertError } = await supabase.from("bookmarks").insert([
+        {
+          user_email: cureentUserEmail,
+          question_nr: questions[currentQuestion]?.question_number,
+        },
+      ]);
+      if (insertError) {
+        throw insertError;
+      }
+    }
+  };
   return (
     <SafeAreaView style={[styles.safeArea, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
       <CustomHeader
         title={isExam ? "Exam" : "Quiz"}
         showBackButton={true}
-        iconRight={"bookmark"}
+        iconRight={bookmarked ? "bookmark" : "bookmark-outline" }
         iconRightHandler={bookMarkHandler}
       />
       <View style={styles.mainContainer}>
@@ -222,33 +260,39 @@ const QuizScreen = () => {
           ) : (
             <View style={styles.mainQuestionContainer}>
               <View style={styles.progressContainer}>
-                <View
-                  style={styles.questionContainer } >
-                  <View style={{ width: "99.999%", marginLeft: 10,flexDirection:"row", justifyContent: "space-between"}}>
-                  <Text style={styles.questionCount}>{`${
-                    currentQuestion + 1
-                  } of ${questions.length}`}</Text>
-                  {isExam && (
-                  <View style={{ width: 60 }}>
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {formatTime(timer)}
-                    </Text>
+                <View style={styles.questionContainer}>
+                  <View
+                    style={{
+                      width: "99.999%",
+                      marginLeft: 10,
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Text style={styles.questionCount}>{`${
+                      currentQuestion + 1
+                    } of ${questions.length}`}</Text>
+                    {isExam && (
+                      <View style={{ width: 60 }}>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {formatTime(timer)}
+                        </Text>
+                      </View>
+                    )}
                   </View>
-                )}
-                  </View>
-             
+
                   <View style={styles.progressBar}>
                     <View
                       style={[styles.progressFill, { width: `${progress}%` }]}
                     />
                   </View>
                 </View>
-        
+
                 {width <= 775 && !isExam && (
                   <TouchableOpacity
                     style={styles.hamburgerButton}
@@ -402,7 +446,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     flex: 1,
-    backgroundColor:bgColor,
+    backgroundColor: bgColor,
   },
   scrollContent: {
     width: "100%",
@@ -461,7 +505,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginTop: 0,
     marginBottom: 10,
-    
   },
   questionCount: {
     fontSize: 16,
@@ -474,7 +517,7 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor:  "#4caf50",
+    borderColor: "#4caf50",
     marginTop: 5,
   },
   progressFill: {
@@ -496,7 +539,7 @@ const styles = StyleSheet.create({
     gap: 15,
     marginBottom: "2%",
     backgroundColor: "white",
-    padding: Platform.OS === "web"  ? 15 : 10,
+    padding: Platform.OS === "web" ? 15 : 10,
     borderRadius: 10,
   },
 

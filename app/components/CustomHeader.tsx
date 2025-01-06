@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -7,7 +7,6 @@ import {
   Platform,
   BackHandler,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router"; // Expo Router's navigation hook
 import { Ionicons } from "@expo/vector-icons"; // For the back button icon
 
@@ -15,7 +14,7 @@ interface CustomHeaderProps {
   title: string; // Title to display in the header
   showBackButton?: boolean; // Whether to show the back button
   iconRight?: string;
-  iconRightHandler?: void;
+  iconRightHandler?: () => void; // Callback function for icon press
 }
 
 const CustomHeader: React.FC<CustomHeaderProps> = ({
@@ -25,6 +24,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
   iconRightHandler,
 }) => {
   const router = useRouter(); // Expo Router's navigation hook
+  const iconRef = useRef<string>(iconRight); // Ref to manage the icon name
 
   const handleBack = () => {
     router.replace("/home"); // Navigate back to the previous screen
@@ -46,6 +46,16 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
     return () => backHandler.remove();
   }, [router]);
 
+  // Handle icon press
+  const handleIconPress = () => {
+    if (iconRightHandler) {
+      iconRightHandler(); // Call the provided handler
+    }
+
+    // Toggle the icon name
+    iconRef.current.name = iconRef.current.name === "bookmark-outline" ? "bookmark" : "bookmark-outline";
+  };
+
   return (
     <View style={styles.header}>
       <View style={styles.titleContainer}>
@@ -57,8 +67,13 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
         <Text style={styles.title}>{title}</Text>
       </View>
       {iconRight && (
-        <TouchableOpacity onPress={iconRightHandler}>
-          <Feather name={iconRight} size={24} color={"black"} />
+        <TouchableOpacity onPress={handleIconPress}>
+          <Ionicons
+            ref={iconRef}
+            name={iconRight} // Use the ref value for the icon name
+            size={24}
+            color={"black"}
+          />
         </TouchableOpacity>
       )}
     </View>

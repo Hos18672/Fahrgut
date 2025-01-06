@@ -21,11 +21,13 @@ import MenuCard from "./components/MenuCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { languageOptions } from "./services/base";
 import { flags } from "./base";
+import { useUser } from "@clerk/clerk-expo";
 import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
 initI18n();
 
 const HomeScreen = () => {
+  const { user } = useUser();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const [selectedLanguage, setSelectedLanguage] = useState<string>(
@@ -33,7 +35,7 @@ const HomeScreen = () => {
   );
   const slideAnimation = useRef(new Animated.Value(-300)).current;
   const isWeb = Platform.OS === "web";
-
+  console.log(user?.emailAddresses[0].emailAddress)
   // PanResponder for side menu
   const panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: (_, gestureState) =>

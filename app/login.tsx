@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSignIn } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
+import { createClient } from '@supabase/supabase-js';
 import {
   Text,
   TextInput,
@@ -11,14 +12,16 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
-
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL
+const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY 
+const supabase = createClient(`${supabaseUrl}`, `${supabaseKey}`);
 const LoginScreen = () => {
   const { signIn, setActive, isLoaded } = useSignIn();
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // State to store error messages
   const router = useRouter();
-
+  console.log(supabaseUrl)
   const onSignInPress = React.useCallback(async () => {
     if (!isLoaded) return;
 
@@ -30,6 +33,35 @@ const LoginScreen = () => {
 
       if (signInAttempt.status === "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
+
+        await setActive({ session: signInAttempt.createdSessionId });
+
+        // Get the user ID from Clerk
+        const userId = signInAttempt.createdUserId;
+
+        // Check if the user exists in the Supabase `users` table
+        const { data: user, error: userError } = await supabase
+          .from('users')
+          .select('*')
+          .eq('email', emailAddress)
+          .single();
+
+        if (userError && userError.code !== 'PGRST116') {
+          throw userError;
+        }
+
+        // If the user does not exist, insert them into the `users` table
+        if (!user) {
+          const { error: insertError } = await supabase
+            .from('users')
+            .insert([{email: emailAddress }]);
+
+          if (insertError) {
+            throw insertError;
+          }
+        }
+
+
         router.replace("/home");
       } else {
         console.error(JSON.stringify(signInAttempt, null, 2));
