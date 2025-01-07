@@ -182,3 +182,74 @@ export  const findDuplicates = (arr) => {
 
   return duplicates;
 };
+
+
+/// insert function
+// Function to sanitize strings by removing null characters
+const sanitizeString = (str) => {
+  if (!str) return ""; // Handle null or undefined
+  return str.replace(/\u0000/g, ""); // Remove null characters
+};
+
+// Function to sanitize the entire question object
+const sanitizeQuestion = (question) => {
+  return {
+    ...question,
+    question_text: sanitizeString(question.question_text),
+    answers: question.answers ? question.answers.map(sanitizeString) : [],
+    correct_answers: question.correct_answers ? question.correct_answers.map(sanitizeString) : [],
+    question_text_fa: sanitizeString(question.question_text_fa),
+    answers_fa: question.answers_fa ? question.answers_fa.map(sanitizeString) : [],
+    correct_answers_fa: question.correct_answers_fa ? question.correct_answers_fa.map(sanitizeString) : [],
+  };
+};
+// Function to check if a question exists in the table
+const questionExists = async (question_number) => {
+  const { data, error } = await supabase
+    .from("question")
+    .select("question_number")
+    .eq("question_number", parseInt(question_number));
+
+  if (error) {
+    console.error("Error checking if question exists:", error);
+    return false;
+  }
+
+  return data.length > 0; // Return true if data exists, false otherwise
+};
+
+// Function to insert data into the `question` table
+const insertQuestions = async () => {
+  try {
+    // Sanitize all questions
+    const sanitizedQuestions = questions.map(sanitizeQuestion);
+
+    // Filter out questions that already exist in the database
+    const questionsToInsert = [];
+    for (const question of sanitizedQuestions) {
+      const exists = await questionExists(question.question_number);
+      if (!exists) {
+        questionsToInsert.push(question);
+      } else {
+        console.log(`Question ${question.question_number} already exists. Skipping.`);
+      }
+    }
+
+    // Insert only new questions into the database
+    if (questionsToInsert.length > 0) {
+      const { data, error } = await supabase
+        .from("question")
+        .insert(questionsToInsert);
+
+      if (error) {
+        console.error("Error inserting questions:", error);
+      } else {
+        console.log("Questions inserted successfully:", data);
+      }
+    } else {
+      console.log("No new questions to insert.");
+    }
+  } catch (err) {
+    console.error("Unexpected error:", err);
+  }
+};

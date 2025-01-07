@@ -18,7 +18,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
 import { WordItem } from "./types";
-import CustomBottomNav from "./components/CustomNavBar";
 import { bgColor } from "./assets/colors";
 initI18n();
 
@@ -112,7 +111,6 @@ const WordsScreen: React.FC = () => {
           screenWidth >= 768 ? styles.listContainer : styles.smListContainer
         }
       />
-        {Platform.OS !== "web" && <CustomBottomNav screenName={"commonwords"} />}
     </SafeAreaView>
   );
 };
@@ -136,7 +134,7 @@ const styles = StyleSheet.create({
   },
   searchInputContainer: {
     backgroundColor: "#fff",
-    borderRadius: 10,
+    borderRadius: 20,
     borderBottomWidth: 0, // Remove the default underline
     paddingHorizontal: 10,
     ...Platform.select({

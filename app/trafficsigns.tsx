@@ -11,7 +11,6 @@ import {
   Platform,
   Modal,
 } from "react-native";
-import CustomBottomNav from "./components/CustomNavBar";
 import { Input, Text, Icon } from "react-native-elements";
 import trafficSigns from "./assets/traffic_signs/traffic_signs.json";
 import i18n from "i18next";
@@ -255,7 +254,6 @@ const TrafficSignsScreen = () => {
           </View>
         </View>
       </Modal>
-      {Platform.OS !== "web" && <CustomBottomNav />}
     </SafeAreaView>
   );
 };

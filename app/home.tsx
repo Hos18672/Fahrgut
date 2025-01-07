@@ -13,7 +13,6 @@ import {
   ScrollView,
 } from "react-native";
 import { bgColor } from "./assets/colors";
-import CustomBottomNav from "./components/CustomNavBar";
 import HomeLearnCategories from "./components/HomeLearnCategories";
 import { useRouter } from "expo-router"; // Added useRouter for navigation
 import SelectOption from "./components/SelectOptions";
@@ -98,6 +97,12 @@ const HomeScreen = () => {
       >
         <MenuCard
           icon={require("./assets/road-sign.png")}
+          title={"Bookmarks"}
+          route={() => router.push("/bookmarks")} // Use router.push for navigation
+          isWeb={isWeb}
+        />
+             <MenuCard
+          icon={require("./assets/road-sign.png")}
           title={"trafficSigns"}
           route={() => router.push("/trafficsigns")} // Use router.push for navigation
           isWeb={isWeb}
@@ -144,7 +149,6 @@ const HomeScreen = () => {
       >
         {/* Add side menu content here */}
       </Animated.View>
-      {Platform.OS !== "web" && <CustomBottomNav screenName={"home"} />}
     </SafeAreaView>
   );
 };

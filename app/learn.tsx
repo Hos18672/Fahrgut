@@ -8,7 +8,6 @@ import {
   SafeAreaView,
   BackHandler, // Add BackHandler
 } from "react-native";
-import CustomBottomNav from "./components/CustomNavBar";
 import { useRouter } from "expo-router"; // Use Expo Router
 import BQuestions from "./assets/Questions/B.json";
 import GWQuestions from "./assets/Questions/GW.json";
@@ -81,7 +80,6 @@ const LearnScreen = () => {
         />
       </View>
       {renderContent()}
-      {Platform.OS !== "web" && <CustomBottomNav screenName={"learn"} />}
     </SafeAreaView>
   );
 };

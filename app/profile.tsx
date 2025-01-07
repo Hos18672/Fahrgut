@@ -16,7 +16,6 @@ import {
   Platform,
 } from "react-native";
 import {bgColor} from "./assets/colors"
-import CustomBottomNav from "./components/CustomNavBar";
 import { initI18n } from "./services/initI18n";
 initI18n();
 
@@ -82,7 +81,6 @@ const ProfileScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
-      {Platform.OS !== "web" && <CustomBottomNav screenName={"profile"} />}
     </SafeAreaView>
   );
 };
