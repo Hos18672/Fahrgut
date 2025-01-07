@@ -57,23 +57,15 @@ const MenuCard = ({ icon, title, route, isWeb }) => {
 const styles = StyleSheet.create({
   card: {
     width: Platform.OS === "web" ? "20%" : "40%",
-    minWidth: 150,
+    minWidth: 160,
     minHeight: 100,
     maxHeight: Platform.OS === "web" ? "40%" : "40%",
     aspectRatio: 4 / 3,
-    backgroundColor: "#fff",
+    backgroundColor: "white",
     borderRadius: 12,
     padding: 16,
     justifyContent: "center",
     alignItems: "center",
-    borderLeftWidth: 5,
-    borderLeftColor: lightblueColor,
-    shadowOffset: {
-        width: 0,
-        height: 4, // Vertical shadow
-    },
-    shadowOpacity: 0.2, // Subtle shadow visibility
-    shadowRadius: 6, // Soft edge
   },
   cardText: {
     marginTop: 12,

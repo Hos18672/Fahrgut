@@ -34,7 +34,7 @@ const HomeScreen = () => {
   );
   const slideAnimation = useRef(new Animated.Value(-300)).current;
   const isWeb = Platform.OS === "web";
-  console.log(user?.emailAddresses[0].emailAddress)
+  console.log(user?.emailAddresses[0].emailAddress);
   // PanResponder for side menu
   const panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: (_, gestureState) =>
@@ -96,12 +96,12 @@ const HomeScreen = () => {
         ]}
       >
         <MenuCard
-          icon={require("./assets/road-sign.png")}
+          icon={require("./assets/bookmark.png")}
           title={"Bookmarks"}
           route={() => router.push("/bookmarks")} // Use router.push for navigation
           isWeb={isWeb}
         />
-             <MenuCard
+        <MenuCard
           icon={require("./assets/road-sign.png")}
           title={"trafficSigns"}
           route={() => router.push("/trafficsigns")} // Use router.push for navigation
@@ -187,15 +187,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
-    padding: 16,
+    padding: 10,
     gap: 20,
   },
-  mainContentSmall: { paddingHorizontal: 15, gap: 15 },
+  mainContentSmall: { paddingHorizontal: 5, gap: 15 },
   sideMenu: {
     position: "absolute",
     top: 0,
     left: 0,
-    width: 300,
+    width: 30,
     height: "100%",
     backgroundColor: "#fff",
     shadowColor: "#000",

@@ -44,7 +44,8 @@ const QuizScreen = () => {
   const { user } = useUser();
   const cureentUserEmail = user?.emailAddresses[0].emailAddress;
   const params = useLocalSearchParams<QuizScreenParams>(); // Use Expo Router
-  const { isExam, category, subCategoryQuestions } = params;
+  const { isExam, category, subCategoryQuestions, BookmarkedQuestions } =
+    params;
   const { width } = useWindowDimensions();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
@@ -81,7 +82,6 @@ const QuizScreen = () => {
     []
   );
 
-
   useEffect(() => {
     const initQuestions = () => {
       let questionSet = allQuestions || [];
@@ -90,25 +90,27 @@ const QuizScreen = () => {
         questionSet = GetRandomQuestions();
       } else if (subCategoryQuestions) {
         questionSet = JSON.parse(subCategoryQuestions);
+      } else if (BookmarkedQuestions) {
+        questionSet = JSON.parse(BookmarkedQuestions);
       }
 
       setQuestions(questionSet);
     };
 
     initQuestions();
-  }, [isExam, subCategoryQuestions]);
+  }, [isExam, subCategoryQuestions, BookmarkedQuestions]);
 
-  const getBookmarked = async () =>{
+  const getBookmarked = async () => {
     const { data: user, error: userError } = await supabase
-    .from("bookmarks")
-    .select("*")
-    .eq("question_nr", questions[currentQuestion]?.question_number)
-    .single();
-    setBookmarked(user ? true : false)
+      .from("bookmarks")
+      .select("*")
+      .eq("question_nr", questions[currentQuestion]?.question_number)
+      .single();
+    setBookmarked(user ? true : false);
     if (userError) {
       throw userError;
     }
-  }
+  };
 
   useEffect(() => {
     if (questions.length > 0) {
@@ -161,7 +163,13 @@ const QuizScreen = () => {
       setIsChecked(true);
     }
     if (currentQuestion + 2 > questions.length) {
-      router.push(subCategoryQuestions ? "/learn" : "/home");
+      if (subCategoryQuestions) {
+        router.push("/learn");
+      } else if (BookmarkedQuestions) {
+        router.push("/bookmarks");
+      } else {
+        router.push("/home");
+      }
     }
   };
 
@@ -216,10 +224,10 @@ const QuizScreen = () => {
   const progress = ((currentQuestion + 1) / questions.length) * 100;
   const bookMarkHandler = async () => {
     const { data: user, error: userError } = await supabase
-    .from("bookmarks")
-    .select("*")
-    .eq("question_nr", questions[currentQuestion]?.question_number)
-    .single();
+      .from("bookmarks")
+      .select("*")
+      .eq("question_nr", questions[currentQuestion]?.question_number)
+      .single();
     if (!user) {
       const { error: insertError } = await supabase.from("bookmarks").insert([
         {
@@ -238,7 +246,7 @@ const QuizScreen = () => {
       <CustomHeader
         title={isExam ? "Exam" : "Quiz"}
         showBackButton={true}
-        iconRight={bookmarked ? "bookmark" : "bookmark-outline" }
+        iconRight={bookmarked ? "bookmark" : "bookmark-outline"}
         iconRightHandler={bookMarkHandler}
       />
       <View style={styles.mainContainer}>
