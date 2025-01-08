@@ -41,7 +41,7 @@ const HomeLearnCategories = () => {
   return (
     <SafeAreaView style={styles.section}>
       <Text style={styles.sectionTitle}>Categories</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.ScrollView}>
         {allCategories.map((item, index) => (
           <TouchableOpacity
             key={index}
@@ -63,6 +63,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
 
   },
+  ScrollView: {
+    paddingVertical: 10,
+  },
   section: {
     alignSelf: "center",
     width: "100%",
@@ -83,6 +86,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     borderRadius: 10,
     marginRight: 3,
+    elevation: 5,
   },
   categoryIcon: {
     height: 50,

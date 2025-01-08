@@ -96,18 +96,21 @@ const HomeScreen = () => {
         ]}
       >
         <MenuCard
+          sideColor={"#007bff"}
           icon={require("./assets/bookmark.png")}
           title={"Bookmarks"}
           route={() => router.push("/bookmarks")} // Use router.push for navigation
           isWeb={isWeb}
         />
         <MenuCard
+          sideColor={"#f72d00"}
           icon={require("./assets/road-sign.png")}
           title={"trafficSigns"}
           route={() => router.push("/trafficsigns")} // Use router.push for navigation
           isWeb={isWeb}
         />
         <MenuCard
+          sideColor={"#00e31a"}
           icon={require("./assets/book.png")}
           title={"commonWords"}
           route={() => router.push("/commonwords")} // Use router.push for navigation
@@ -115,18 +118,21 @@ const HomeScreen = () => {
         />
 
         <MenuCard
+          sideColor={"#9f00a2"}
           icon={require("./assets/study.png")}
           title={"learn"}
           route={() => router.push("/learn")} // Use router.push for navigation
           isWeb={isWeb}
         />
         <MenuCard
+          sideColor={"#ff9100"}
           icon={require("./assets/quiz.png")}
           title={"quiz"}
           route={() => router.push("/question")} // Use router.push for navigation
           isWeb={isWeb}
         />
         <MenuCard
+          sideColor={"#ff00e1"}
           icon={require("./assets/deadline.png")}
           title={"exam"}
           route={() =>
@@ -135,20 +141,6 @@ const HomeScreen = () => {
           isWeb={isWeb}
         />
       </View>
-
-      {/* Side Menu (Slide-out) */}
-      <Animated.View
-        style={[
-          styles.sideMenu,
-          {
-            transform: [{ translateX: slideAnimation }],
-            paddingTop: insets.top + 20,
-          },
-        ]}
-        {...(Platform.OS !== "web" ? panResponder.panHandlers : {})}
-      >
-        {/* Add side menu content here */}
-      </Animated.View>
     </SafeAreaView>
   );
 };
@@ -191,18 +183,6 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   mainContentSmall: { paddingHorizontal: 5, gap: 15 },
-  sideMenu: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: 30,
-    height: "100%",
-    backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOffset: { width: 2, height: 0 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
 });
 
 export default HomeScreen;

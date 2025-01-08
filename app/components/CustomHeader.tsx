@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router"; // Expo Router's navigation hook
 import { Ionicons } from "@expo/vector-icons"; // For the back button icon
+import { blackColor, blueColor } from "../assets/colors";
 
 interface CustomHeaderProps {
   title: string; // Title to display in the header
@@ -24,8 +25,6 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
   iconRightHandler,
 }) => {
   const router = useRouter(); // Expo Router's navigation hook
-  const iconRef = useRef<string>(iconRight); // Ref to manage the icon name
-
   const handleBack = () => {
     router.replace("/home"); // Navigate back to the previous screen
   };
@@ -51,9 +50,6 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
     if (iconRightHandler) {
       iconRightHandler(); // Call the provided handler
     }
-
-    // Toggle the icon name
-    iconRef.current.name = iconRef.current.name === "bookmark-outline" ? "bookmark" : "bookmark-outline";
   };
 
   return (
@@ -69,10 +65,9 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
       {iconRight && (
         <TouchableOpacity onPress={handleIconPress}>
           <Ionicons
-            ref={iconRef}
             name={iconRight} // Use the ref value for the icon name
             size={24}
-            color={"black"}
+            color={blueColor}
           />
         </TouchableOpacity>
       )}

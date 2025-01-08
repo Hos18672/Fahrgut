@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { View, TouchableOpacity, Text, Animated } from "react-native";
-import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons"; // For the back button icon
 const CustomBottomNav = ({ screenName }) => {

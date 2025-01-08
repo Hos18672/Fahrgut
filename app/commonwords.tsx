@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   },
   searchInputContainer: {
     backgroundColor: "#fff",
-    borderRadius: 20,
+    borderRadius: 10,
     borderBottomWidth: 0, // Remove the default underline
     paddingHorizontal: 10,
     ...Platform.select({

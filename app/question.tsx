@@ -19,7 +19,6 @@ import ResponsiveQuizImage from "./components/ResponsiveQuizImage";
 import ExamResultScreen from "./examrsult";
 import CheckboxField from "./components/CheckBoxField";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import CustomHeader from "./components/CustomHeader";
 import { QuizScreenParams, Question } from "./types";
 import { renderFilters } from "./base";
 import { bgColor } from "./assets/colors";
@@ -29,11 +28,13 @@ import { useUser } from "@clerk/clerk-expo";
 import { createClient } from "@supabase/supabase-js";
 import {
   GetRandomQuestions,
-  downloadImage,
   formatTime,
   getKeyCat,
   allQuestions,
 } from "./services/base";
+import Icon from "react-native-vector-icons/Ionicons";
+import CustomHeader from "./components/CustomHeader";
+
 initI18n();
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
@@ -68,6 +69,7 @@ const QuizScreen = () => {
     "https://osfxlrmxaifoehvxztqv.supabase.co/storage/v1/object/public/question_images";
   const insets = useSafeAreaInsets();
   const router = useRouter();
+
   const preloadImages = useCallback(
     async (currentNum: string, nextNum: string) => {
       if (currentNum) {
@@ -223,21 +225,49 @@ const QuizScreen = () => {
   // Calculate progress based on the current question
   const progress = ((currentQuestion + 1) / questions.length) * 100;
   const bookMarkHandler = async () => {
-    const { data: user, error: userError } = await supabase
+    const questionNumber = questions[currentQuestion]?.question_number;
+    const { data: existingBookmarks, error: fetchError } = await supabase
       .from("bookmarks")
       .select("*")
-      .eq("question_nr", questions[currentQuestion]?.question_number)
-      .single();
-    if (!user) {
+      .eq("question_nr", questionNumber)
+      .eq("user_email", cureentUserEmail); // Add user_email to the query
+
+    if (fetchError) {
+      console.error("Error fetching bookmark:", fetchError);
+      return;
+    }
+
+    if (existingBookmarks && existingBookmarks.length > 0) {
+      // If the question is already bookmarked, remove it
+      const { error: deleteError } = await supabase
+        .from("bookmarks")
+        .delete()
+        .eq("question_nr", parseInt(questionNumber))
+        .eq("user_email", cureentUserEmail); // Add user_email to the delete query
+
+      if (deleteError) {
+        console.error("Error deleting bookmark:", deleteError);
+        return;
+      }
+
+      // Update the state to reflect that the question is no longer bookmarked
+      setBookmarked(false);
+    } else {
+      // If the question is not bookmarked, add it
       const { error: insertError } = await supabase.from("bookmarks").insert([
         {
           user_email: cureentUserEmail,
-          question_nr: questions[currentQuestion]?.question_number,
+          question_nr: parseInt(questionNumber),
         },
       ]);
+
       if (insertError) {
-        throw insertError;
+        console.error("Error adding bookmark:", insertError);
+        return;
       }
+
+      // Update the state to reflect that the question is now bookmarked
+      setBookmarked(true);
     }
   };
   return (
@@ -246,7 +276,7 @@ const QuizScreen = () => {
       <CustomHeader
         title={isExam ? "Exam" : "Quiz"}
         showBackButton={true}
-        iconRight={bookmarked ? "bookmark" : "bookmark-outline"}
+        iconRight={!quizEnded ? bookmarked ? "bookmark" : "bookmark-outline" : ""}
         iconRightHandler={bookMarkHandler}
       />
       <View style={styles.mainContainer}>
@@ -696,6 +726,33 @@ const styles = StyleSheet.create({
   resultsText: {
     fontSize: 18,
     fontWeight: "bold",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: bgColor,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+  backButton: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  backButtonText: {
+    marginLeft: 5,
+    fontSize: 16,
+    color: "#333",
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  bookmarkButton: {
+    padding: 8,
   },
 });
 

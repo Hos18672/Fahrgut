@@ -159,7 +159,8 @@ const BookmarksScreen = () => {
                 overshootRight={false}
               >
                 <View style={styles.item}>
-                  <Text style={styles.title}>{question.question_text}</Text>
+                 
+                  <Text style={styles.title}><Text>{question.question_number}</Text>)  {question.question_text}</Text>
                   <Ionicons name="bookmark" size={24} color={blueColor} />
                 </View>
               </Swipeable>
@@ -200,10 +201,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     gap: 10,
   },
+  number:{
+    width:30,
+    paddingRight: 10,
+  },
   title: {
-    fontSize: 18,
+    fontSize: 16,
     color: "#333",
-    flexShrink: 1, // Ensure text doesn't overflow
+    flexShrink: 1,
   },
   deleteContainer: {
     backgroundColor: "red",

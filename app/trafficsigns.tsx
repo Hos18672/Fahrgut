@@ -11,6 +11,7 @@ import {
   Platform,
   Modal,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons"; 
 import { Input, Text, Icon } from "react-native-elements";
 import trafficSigns from "./assets/traffic_signs/traffic_signs.json";
 import i18n from "i18next";
@@ -208,47 +209,58 @@ const TrafficSignsScreen = () => {
                   source={{ uri: imageAssets[selectedSign.filename] }}
                   style={styles.modalImage}
                 />
-                <Text style={styles.modalTitle}>
-                  {selectedSign.title
-                    ? selectedSign.title.split(":")[1]
-                    : "No Title"}
-                </Text>
-                <Text style={styles.modalTitleFa}>
-                  {selectedSign.title_fa
-                    ? selectedSign.title_fa.split(":")[1]
-                    : "No Title (FA)"}
-                </Text>
-                <View style={styles.navigationButtons}>
+                <View>
+                  <Text style={styles.modalTitle}>
+                    {selectedSign.title
+                      ? selectedSign.title.split(":")[1]
+                      : "No Title"}
+                  </Text>
+                  <Text style={styles.modalTitleFa}>
+                    {selectedSign.title_fa
+                      ? selectedSign.title_fa.split(":")[1]
+                      : "No Title (FA)"}
+                  </Text>
+                </View>
+                <View>
+                  <View style={styles.navigationButtons}>
+                    <TouchableOpacity
+                      style={styles.navButton}
+                      onPress={handlePreviousSign}
+                      disabled={
+                        visibleSigns.findIndex(
+                          (sign) => sign.filename === selectedSign.filename
+                        ) === 0
+                      }>                      
+                      <Ionicons
+                        name={"arrow-back"}
+                        size={20}
+                        color={blueColor}
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.navButton}
+                      onPress={handleNextSign}
+                      disabled={
+                        visibleSigns.findIndex(
+                          (sign) => sign.filename === selectedSign.filename
+                        ) ===
+                        visibleSigns.length - 1
+                      }
+                    >
+                      <Ionicons
+                        name={"arrow-forward"}
+                        size={20}
+                        color={blueColor}
+                      />
+                    </TouchableOpacity>
+                  </View>
                   <TouchableOpacity
-                    style={styles.navButton}
-                    onPress={handlePreviousSign}
-                    disabled={
-                      visibleSigns.findIndex(
-                        (sign) => sign.filename === selectedSign.filename
-                      ) === 0
-                    }
+                    style={styles.closeButton}
+                    onPress={() => setIsModalVisible(false)}
                   >
-                    <Text style={styles.navButtonText}>Previous</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.navButton}
-                    onPress={handleNextSign}
-                    disabled={
-                      visibleSigns.findIndex(
-                        (sign) => sign.filename === selectedSign.filename
-                      ) ===
-                      visibleSigns.length - 1
-                    }
-                  >
-                    <Text style={styles.navButtonText}>Next</Text>
+                    <Text style={styles.closeButtonText}>Close</Text>
                   </TouchableOpacity>
                 </View>
-                <TouchableOpacity
-                  style={styles.closeButton}
-                  onPress={() => setIsModalVisible(false)}
-                >
-                  <Text style={styles.closeButtonText}>Close</Text>
-                </TouchableOpacity>
               </>
             )}
           </View>
@@ -265,6 +277,7 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     marginBottom: 0,
+    marginTop: 10,
     height: 50,
   },
   searchInputContainer: {
@@ -299,7 +312,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-
   },
   signImage: {
     width: 80,
@@ -322,18 +334,21 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   modalContainer: {
+    width: "100%",
+    padding: 0,
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    height: "80%",
-    width: "80%",
-    maxWidth: Math.min(Platform.OS == "web" ? "60%" : "95%"),
+    display: "flex",
+    justifyContent: "space-between",
+    height: Platform.OS == "web" ? "80%" : "80%",
+    width: Platform.OS == "web" ? "70%" : "95%",
     backgroundColor: "#fff",
     borderRadius: 12,
-    padding: 20,
+    padding: 10,
     alignItems: "center",
   },
   modalImage: {
@@ -357,28 +372,31 @@ const styles = StyleSheet.create({
   navigationButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: Math.min(Platform.OS == "web" ? 400 : "95%"),
+    width: Platform.OS == "web" ? 400 : "95%",
     marginTop: 16,
+    gap: 40,
   },
   navButton: {
     padding: 10,
-    backgroundColor: blueColor,
+    backgroundColor: "white",
     borderRadius: 8,
     flex: 1,
-    marginHorizontal: 8,
+    borderWidth: 1,
+    borderColor: blueColor,
+    marginHorizontal: 0,
     alignItems: "center",
   },
   navButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#fff",
+    color: blueColor,
   },
   closeButton: {
     marginTop: 20,
-    padding: 10,
+    marginBottom: 10,
+    padding: 13,
     backgroundColor: blueColor,
     borderRadius: 8,
-    width: Platform.OS == "web" ? 400 : "95%",
     alignItems: "center",
   },
   closeButtonText: {

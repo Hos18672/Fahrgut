@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
-    Image,
+  Image,
   Text,
   TouchableOpacity,
   Animated,
   Platform,
   StyleSheet,
   Dimensions,
+  View,
 } from "react-native";
 
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -14,7 +15,8 @@ import { lightblueColor } from "../assets/colors";
 import { resources } from "../assets/translations";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import * as Localization from 'expo-localization'; // Replace react-native-localize
+import * as Localization from "expo-localization"; // Replace react-native-localize
+import { SafeAreaView } from "react-native-safe-area-context";
 
 i18n.use(initReactI18next).init({
   resources,
@@ -23,15 +25,15 @@ i18n.use(initReactI18next).init({
   interpolation: { escapeValue: false },
 });
 
-const MenuCard = ({ icon, title, route, isWeb }) => {
+const MenuCard = ({sideColor, icon, title, route, isWeb }) => {
   const slideAnimation = useRef(new Animated.Value(-300)).current;
 
   const CardContainer = isWeb
     ? TouchableOpacity
     : Animated.createAnimatedComponent(TouchableOpacity);
-  const isSmallScreen =  Platform.OS !== "web";
+  const isSmallScreen = Platform.OS !== "web";
   return (
-    <CardContainer
+    <TouchableOpacity
       style={[
         styles.card,
         isSmallScreen && styles.cardSmallScreen,
@@ -43,6 +45,7 @@ const MenuCard = ({ icon, title, route, isWeb }) => {
                 outputRange: [0.8, 1],
               }),
         },
+        {borderColor: sideColor}
       ]}
       onPress={route}
     >
@@ -50,7 +53,7 @@ const MenuCard = ({ icon, title, route, isWeb }) => {
       <Text style={[styles.cardText, isSmallScreen && styles.cardTextSmall]}>
         {i18n.t(title)}
       </Text>
-    </CardContainer>
+    </TouchableOpacity>
   );
 };
 
@@ -61,11 +64,20 @@ const styles = StyleSheet.create({
     minHeight: 100,
     maxHeight: Platform.OS === "web" ? "40%" : "40%",
     aspectRatio: 4 / 3,
-    backgroundColor: "white",
+    backgroundColor: "#fff", // Ensure this is white
     borderRadius: 12,
+    borderLeftWidth: 5,
     padding: 16,
     justifyContent: "center",
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 5,
   },
   cardText: {
     marginTop: 12,
@@ -75,9 +87,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   cardTextSmall: { fontSize: 14 },
-  icon:{
+  icon: {
     width: 40,
-    height:40
-  }
+    height: 40,
+  },
 });
 export default MenuCard;

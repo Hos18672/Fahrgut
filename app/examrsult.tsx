@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
+  Platform,
 } from "react-native";
 import { Icon } from "react-native-elements";
 import ResponsiveQuizImage from "./components/ResponsiveQuizImage";
@@ -177,6 +178,8 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1, // Allow content to grow and scroll
+    width: Platform.OS=="web" ? "60%" : "100%",
+    alignSelf: "center",
   },
   resultsContainer: {
     flex: 1,
