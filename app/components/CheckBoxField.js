@@ -34,7 +34,7 @@ const CustomCheckboxField = ({
           <View style={styles.checkmarkKick} />
         </View>
       </View>
-      <Text style={[styles.text, disabled && styles.textDisabled]}>
+      <Text style={[styles.text, disabled && styles.textDisabled,  {textAlign: showTranslation ? "right" : "left"}]}>
         {showTranslation ? translatedOption : option}
       </Text>
     </TouchableOpacity>

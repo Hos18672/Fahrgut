@@ -29,22 +29,16 @@ import { createClient } from "@supabase/supabase-js";
 import {
   GetRandomQuestions,
   formatTime,
-  getKeyCat,
-  allQuestions,
+  AllQuestions,
 } from "./services/base";
-import Icon from "react-native-vector-icons/Ionicons";
 import CustomHeader from "./components/CustomHeader";
-
+import { supabase } from "./services/supabase"; // Import Supabase client
 initI18n();
-
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
-const supabase = createClient(`${supabaseUrl}`, `${supabaseKey}`);
 
 const QuizScreen = () => {
   const { user } = useUser();
   const cureentUserEmail = user?.emailAddresses[0].emailAddress;
-  const params = useLocalSearchParams<QuizScreenParams>(); // Use Expo Router
+  const params = useLocalSearchParams<QuizScreenParams>();
   const { isExam, category, subCategoryQuestions, BookmarkedQuestions } =
     params;
   const { width } = useWindowDimensions();
@@ -65,10 +59,15 @@ const QuizScreen = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [examAnsweredNums, setExamAnsweredNums] = useState(0);
   const [bookmarked, setBookmarked] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [textAlign, setTextAlign] = useState('left');
+  const [currentLanguage, setCurrentLanguage] = useState(i18n.language);
   const question_images_url =
     "https://osfxlrmxaifoehvxztqv.supabase.co/storage/v1/object/public/question_images";
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  console.log(i18n.language)
+
 
   const preloadImages = useCallback(
     async (currentNum: string, nextNum: string) => {
@@ -84,23 +83,42 @@ const QuizScreen = () => {
     []
   );
 
+  // Fetch questions by category from Supabase
+  const fetchQuestionsByCategory = async (category: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("question")
+        .select("*")
+        .eq("category", category); // Filter questions by category
+
+      if (error) throw error;
+
+      return data || [];
+    } catch (err) {
+      console.error("Error fetching questions by category:", err.message);
+      return [];
+    }
+  };
+
   useEffect(() => {
-    const initQuestions = () => {
-      let questionSet = allQuestions || [];
+    const initQuestions = async () => {
+      let questionSet = await AllQuestions() || [];
 
       if (isExam) {
-        questionSet = GetRandomQuestions();
-      } else if (subCategoryQuestions) {
-        questionSet = JSON.parse(subCategoryQuestions);
+        questionSet = await GetRandomQuestions();
+      } else if (category) {
+        // Fetch questions from Supabase based on the category
+        questionSet = await fetchQuestionsByCategory(category);
       } else if (BookmarkedQuestions) {
         questionSet = JSON.parse(BookmarkedQuestions);
       }
 
       setQuestions(questionSet);
+      setLoading(false)
     };
 
     initQuestions();
-  }, [isExam, subCategoryQuestions, BookmarkedQuestions]);
+  }, [isExam, category, subCategoryQuestions, BookmarkedQuestions]);
 
   const getBookmarked = async () => {
     const { data: user, error: userError } = await supabase
@@ -137,7 +155,11 @@ const QuizScreen = () => {
 
       return () => clearInterval(interval);
     }
-  }, [timer, examAnsweredNums]);
+
+
+    // Determine text alignment based on the language
+    setTextAlign(isTranslated === "fa" ? "right" : "left")
+  }, [timer, examAnsweredNums, textAlign]);
 
   // Preload the image for the first question on mount
   useEffect(() => {
@@ -270,13 +292,16 @@ const QuizScreen = () => {
       setBookmarked(true);
     }
   };
+
   return (
     <SafeAreaView style={[styles.safeArea, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
       <CustomHeader
         title={isExam ? "Exam" : "Quiz"}
         showBackButton={true}
-        iconRight={!quizEnded ? bookmarked ? "bookmark" : "bookmark-outline" : ""}
+        iconRight={
+          !quizEnded ? (bookmarked ? "bookmark" : "bookmark-outline") : ""
+        }
         iconRightHandler={bookMarkHandler}
       />
       <View style={styles.mainContainer}>
@@ -286,14 +311,30 @@ const QuizScreen = () => {
             { paddingHorizontal: quizEnded ? "0%" : "2%" },
           ]}
         >
-          <View style={category ? {} : { height: 0 }}>
-            <Text
-              style={{ fontSize: 20, fontWeight: "bold", paddingBottom: 5 }}
-            >
-              {i18n.t(getKeyCat(category)) || null}
-            </Text>
-          </View>
-          {quizEnded ? (
+          {/* Show loading skeleton if questions are not yet fetched */}
+          {loading ? (
+            <View style={styles.skeletonContainer}>
+              {/* Skeleton for category */}
+              <View style={styles.skeletonCategory} />
+
+              {/* Skeleton for progress bar */}
+              <View style={styles.skeletonProgressBar} />
+
+              {/* Skeleton for question text */}
+              <View style={styles.skeletonQuestionText} />
+
+              {/* Skeleton for image */}
+              <View style={styles.skeletonImage} />
+
+              {/* Skeleton for answer options */}
+              {[1, 2, 3, 4].map((_, index) => (
+                <View key={index} style={styles.skeletonAnswerOption} />
+              ))}
+
+              {/* Skeleton for bottom buttons */}
+              <View style={styles.skeletonBottomButtons} />
+            </View>
+          ) : quizEnded ? (
             <ExamResultScreen examAnsweredQuestions={examAnsweredQuestions} />
           ) : (
             <View style={styles.mainQuestionContainer}>
@@ -309,7 +350,7 @@ const QuizScreen = () => {
                   >
                     <Text style={styles.questionCount}>{`${
                       currentQuestion + 1
-                    } of ${questions.length}`}</Text>
+                    }/${questions.length}`}</Text>
                     {isExam && (
                       <View style={{ width: 60 }}>
                         <Text
@@ -345,7 +386,7 @@ const QuizScreen = () => {
                 )}
               </View>
               <View style={styles.questionContainer}>
-                <Text style={styles.questionText}>
+                <Text style={[styles.questionText, {textAlign: isTranslated ? "right" : "left"}]}>
                   <Text style={styles.questionNumber}>
                     {questions[currentQuestion]?.question_number})
                   </Text>
@@ -373,7 +414,7 @@ const QuizScreen = () => {
                       showTranslation={
                         filterAlwaysShowTranslation || isTranslated
                       }
-                      style={getAnswerStyle(option)}
+                      style={ [getAnswerStyle(option), {textAlign}]}
                       onPress={() => handleCheckboxChange(option)}
                     />
                   ))}
@@ -513,16 +554,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  backButtonText: {
-    marginLeft: 5,
-    fontSize: 16,
-    color: "#333",
-  },
+
   progressContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -583,8 +615,8 @@ const styles = StyleSheet.create({
 
   questionNumber: {
     fontSize: 16,
-    fontWeight: "bold",
     color: "#333",
+    paddingLeft: 5,
     paddingRight: 5,
   },
   questionText: {
@@ -609,7 +641,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#ccc",
     borderRadius: 5,
     padding: 3,
     marginBottom: 5,
@@ -740,6 +771,7 @@ const styles = StyleSheet.create({
   backButton: {
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 10,
   },
   backButtonText: {
     marginLeft: 5,
@@ -753,6 +785,51 @@ const styles = StyleSheet.create({
   },
   bookmarkButton: {
     padding: 8,
+  },
+  skeletonContainer: {
+    padding: 16,
+  },
+  skeletonCategory: {
+    height: 20,
+    width: "40%",
+    backgroundColor: "#e0e0e0",
+    borderRadius: 4,
+    marginBottom: 10,
+  },
+  skeletonProgressBar: {
+    height: 10,
+    width: "100%",
+    backgroundColor: "#e0e0e0",
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+  skeletonQuestionText: {
+    height: 24,
+    width: "80%",
+    backgroundColor: "#e0e0e0",
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+  skeletonImage: {
+    height: 200,
+    width: "100%",
+    backgroundColor: "#e0e0e0",
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  skeletonAnswerOption: {
+    height: 48,
+    width: "100%",
+    backgroundColor: "#e0e0e0",
+    borderRadius: 4,
+    marginBottom: 10,
+  },
+  skeletonBottomButtons: {
+    height: 48,
+    width: "100%",
+    backgroundColor: "#e0e0e0",
+    borderRadius: 4,
+    marginTop: 20,
   },
 });
 

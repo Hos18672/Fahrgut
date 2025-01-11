@@ -2,37 +2,85 @@ import BQuestions from "../assets/Questions/B.json";
 import GWQuestions from "../assets/Questions/GW.json";
 import React, { useState, useEffect, useCallback } from "react";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
-export const allQuestions = [...BQuestions, ...GWQuestions];
+import { supabase } from "./supabase"; // Import Supabase client
 
-export const GetRandomQuestions = () => {
-  const categories = {};
-  allQuestions.forEach((question) => {
-    if (!categories[question.category]) {
-      categories[question.category] = [];
-    }
-    categories[question.category].push(question);
-  });
+export const AllQuestions = async () => {
+  try {
+    // Fetch all questions from Supabase
+    const { data: allQuestions, error } = await supabase
+      .from("question")
+      .select("*");
 
-  const selectedQuestions = Object.values(categories).map(
-    (categoryQuestions) => {
-      const randomIndex = Math.floor(Math.random() * categoryQuestions.length);
-      return categoryQuestions[randomIndex];
-    }
-  );
+    if (error) throw error;
 
-  const remainingQuestions = allQuestions.filter(
-    (question) => !selectedQuestions.includes(question)
-  );
-  const remainingCount = Math.min( 30 - selectedQuestions.length, remainingQuestions.length);
+    // Shuffle the questions array to return them in a random order
+    const shuffledQuestions = shuffleArray(allQuestions);
 
-  return [
-    ...selectedQuestions,
-    ...remainingQuestions
-      .sort(() => 0.5 - Math.random())
-      .slice(0, remainingCount),
-  ];
+    return shuffledQuestions;
+  } catch (err) {
+    console.error("Error fetching all questions:", err.message);
+    return []; // Return an empty array in case of error
+  }
+};
+// Helper function to shuffle an array
+const shuffleArray = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1)); // Random index
+    [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+  }
+  return array;
 };
 
+
+export const GetRandomQuestions = async () => {
+  try {
+    // Fetch all questions from Supabase
+    const { data: allQuestions, error } = await supabase
+      .from("question")
+      .select("*");
+
+    if (error) throw error;
+
+    // Group questions by category
+    const categories = {};
+    allQuestions.forEach((question) => {
+      if (!categories[question.category]) {
+        categories[question.category] = [];
+      }
+      categories[question.category].push(question);
+    });
+
+    // Select one random question from each category
+    const selectedQuestions = Object.values(categories).map(
+      (categoryQuestions) => {
+        const randomIndex = Math.floor(Math.random() * categoryQuestions.length);
+        return categoryQuestions[randomIndex];
+      }
+    );
+
+    // Filter out the selected questions to get the remaining questions
+    const remainingQuestions = allQuestions.filter(
+      (question) => !selectedQuestions.includes(question)
+    );
+
+    // Calculate how many more questions are needed to reach 30
+    const remainingCount = Math.min(
+      30 - selectedQuestions.length,
+      remainingQuestions.length
+    );
+
+    // Select random questions from the remaining pool
+    const additionalQuestions = remainingQuestions
+      .sort(() => 0.5 - Math.random())
+      .slice(0, remainingCount);
+
+    // Combine the selected and additional questions
+    return [...selectedQuestions, ...additionalQuestions];
+  } catch (err) {
+    console.error("Error fetching random questions:", err.message);
+    return []; // Return an empty array in case of error
+  }
+};
 
 
 export const downloadImage = async (questionNumber) => {

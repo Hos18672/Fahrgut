@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingTop: Platform.OS === "web" ? 10 : 5, // Adjust for iOS status bar
-    paddingBottom: 15,
+    paddingBottom: 10,
     paddingHorizontal: 16,
   },
   titleContainer: {
@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   title: {
+    minWidth: 200,
     fontSize: 20,
     fontWeight: "bold",
     color: "#000",

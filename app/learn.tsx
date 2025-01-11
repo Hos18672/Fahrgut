@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   StatusBar,
   View,
@@ -6,55 +6,143 @@ import {
   StyleSheet,
   Platform,
   SafeAreaView,
-  BackHandler, // Add BackHandler
+  ActivityIndicator,
+  Text,
 } from "react-native";
-import { useRouter } from "expo-router"; // Use Expo Router
-import BQuestions from "./assets/Questions/B.json";
-import GWQuestions from "./assets/Questions/GW.json";
+import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CustomHeader from "./components/CustomHeader";
 import { groupByCategory, CustomTab, SubCategoryItem } from "./base";
 import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
-import { blueColor,bgColor } from "./assets/colors";
+import { bgColor } from "./assets/colors";
+import { supabase } from "./services/supabase"; // Import Supabase client
+
 initI18n();
 
 const LearnScreen = () => {
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState(0);
-  const router = useRouter(); // Use Expo Router
-  const grundwissenCategories = groupByCategory(GWQuestions);
-  const basiswissenCategories = groupByCategory(BQuestions);
+  const [allQuestions, setAllQuestions] = useState([]); // Store all questions
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const router = useRouter();
 
-  const handleSubCategorySelect = (subCategory: string, cat: string) => {
-    const questions = cat === "GW" ? GWQuestions : BQuestions;
-    const subCategoryQuestions = questions.filter(
-      (q) => q.category === subCategory
+  // Fetch all questions from Supabase once when the screen loads
+  useEffect(() => {
+    const fetchAllQuestions = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        let allQuestions = [];
+        let offset = 0;
+        const limit = 1000; // Number of rows to fetch per request
+
+        while (true) {
+          const { data, error } = await supabase
+            .from("question")
+            .select("*")
+            .range(offset, offset + limit - 1); // Fetch rows in chunks
+
+          if (error) throw error;
+
+          if (data.length === 0) break; // Stop if no more rows are returned
+
+          allQuestions = [...allQuestions, ...data];
+          offset += limit;
+        }
+
+        setAllQuestions(allQuestions);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllQuestions();
+  }, []);
+
+  // Calculate the number of GW and B questions
+  const [gwCount, bCount] = useMemo(() => {
+    const gwQuestions = allQuestions.filter((question) =>
+      question.category?.startsWith("GW")
     );
-    router.push({
-      pathname: "/question",
-      params: {
-        subCategoryQuestions: JSON.stringify(subCategoryQuestions),
-        category: subCategory,
-      },
+    const bQuestions = allQuestions.filter((question) =>
+      question.category?.startsWith("B")
+    );
+    return [gwQuestions.length, bQuestions.length];
+  }, [allQuestions]);
+
+  // Filter questions based on the active tab
+  const filteredQuestions = useMemo(() => {
+    return allQuestions.filter((question) => {
+      const prefix = question.category?.startsWith("GW") ? "GW" : "B";
+      return activeTab === 0 ? prefix === "GW" : prefix === "B";
     });
+  }, [allQuestions, activeTab]);
+
+  // Group questions by category
+  const groupedQuestions = useMemo(() => {
+    return groupByCategory(filteredQuestions);
+  }, [filteredQuestions]);
+
+  const handleSubCategorySelect = useCallback(
+    (subCategory: string) => {
+      const subCategoryQuestions = filteredQuestions.filter(
+        (q) => q.category === subCategory
+      );
+
+      router.push({
+        pathname: "/question",
+        params: {
+          category: subCategory,
+        },
+      });
+    },
+    [filteredQuestions]
+  );
+
+  // Render loading skeleton for tabs and content
+  const renderSkeleton = () => {
+    return (
+      <View style={styles.skeletonContainer}>
+        {/* Skeleton for content */}
+        <View style={styles.skeletonContent}>
+          {[1, 2, 3, 4, 5].map((_, index) => (
+            <View key={index} style={styles.skeletonItem} >
+                <View style={styles.skeletonText} />
+              </View>
+          ))}
+        </View>
+      </View>
+    );
   };
 
   const renderContent = () => {
-    const categories =
-      activeTab === 0 ? grundwissenCategories : basiswissenCategories;
-    const cat = activeTab === 0 ? "GW" : "B";
+    if (loading) {
+      return renderSkeleton(); // Show skeleton while loading
+    }
+
+    if (error) {
+      return (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      );
+    }
 
     return (
       <ScrollView
         style={styles.tabContent}
         contentContainerStyle={styles.contentContainer}
       >
-        {categories.map((item) => (
+        {groupedQuestions.map((item) => (
           <SubCategoryItem
             key={item.category}
             item={item}
-            onPress={() => handleSubCategorySelect(item.category, cat)}
+            onPress={() => handleSubCategorySelect(item.category)}
           />
         ))}
       </ScrollView>
@@ -68,13 +156,13 @@ const LearnScreen = () => {
       <View style={[styles.tabsContainer]}>
         <CustomTab
           style={{ flex: 1 }}
-          title={`${i18n.t("Grundwissen")} (${GWQuestions.length})`}
+          title={`${i18n.t("Grundwissen")} (${gwCount})`} // Always show GW count
           active={activeTab === 0}
           onPress={() => setActiveTab(0)}
         />
         <CustomTab
           style={{ flex: 1 }}
-          title={`${i18n.t("Basiswissen")} (${BQuestions.length})`}
+          title={`${i18n.t("Basiswissen")} (${bCount})`} // Always show B count
           active={activeTab === 1}
           onPress={() => setActiveTab(1)}
         />
@@ -101,24 +189,54 @@ const styles = StyleSheet.create({
     borderColor: "#0084ff",
     marginTop: 10,
   },
-  tabPressed: {
-    opacity: 0.8,
-  },
-  tabText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#000000",
-  },
-  activeTabText: {
-    color: "#0080ff",
-  },
-  contentContainer: {
-    padding: 16,
-    paddingBottom: Platform.OS !=="web"? "30%" : 20,
-  },
   tabContent: {
     flex: 1,
     backgroundColor: bgColor,
+  },
+  contentContainer: {
+    padding: 16,
+    paddingBottom: Platform.OS !== "web" ? "30%" : 20,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 16,
+  },
+  skeletonContainer: {
+    flex: 1,
+    padding: 10,
+    paddingTop: 15
+  },
+  skeletonContent: {
+    flex: 1,
+    width: "95%",
+    alignSelf: "center",
+  },
+  skeletonItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 16,
+    marginHorizontal: 0,
+    marginVertical: 5,
+    backgroundColor: "#e0e0e0",
+    borderRadius: 12,
+  },
+  skeletonText: {
+    width: "70%",
+    height: 20,
+    backgroundColor: "#c7c7c7",
+    borderRadius: 4,
+  
   },
 });
 

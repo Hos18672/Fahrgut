@@ -68,7 +68,7 @@ const CustomBottomNav = ({ screenName }) => {
         },
         shadowOpacity: 0.1,
         shadowRadius: 8,
-        elevation: 5,
+        elevation: 15,
         paddingVertical: 8,
         paddingHorizontal: 16,
       }}

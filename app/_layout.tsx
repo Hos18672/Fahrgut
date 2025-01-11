@@ -50,7 +50,7 @@ function AuthRedirectHandler() {
 
   return (
     <View style={styles.container}>
-      <Slot /> {/* Render the Slot for navigation */}
+      <Slot />
       {showBottomNav && <CustomBottomNav screenName={segments[0]} />}
     </View>
   );

@@ -9,16 +9,13 @@ import {
   TouchableOpacity,
   Animated,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons"; // For the trash icon
+import { Ionicons } from "@expo/vector-icons";
 import { bgColor, blueColor } from "./assets/colors";
-import { createClient } from "@supabase/supabase-js";
 import CustomHeader from "./components/CustomHeader";
 import { GestureHandlerRootView, Swipeable } from "react-native-gesture-handler";
 import { useRouter } from "expo-router"; // Use Expo Router
+import { supabase } from "./services/supabase"
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
-const supabase = createClient(`${supabaseUrl}`, `${supabaseKey}`);
 
 const BookmarksScreen = () => {
   const router = useRouter(); // Use Expo Router
