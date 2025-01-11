@@ -18,7 +18,7 @@ const ResponsiveQuizImage = ({ imageURL, maxWidth=0 }) => {
   const screenHeight = Dimensions.get("window").height;
 
   // Calculate the image width and height dynamically
-  const imageWidth = Math.min(screenWidth * 0.9, maxWidth || 450); // Use 90% of screen width or maxWidth, whichever is smaller
+  const imageWidth = Math.min(screenWidth * 0.86, maxWidth || 450); // Use 90% of screen width or maxWidth, whichever is smaller
   const imageHeight = (imageWidth * 2) / 3; // Maintain 3:2 aspect ratio
 
   // Preload the image
