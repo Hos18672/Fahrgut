@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: "row",
     alignItems: "center",
-    width: "15%",
+    width: "50%",
     minWidth: 100,
   },
   backButton: {
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   },
   title: {
     minWidth: 200,
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
     color: "#000",
   },

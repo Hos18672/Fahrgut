@@ -32,10 +32,11 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({
   const [imageURLs, setImageURLs] = useState<{ [key: string]: string }>({});
   const [activeTab, setActiveTab] = useState<"wrong" | "correct">("wrong");
 
-  if (!examAnsweredQuestions || !Array.isArray(examAnsweredQuestions)) {
+  if (!examAnsweredQuestions || examAnsweredQuestions.length === 0) {
     return (
       <View style={styles.resultsContainer}>
-        <Text style={styles.errorText}>{i18n.t("NoExamDataAvailable")}.</Text>
+        <Ionicons name="information-circle-outline" size={48} color="#333" />
+        <Text style={styles.infoText}>{i18n.t("NoQuestionsAnsweredYet")}</Text>
       </View>
     );
   }
@@ -44,8 +45,8 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({
     const correctList: Array<{ question: string; answers: string[] }> = [];
     const wrongList: WrongAnswer[] = [];
     examAnsweredQuestions.forEach((obj) => {
-      const answers = obj.userAnswers;
-      const correctAnswers = obj.question.correct_answers;
+      const answers = obj.userAnswers || [];
+      const correctAnswers = obj.question.correct_answers || [];
 
       const allCorrect =
         correctAnswers.every((answer) => answers.includes(answer)) &&
@@ -69,6 +70,38 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({
     setWrongAnswersList(wrongList);
   }, [examAnsweredQuestions]);
 
+  const totalQuestions = examAnsweredQuestions.length;
+  const correctCount = correctAnswersList.length;
+  const wrongCount = wrongAnswersList.length;
+  const score =
+    totalQuestions > 0
+      ? ((correctCount / totalQuestions) * 100).toFixed(2)
+      : 0;
+
+  let reaction;
+  if (totalQuestions === 0) {
+    reaction = (
+      <View >
+        <Ionicons name="information-circle-outline" size={48} color="#333" />
+        <Text style={styles.infoText}>{i18n.t("NoQuestionsAnsweredYet")}</Text>
+      </View>
+    );
+  } else if (score > 80) {
+    reaction = (
+      <View>
+        <Ionicons style={styles.reactionIcon} name="happy-outline" size={48} color="#2196F3" />
+        <Text style={styles.successText}>{i18n.t("GreatJob")}</Text>
+      </View>
+    );
+  } else {
+    reaction = (
+      <View>
+        <Ionicons style={styles.reactionIcon}  name="warning-outline" size={48} color="#FF9800" />
+        <Text style={styles.warningText}>{i18n.t("KeepTrying")}</Text>
+      </View>
+    );
+  }
+
   const loadImageURL = async (questionNumber: string) => {
     if (questionNumber && !imageURLs[questionNumber]) {
       try {
@@ -79,11 +112,6 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({
       }
     }
   };
-
-  const totalQuestions = examAnsweredQuestions.length;
-  const correctCount = correctAnswersList.length;
-  const wrongCount = wrongAnswersList.length;
-  const score = totalQuestions > 0 ? (correctCount / totalQuestions) * 100 : 0;
 
   const toggleExpand = async (index: number, questionNumber: string) => {
     setExpandedItems((prev) => ({
@@ -101,18 +129,36 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({
         <View style={styles.resultsContainer}>
           <Text style={styles.title}>{i18n.t("ExamResults")}</Text>
 
+          {/* Reaction */}
+          {reaction}
+
           {/* Results Card */}
           <View style={styles.resultsCard}>
             <View style={styles.resultItem}>
-              <Ionicons name="star" type="material" color="#FFD700" size={30} />
-              <Text style={styles.resultText}>{score.toFixed(2)}%</Text>
+              <Ionicons
+                name="star"
+                type="material"
+                color="#FFD700"
+                size={30}
+              />
+              <Text style={styles.resultText}>{score}%</Text>
             </View>
             <View style={styles.resultItem}>
-              <Ionicons name="checkmark-outline" type="material" color="#4CAF50" size={30} />
+              <Ionicons
+                name="checkmark-outline"
+                type="material"
+                color="#4CAF50"
+                size={30}
+              />
               <Text style={styles.resultText}>{correctCount}</Text>
             </View>
             <View style={styles.resultItem}>
-              <Ionicons name="close" type="material" color="#F44336" size={30} />
+              <Ionicons
+                name="close"
+                type="material"
+                color="#F44336"
+                size={30}
+              />
               <Text style={styles.resultText}>{wrongCount}</Text>
             </View>
           </View>
@@ -179,10 +225,13 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({
                             />
                           )}
                           <Text style={styles.correctAnswerHeader}>
-                            Correct Answer(s):
+                            {i18n.t("CorrectAnswers") + ":"}
                           </Text>
                           {item.correctAnswers.map((answer, idx) => (
-                            <Text key={idx} style={styles.correctAnswerText}>
+                            <Text
+                              key={idx}
+                              style={styles.correctAnswerText}
+                            >
                               {idx + 1}) {answer}
                             </Text>
                           ))}
@@ -190,7 +239,11 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({
                       )}
                     </View>
                     <Ionicons
-                      name={expandedItems[index] ? "chevron-down-outline" : "chevron-forward-outline"}
+                      name={
+                        expandedItems[index]
+                          ? "chevron-down-outline"
+                          : "chevron-forward-outline"
+                      }
                       type="material"
                       color="#333"
                       size={22}
@@ -199,7 +252,7 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({
                 ))
               ) : (
                 <Text style={styles.noWrongAnswers}>
-                  {i18n.t("GreatNoWrongAnswers")}.
+                  {i18n.t("NoWrongAnswers")}
                 </Text>
               )
             ) : (
@@ -207,7 +260,7 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({
                 <View key={index} style={styles.correctListItem}>
                   <Text style={styles.questionText}>{item.question}</Text>
                   <Text style={styles.correctAnswerText}>
-                    Your Answer: {item.answers.join(", ")}
+                    {i18n.t("YourAnswer")}: {item.answers.join(", ")}
                   </Text>
                 </View>
               ))
@@ -234,13 +287,39 @@ const styles = StyleSheet.create({
     backgroundColor: bgColor,
     alignItems: "center",
     borderRadius: 10,
-    padding: Platform.OS === "web" ? 20 : 10,
+    padding: Platform.OS === "web" ? 20 : 5,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
     color: "#333",
+  },
+  infoText: {
+    fontSize: 16,
+    color: "#333",
+    marginVertical: 10,
+    textAlign: "center",
+  },
+  reactionIcon:{
+    alignSelf: "center",
+  },
+  successText: {
+    fontSize: 18,
+    color: "#2196F3",
+    fontWeight: "bold",
+    marginVertical: 10,
+  },
+  warningText: {
+    fontSize: 18,
+    color: "#FF9800",
+    fontWeight: "bold",
+    marginVertical: 10,
+  },
+  scoreText: {
+    fontSize: 16,
+    color: "#333",
+    marginTop: 5,
   },
   resultsCard: {
     flexDirection: "row",
@@ -249,7 +328,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     paddingHorizontal: "10%",
-    width: "95%",
+    width: "100%",
     marginBottom: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -266,14 +345,10 @@ const styles = StyleSheet.create({
     color: "#333",
     marginTop: 5,
   },
-  resultLabel: {
-    fontSize: 14,
-    color: "#777",
-  },
   tabContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    width: "95%",
+    width: "100%",
     marginBottom: 20,
     backgroundColor: "#fff",
     borderRadius: 10,
@@ -310,13 +385,14 @@ const styles = StyleSheet.create({
   },
   tabContentContainer: {
     paddingBottom: 20,
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
   },
   listItem: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     padding: 15,
+    paddingRight: 5,
     backgroundColor: "#fff",
     borderRadius: 8,
     marginBottom: 10,

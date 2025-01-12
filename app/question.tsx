@@ -27,7 +27,7 @@ import { initI18n } from "./services/initI18n";
 import { useUser } from "@clerk/clerk-expo";
 import { GetRandomQuestions, formatTime, AllQuestions } from "./services/base";
 import CustomHeader from "./components/CustomHeader";
-import { supabase } from "./services/supabase"; // Import Supabase client
+import { supabase } from "./services/supabase"; 
 initI18n();
 const { width, height } = Dimensions.get("window");
 const isWeb = Platform.OS === "web";
@@ -111,7 +111,7 @@ const QuizScreen = () => {
     };
 
     initQuestions();
-  }, [isExam, category, subCategoryQuestions, BookmarkedQuestions]);
+  }, [isExam, category, BookmarkedQuestions]);
 
   const getBookmarked = async () => {
     const { data: user, error: userError } = await supabase
@@ -178,11 +178,11 @@ const QuizScreen = () => {
     } else {
       setIsChecked(true);
     }
-    if (currentQuestion + 2 > questions.length) {
+    if (currentQuestion + 1 >= questions.length) {
       if (subCategoryQuestions) {
         router.push("/learn");
       } else if (BookmarkedQuestions) {
-        router.push("/bookmarks");
+       isChecked && router.push("/bookmarks");
       } else {
         router.push("/home");
       }
@@ -204,6 +204,7 @@ const QuizScreen = () => {
         setSelectedAnswers([]);
         setIsChecked(false);
         setImageURL(nextImageURL);
+        setTimer((prevTimer) => prevTimer - 1);
       } else {
         setQuizEnded(true);
       }
@@ -224,19 +225,7 @@ const QuizScreen = () => {
     return correctAnswers.includes(answer);
   };
 
-  const getAnswerStyle = (answer: string) => {
-    if (!isChecked && !filterCorrectAnswersOnly) return styles.answerButton;
 
-    if (isCorrect(answer)) return [styles.answerButton, styles.correctAnswer];
-    if (selectedAnswers.includes(answer) && !isCorrect(answer))
-      return [styles.answerButton, styles.incorrectAnswer];
-
-    return filterCorrectAnswersOnly && !isCorrect(answer)
-      ? styles.WrongAnswer
-      : styles.answerButton;
-  };
-
-  // Calculate progress based on the current question
   const progress = ((currentQuestion + 1) / questions.length) * 100;
   const bookMarkHandler = async () => {
     const questionNumber = questions[currentQuestion]?.question_number;
@@ -289,7 +278,7 @@ const QuizScreen = () => {
     <SafeAreaView style={[styles.safeArea, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
       <CustomHeader
-        title={isExam ? "Exam" : "Quiz"}
+        title={ category ? category : (isExam ? "Exam" : "Quiz")}
         showBackButton={true}
         iconRight={
           !quizEnded ? (bookmarked ? "bookmark" : "bookmark-outline") : ""
@@ -411,10 +400,14 @@ const QuizScreen = () => {
                       }
                       checked={selectedAnswers.includes(option)}
                       disabled={isChecked}
+                      isAnswerCorrect={isCorrect(option)}
+                      style={{}}
                       showTranslation={
                         filterAlwaysShowTranslation || isTranslated
                       }
-                      style={[getAnswerStyle(option), { textAlign }]}
+                      showCorrectAnswers={
+                        filterCorrectAnswersOnly
+                      }
                       onPress={() => handleCheckboxChange(option)}
                     />
                   ))}
@@ -436,9 +429,9 @@ const QuizScreen = () => {
                             : styles.submitButtonTextUnchecked
                         }
                       >
-                        {isChecked || filterCorrectAnswersOnly
+                              {currentQuestion +1 === questions.length && isChecked ? i18n.t("finish") : (isChecked || filterCorrectAnswersOnly
                           ? i18n.t("next")
-                          : i18n.t("check")}
+                          : i18n.t("check"))}
                       </Text>
                     </TouchableOpacity>
 
@@ -474,8 +467,8 @@ const QuizScreen = () => {
                             : styles.submitButtonTextUnchecked
                         }
                       >
-                        {isChecked || isExam ? i18n.t("next") : i18n.t("check")}
-                      </Text>
+                        {currentQuestion + 1 === questions.length ? i18n.t("finish") : (isChecked || isExam ? i18n.t("next") : i18n.t("check"))}
+                       </Text>
                     </TouchableOpacity>
                   </View>
                 )}
@@ -603,7 +596,8 @@ const QuizScreen = () => {
     progressBar: {
       height: 10,
       width: "100%",
-      backgroundColor: "#e1e1e1",
+      borderWidth: 1,
+      borderColor: "#4CAF50",
       borderRadius: 5,
       overflow: "hidden",
     },
@@ -639,6 +633,8 @@ const QuizScreen = () => {
     correctAnswer: {
       backgroundColor: "#6ef573",
       borderColor:  "#06b203",
+      padding: isWeb ? 10: 5,
+      borderRadius: 5,
     },
     incorrectAnswer: {
       color: "#600000",
@@ -658,7 +654,7 @@ const QuizScreen = () => {
       borderColor: "#007bff",
       padding: 10,
       alignItems: "center",
-      borderRadius: 5,
+      borderRadius: 10,
       flex: 2,
     },
 
@@ -672,7 +668,7 @@ const QuizScreen = () => {
       borderWidth: 1,
       padding: 10,
       alignItems: "center",
-      borderRadius: 5,
+      borderRadius: 10,
       flex: 2,
       backgroundColor: "#ffffff",
       borderColor: "#007bff",
@@ -689,7 +685,7 @@ const QuizScreen = () => {
       borderWidth: 1,
       borderColor: "#333",
       alignItems: "center",
-      borderRadius: 5,
+      borderRadius:10,
     },
     languageIcon: {
       width: 30,

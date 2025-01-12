@@ -8,14 +8,20 @@ import {
   ScrollView,
   TouchableOpacity,
   Animated,
+  Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { bgColor, blueColor } from "./assets/colors";
 import CustomHeader from "./components/CustomHeader";
-import { GestureHandlerRootView, Swipeable } from "react-native-gesture-handler";
+import {
+  GestureHandlerRootView,
+  Swipeable,
+} from "react-native-gesture-handler";
 import { useRouter } from "expo-router"; // Use Expo Router
-import { supabase } from "./services/supabase"
+import { supabase } from "./services/supabase";
 
+const { width, height } = Dimensions.get("window");
+const isWeb = Platform.OS === "web";
 
 const BookmarksScreen = () => {
   const router = useRouter(); // Use Expo Router
@@ -135,34 +141,40 @@ const BookmarksScreen = () => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
+      {Platform.OS === "web" && (
+        <CustomHeader title="Bookmarks" showBackButton={true} />
+      )}
       <View style={styles.container}>
-        <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
-        {Platform.OS === "web" && (
-          <CustomHeader title="Bookmarks" showBackButton={true} />
-        )}
         <ScrollView style={styles.list}>
-          {isLoading ? (
-            // Show skeleton loading UI while data is being fetched
-            renderSkeleton()
-          ) : (
-            // Show actual data once loaded
-            bookmarkedQuestions.map((question) => (
-              <Swipeable
-                key={question.question_number}
-                renderRightActions={(progress, dragX) =>
-                  renderRightActions(progress, dragX, question.question_number)
-                }
-                onSwipeableWillOpen={() => handleDelete(question.question_number)} // Delete on full swipe
-                overshootRight={false}
-              >
-                <View style={styles.item}>
-                 
-                  <Text style={styles.title}><Text>{question.question_number}</Text>)  {question.question_text}</Text>
-                  <Ionicons name="bookmark" size={24} color={blueColor} />
-                </View>
-              </Swipeable>
-            ))
-          )}
+          {isLoading
+            ? // Show skeleton loading UI while data is being fetched
+              renderSkeleton()
+            : // Show actual data once loaded
+              bookmarkedQuestions.map((question) => (
+                <Swipeable
+                  key={question.question_number}
+                  renderRightActions={(progress, dragX) =>
+                    renderRightActions(
+                      progress,
+                      dragX,
+                      question.question_number
+                    )
+                  }
+                  onSwipeableWillOpen={() =>
+                    handleDelete(question.question_number)
+                  } // Delete on full swipe
+                  overshootRight={false}
+                >
+                  <View style={styles.item}>
+                    <Text style={styles.title}>
+                      <Text>{question.question_number}</Text>){" "}
+                      {question.question_text}
+                    </Text>
+                    <Ionicons name="bookmark" size={24} color={blueColor} />
+                  </View>
+                </Swipeable>
+              ))}
         </ScrollView>
         {/* Add a "Review All" button */}
         {!isLoading && (
@@ -182,10 +194,11 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: bgColor,
     flex: 1,
-    paddingBottom: Platform.OS === "web" ? 5 : 80,
+    paddingBottom: Platform.OS === "web" ? 10 : 80,
+    paddingHorizontal: width > 950 ? "20%" : 5,
   },
   list: {
-    marginTop: 30,
+    marginTop: 40,
   },
   item: {
     flexDirection: "row",
@@ -198,8 +211,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     gap: 10,
   },
-  number:{
-    width:30,
+  number: {
+    width: 30,
     paddingRight: 10,
   },
   title: {
@@ -213,20 +226,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: 80,
     height: "76%",
+    alignSelf: "center",
     marginHorizontal: 10,
     borderRadius: 12,
     marginVertical: 8,
   },
   reviewButton: {
     backgroundColor: blueColor,
-    padding: 15,
+    padding: 10,
     borderRadius: 12,
     alignItems: "center",
     marginHorizontal: 10,
     marginBottom: 20,
   },
   reviewButtonText: {
-    fontSize: 18,
+    fontSize: 16,
     color: "white",
     fontWeight: "bold",
   },

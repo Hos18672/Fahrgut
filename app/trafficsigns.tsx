@@ -38,10 +38,8 @@ const TrafficSignsScreen = () => {
       for (const sign of signs) {
         let imagUrl = `https://osfxlrmxaifoehvxztqv.supabase.co/storage/v1/object/public/traffic_signs/${sign.filename}`;
         assets[sign.filename] = imagUrl;
-        console.log("Signed URL:", imagUrl);
       }
     } catch (error) {
-      console.error("Error fetching image URLs:", error);
       setError("Failed to load images. Please check your internet connection.");
     }
     return assets;
@@ -134,7 +132,6 @@ const TrafficSignsScreen = () => {
             <Image
               source={{ uri: imageUri }}
               style={styles.signImage}
-              onError={() => console.error("Error loading image:", imageUri)}
             />
           ) : (
             <ActivityIndicator size="small" color={blueColor} />

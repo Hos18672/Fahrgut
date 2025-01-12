@@ -6,20 +6,21 @@ const CustomScrollView = () => {
     <View style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.contentContainer}
-        showsVerticalScrollIndicator={true} // Set to true to show the scrollbar
+        showsVerticalScrollIndicator={true} // Show the scrollbar
         scrollIndicatorInsets={{ right: 1 }} // Optional: Control padding for the scrollbar
       >
-        {/* Your content goes here */}
         {Array.from({ length: 30 }, (_, index) => (
-          <Text
+          <View
             key={index}
             style={[
-              styles.text,
+              styles.itemContainer,
               index === 0 && styles.firstItemMargin, // Apply margin only to the first item
             ]}
           >
-            Item {index + 1}
-          </Text>
+            <Text style={styles.text}>
+              Item {index + 1}
+            </Text>
+          </View>
         ))}
       </ScrollView>
     </View>
@@ -31,14 +32,16 @@ const styles = StyleSheet.create({
     flex: 1, // Ensure the parent container takes up the full screen
   },
   contentContainer: {
-    paddingHorizontal: 20, // Only horizontal padding to avoid interference with marginTop
+    paddingHorizontal: 20, // Horizontal padding for the ScrollView content
+  },
+  itemContainer: {
+    marginVertical: 10, // Default vertical margin for all items
+  },
+  firstItemMargin: {
+    marginLeft: 10, // Add a left margin only for the first item
   },
   text: {
     fontSize: 18,
-    marginVertical: 10, // Default margin for all items
-  },
-  firstItemMargin: {
-    marginLeft: 30, // Add a top margin only for the first item
   },
 });
 
