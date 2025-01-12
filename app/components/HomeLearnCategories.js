@@ -10,6 +10,10 @@ import { useRouter } from "expo-router"; // Use Expo Router
 import BQuestions from "../assets/Questions/B.json";
 import GWQuestions from "../assets/Questions/GW.json";
 import { groupByCategory, CustomTab, SubCategoryItem } from "../base";
+import { removeCharacters} from "../base";
+import i18n from "i18next";
+import { initI18n } from "../services/initI18n";
+initI18n();
 
 const HomeLearnCategories = () => {
   const grundwissenCategories = groupByCategory(GWQuestions);
@@ -27,7 +31,7 @@ const HomeLearnCategories = () => {
   };
   return (
     <SafeAreaView style={styles.section}>
-      <Text style={styles.sectionTitle}>Categories</Text>
+      <Text style={styles.sectionTitle}> {i18n.t("categories")}</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.ScrollView}>
         {allCategories.map((item, index) => (
           <TouchableOpacity
@@ -35,7 +39,7 @@ const HomeLearnCategories = () => {
             style={[styles.categoryCard,  index === 0 && styles.firstItemMargin]}
             onPress={() => handleSubCategorySelect(item.category)}
           >
-            <Text style={styles.categoryText}>{item.category.replace('GW - ', '').replace('B - ','')}</Text>
+            <Text style={styles.categoryText}>{i18n.t(removeCharacters(item.category))}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>

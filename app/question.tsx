@@ -26,6 +26,7 @@ import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
 import { useUser } from "@clerk/clerk-expo";
 import { GetRandomQuestions, formatTime, AllQuestions } from "./services/base";
+import { removeCharacters } from "./base";
 import CustomHeader from "./components/CustomHeader";
 import { supabase } from "./services/supabase"; 
 initI18n();
@@ -113,17 +114,7 @@ const QuizScreen = () => {
     initQuestions();
   }, [isExam, category, BookmarkedQuestions]);
 
-  const getBookmarked = async () => {
-    const { data: user, error: userError } = await supabase
-      .from("bookmarks")
-      .select("*")
-      .eq("question_nr", questions[currentQuestion]?.question_number)
-      .single();
-    setBookmarked(user ? true : false);
-    if (userError) {
-      throw userError;
-    }
-  };
+
 
   useEffect(() => {
     if (questions.length > 0) {
@@ -226,6 +217,19 @@ const QuizScreen = () => {
   };
 
 
+  const getBookmarked = async () => {
+    const { data: user, error: userError } = await supabase
+      .from("bookmarks")
+      .select("*")
+      .eq("user_email", cureentUserEmail)
+      .eq("question_nr", questions[currentQuestion]?.question_number)
+      .single();
+    setBookmarked(user ? true : false);
+    if (userError) {
+      throw userError;
+    }
+  };
+
   const progress = ((currentQuestion + 1) / questions.length) * 100;
   const bookMarkHandler = async () => {
     const questionNumber = questions[currentQuestion]?.question_number;
@@ -278,7 +282,7 @@ const QuizScreen = () => {
     <SafeAreaView style={[styles.safeArea, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
       <CustomHeader
-        title={ category ? category : (isExam ? "Exam" : "Quiz")}
+        title={ category ? i18n.t(removeCharacters(category)) : (isExam ? i18n.t("exam") : i18n.t("quiz"))}
         showBackButton={true}
         iconRight={
           !quizEnded ? (bookmarked ? "bookmark" : "bookmark-outline") : ""
@@ -385,7 +389,7 @@ const QuizScreen = () => {
                 {imageURL ? (
                   <ResponsiveQuizImage imageURL={imageURL} />
                 ) : (
-                  <Text>"Loading.."</Text>
+                  <Text> {i18n.t("loading")}".."</Text>
                 )}
               </View>
 

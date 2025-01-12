@@ -225,7 +225,7 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({
                             />
                           )}
                           <Text style={styles.correctAnswerHeader}>
-                            {i18n.t("CorrectAnswers") + ":"}
+                            {i18n.t("CorrectAnswers")}
                           </Text>
                           {item.correctAnswers.map((answer, idx) => (
                             <Text
@@ -260,7 +260,7 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({
                 <View key={index} style={styles.correctListItem}>
                   <Text style={styles.questionText}>{item.question}</Text>
                   <Text style={styles.correctAnswerText}>
-                    {i18n.t("YourAnswer")}: {item.answers.join(", ")}
+                    {i18n.t("YourAnswer")} {item.answers.join(", ")}
                   </Text>
                 </View>
               ))

@@ -13,11 +13,10 @@ import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CustomHeader from "./components/CustomHeader";
 import { groupByCategory, CustomTab, SubCategoryItem } from "./base";
-import i18n from "i18next";
-import { initI18n } from "./services/initI18n";
 import { bgColor } from "./assets/colors";
 import { supabase } from "./services/supabase"; // Import Supabase client
-
+import i18n from "i18next";
+import { initI18n } from "./services/initI18n";
 initI18n();
 
 const LearnScreen = () => {
@@ -152,7 +151,7 @@ const LearnScreen = () => {
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
-      {Platform.OS === "web" && <CustomHeader title="Learn" showBackButton={true} />}
+      {Platform.OS === "web" && <CustomHeader title={i18n.t('learn')} showBackButton={true} />}
       <View style={[styles.tabsContainer]}>
         <CustomTab
           style={{ flex: 1 }}
@@ -176,26 +175,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: bgColor,
+    width: "100%",
   },
   tabsContainer: {
     flexDirection: "row",
     backgroundColor: "#fff",
     padding: 4,
-    width: "95%",
     alignSelf: "center",
     marginHorizontal: 10,
     borderWidth: 1,
     borderRadius: 10,
     borderColor: "#0084ff",
     marginTop: 10,
+    width: Platform.OS === "web" ? "60%" : "95%",
   },
   tabContent: {
+    paddingHorizontal: Platform.OS === "web" ? "18%" : 0,
     flex: 1,
     backgroundColor: bgColor,
   },
   contentContainer: {
     padding: 16,
-    paddingBottom: Platform.OS !== "web" ? "30%" : 20,
   },
   loadingContainer: {
     flex: 1,

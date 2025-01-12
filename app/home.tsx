@@ -98,7 +98,7 @@ const HomeScreen = () => {
         <MenuCard
           sideColor={"#007bff"}
           icon={require("./assets/bookmark.png")}
-          title={"Bookmarks"}
+          title={"bookmarks"}
           route={() => router.push("/bookmarks")} // Use router.push for navigation
           isWeb={isWeb}
         />

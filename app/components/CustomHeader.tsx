@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "left",
     width: "50%",
     minWidth: 100,
   },
@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "#000",
+    textAlign: "left",
   },
 });
 

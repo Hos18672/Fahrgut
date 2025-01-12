@@ -6,6 +6,10 @@ import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
 initI18n();
 
+export const removeCharacters =(name)=>{
+  return name.replace(/[ -\/\\]/g, '');
+}
+
 
 export const flags = {
   de: { name: "At", url: require("./assets/at.png") },
@@ -57,7 +61,7 @@ export const SubCategoryItem: React.FC<SubCategoryItemProps> = ({
     ]}
   >
     <View style={styles.subCategoryContent}>
-      <Text style={styles.subCategoryText}>{i18n.t(item.category)}</Text>
+      <Text style={styles.subCategoryText}>{i18n.t(removeCharacters(item.category))}</Text>
       <Text style={styles.subCategoryCount}>{item.questions.length}</Text>
     </View>
   </Pressable>
@@ -75,7 +79,7 @@ export const renderFilters = ({
   setFilterAlwaysShowTranslation: (value: boolean) => void;
 }) => (
   <View style={styles.filterContainer}>
-    <Text style={styles.modalTitle}>Filters</Text>
+    <Text style={styles.modalTitle}>{i18n.t("filters")}</Text>
     <ToggleSwitch
       label={i18n.t("showOnlyCorrectAnswers")}
       value={filterCorrectAnswersOnly}
@@ -97,10 +101,11 @@ const styles = StyleSheet.create({
   tab: {
     flex: 1,
     paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingHorizontal: Platform.OS === "web" ? "20%" : 20,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
+  
   },
   activeTab: {
     backgroundColor: "#0084ff",
@@ -119,6 +124,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     padding: 16,
     paddingBottom: 32,
+   
   },
   tabContent: {
     flex: 1,

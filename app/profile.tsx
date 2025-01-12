@@ -20,11 +20,11 @@ import {
   ScrollView,
 } from "react-native";
 import { bgColor } from "./assets/colors";
-import { initI18n } from "./services/initI18n";
 import { supabase } from "./services/supabase"; // Ensure Supabase is configured
 import { Ionicons } from "@expo/vector-icons"; // For icons
-
-initI18n();
+import i18n from "i18next";
+import { initI18n } from "./services/initI18n";
+initI18n();;
 
 const ProfileScreen = () => {
   const insets = useSafeAreaInsets();
@@ -99,7 +99,7 @@ const ProfileScreen = () => {
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
       {Platform.OS === "web" && (
-        <CustomHeader title="Profile" showBackButton={true} />
+        <CustomHeader title={i18n.t("profile")} showBackButton={true} />
       )}
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -118,7 +118,7 @@ const ProfileScreen = () => {
                 source={{ uri: user?.profileImageUrl }}
                 style={styles.profileImage}
               />
-              <Text style={styles.profileGreeting}>Hello, {firstName}!</Text>
+              <Text style={styles.profileGreeting}>{i18n.t("hello")}, {firstName}!</Text>
             </View>
 
             {/* User Information */}
@@ -128,19 +128,19 @@ const ProfileScreen = () => {
                   style={styles.input}
                   value={firstName}
                   onChangeText={setFirstName}
-                  placeholder="First Name"
+                  placeholder={i18n.t('firstName')}
                 />
                 <TextInput
                   style={styles.input}
                   value={lastName}
                   onChangeText={setLastName}
-                  placeholder="Last Name"
+                  placeholder={i18n.t('lastName')}
                 />
                 <TextInput
                   style={styles.input}
                   value={email}
                   disabled={true}
-                  placeholder="Email"
+                  placeholder={i18n.t('email')}
                   keyboardType="email-address"
                 />
 
@@ -163,15 +163,15 @@ const ProfileScreen = () => {
             ) : (
               <>
                 <View style={styles.infoContainer}>
-                  <Text style={styles.infoLabel}>First Name</Text>
+                  <Text style={styles.infoLabel}>{i18n.t('firstName')}</Text>
                   <Text style={styles.infoValue}>{firstName}</Text>
                 </View>
                 <View style={styles.infoContainer}>
-                  <Text style={styles.infoLabel}>Last Name</Text>
+                  <Text style={styles.infoLabel}>{i18n.t('lastName')}</Text>
                   <Text style={styles.infoValue}>{lastName}</Text>
                 </View>
                 <View style={styles.infoContainer}>
-                  <Text style={styles.infoLabel}>Email</Text>
+                  <Text style={styles.infoLabel}>{i18n.t('email')}</Text>
                   <Text style={styles.infoValue}>{email}</Text>
                 </View>
                 <TouchableOpacity
@@ -179,7 +179,7 @@ const ProfileScreen = () => {
                   onPress={() => setIsEditing(true)}
                 >
                   <Ionicons name="create-outline" size={20} color="#fff" />
-                  <Text style={styles.editButtonText}>Edit Profile</Text>
+                  <Text style={styles.editButtonText}>{i18n.t('editrofile')}</Text>
                 </TouchableOpacity>
               </>
             )}
@@ -190,7 +190,7 @@ const ProfileScreen = () => {
               onPress={handleSignOut}
             >
               <Ionicons name="log-out-outline" size={20} color="#fff" />
-              <Text style={styles.signOutButtonText}>Sign Out</Text>
+              <Text style={styles.signOutButtonText}>{i18n.t('signOut')} </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

@@ -9,6 +9,9 @@ import {
   Image,
   ImageSourcePropType,
 } from "react-native";
+import i18n from "i18next";
+import { initI18n } from "../services/initI18n";
+initI18n();;
 
 // Define the type for an option
 interface Option {
@@ -83,7 +86,7 @@ const SelectOption: React.FC<SelectOptionProps> = ({
               style={styles.closeButton}
               onPress={() => setIsModalVisible(false)}
             >
-              <Text style={styles.closeText}>Close</Text>
+              <Text style={styles.closeText}>{i18n.t('close')}</Text>
             </TouchableOpacity>
           </View>
         </View>

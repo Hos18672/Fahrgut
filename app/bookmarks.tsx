@@ -13,13 +13,16 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { bgColor, blueColor } from "./assets/colors";
 import CustomHeader from "./components/CustomHeader";
+import { useUser } from "@clerk/clerk-expo";
 import {
   GestureHandlerRootView,
   Swipeable,
 } from "react-native-gesture-handler";
 import { useRouter } from "expo-router"; // Use Expo Router
 import { supabase } from "./services/supabase";
-
+import i18n from "i18next";
+import { initI18n } from "./services/initI18n";
+initI18n();
 const { width, height } = Dimensions.get("window");
 const isWeb = Platform.OS === "web";
 
@@ -27,6 +30,8 @@ const BookmarksScreen = () => {
   const router = useRouter(); // Use Expo Router
   const [bookmarkedQuestions, setBookmarkedQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // Loading state
+  const { user } = useUser();
+  const cureentUserEmail = user?.emailAddresses[0].emailAddress;
 
   useEffect(() => {
     fetchBookmarkedQuestions();
@@ -40,7 +45,8 @@ const BookmarksScreen = () => {
       // Step 1: Fetch all bookmarked question_nr from the `bookmarks` table
       const { data: bookmarks, error: bookmarksError } = await supabase
         .from("bookmarks")
-        .select("question_nr");
+        .select("question_nr")
+        .eq("user_email", cureentUserEmail);
 
       if (bookmarksError) {
         console.error("Error fetching bookmarks:", bookmarksError);
@@ -102,7 +108,6 @@ const BookmarksScreen = () => {
       inputRange: [0, 50, 100, 101],
       outputRange: [0, 0, 0, 1],
     });
-
     return (
       <Animated.View
         style={[
@@ -143,7 +148,7 @@ const BookmarksScreen = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
       {Platform.OS === "web" && (
-        <CustomHeader title="Bookmarks" showBackButton={true} />
+        <CustomHeader title={i18n.t('bookmarks')} showBackButton={true} />
       )}
       <View style={styles.container}>
         <ScrollView style={styles.list}>
@@ -163,12 +168,12 @@ const BookmarksScreen = () => {
                   }
                   onSwipeableWillOpen={() =>
                     handleDelete(question.question_number)
-                  } // Delete on full swipe
+                  } 
                   overshootRight={false}
                 >
                   <View style={styles.item}>
                     <Text style={styles.title}>
-                      <Text>{question.question_number}</Text>){" "}
+                      {question.question_number}) 
                       {question.question_text}
                     </Text>
                     <Ionicons name="bookmark" size={24} color={blueColor} />
@@ -176,16 +181,16 @@ const BookmarksScreen = () => {
                 </Swipeable>
               ))}
         </ScrollView>
-        {/* Add a "Review All" button */}
-        {!isLoading && (
+        {!isLoading && bookmarkedQuestions.length > 0 && 
           <TouchableOpacity
             style={styles.reviewButton}
-            onPress={navigateToQuestionScreen}
-          >
-            <Text style={styles.reviewButtonText}>Review All</Text>
+            onPress={navigateToQuestionScreen}>
+            <Text style={styles.reviewButtonText}>{i18n.t("reviewAll")}</Text>
           </TouchableOpacity>
-        )}
+          }
       </View>
+      {!isLoading && bookmarkedQuestions.length < 1 && <Text style={styles.noBookmaks}>{i18n.t("nobookmarks")}</Text>}
+      
     </GestureHandlerRootView>
   );
 };
@@ -197,6 +202,14 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === "web" ? 10 : 80,
     paddingHorizontal: width > 950 ? "20%" : 5,
   },
+  noBookmaks:{
+    width: "100%",
+    height: "100%",
+    alignSelf: "center",
+    textAlign: "center",
+    paddingVertical: "10%",
+    backgroundColor: bgColor
+  } ,
   list: {
     marginTop: 40,
   },

@@ -1,31 +1,43 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { View, TouchableOpacity, Text, Animated } from "react-native";
 import { useRouter } from "expo-router";
-import { Ionicons } from "@expo/vector-icons"; // For the back button icon
-const CustomBottomNav = ({ screenName }) => {
+import { Ionicons } from "@expo/vector-icons"; 
+import i18n from "i18next";
+import { initI18n } from "../services/initI18n";
+initI18n();
+
+const CustomBottomNav = React.memo(({ screenName }) => {
   const router = useRouter();
   const [selected, setSelected] = useState(0);
   const [animation] = useState(new Animated.Value(0));
+  const [currentLanguage, setCurrentLanguage] = useState(i18n.language);
 
+  // Define the language change handler
+  const handleLanguageChange = (lng) => {
+    setCurrentLanguage(lng);
+  };
+
+  // Add the event listener and clean it up properly
+  useEffect(() => {
+    i18n.on('languageChanged', handleLanguageChange);
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange);
+    };
+  }, []);
+
+  // Memoize the translation function
+  const translate = useMemo(() => (key) => i18n.t(key), [currentLanguage]);
+
+  // Define navigation items using the translate function
   const navItems = [
-    { icon: "home-outline", label: "Home", route: "/home", color: "#FF6B6B" },
-    { icon: "book-outline", label: "Learn", route: "/learn", color: "#4ECDC4" },
-    {
-      icon: "text-outline",
-      label: "Words",
-      route: "/commonwords",
-      color: "#4ECDC4",
-    },
-    {
-      icon: "bookmark-outline",
-      label: "Bookmarks",
-      route: "/bookmarks",
-      color: "#45B7D1",
-    },
-    { icon:"person-outline", label: "Profile", route: "/profile", color: "#96CEB4" },
+    { icon: "home-outline", label: translate("home"), route: "/home", color: "#FF6B6B" },
+    { icon: "book-outline", label: translate("learn"), route: "/learn", color: "#4ECDC4" },
+    { icon: "text-outline", label: translate("commonWords"), route: "/commonwords", color: "#4ECDC4" },
+    { icon: "bookmark-outline", label: translate("bookmarks"), route: "/bookmarks", color: "#45B7D1" },
+    { icon: "person-outline", label: translate("profile"), route: "/profile", color: "#96CEB4" },
   ];
 
-  // Update selected state when screenName changes
+  // Update selected index when screenName or currentLanguage changes
   useEffect(() => {
     const currentIndex = navItems.findIndex(
       (item) => item.route.replace("/", "") === screenName
@@ -39,8 +51,9 @@ const CustomBottomNav = ({ screenName }) => {
         friction: 8,
       }).start();
     }
-  }, [screenName]);
+  }, [screenName, currentLanguage, navItems]);
 
+  // Handle navigation press
   const handlePress = (index, route) => {
     setSelected(index);
     router.push(route);
@@ -54,6 +67,7 @@ const CustomBottomNav = ({ screenName }) => {
 
   return (
     <View
+      key={currentLanguage}
       style={{
         position: "absolute",
         bottom: 0,
@@ -140,6 +154,8 @@ const CustomBottomNav = ({ screenName }) => {
       </View>
     </View>
   );
-};
+}, (prevProps, nextProps) => {
+  return prevProps.screenName === nextProps.screenName;
+});
 
 export default CustomBottomNav;

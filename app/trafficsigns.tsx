@@ -9,7 +9,7 @@ import {
   SafeAreaView,
   ActivityIndicator,
   Platform,
-  Modal,
+  Modal,Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons"; 
 import { Input, Text, Icon } from "react-native-elements";
@@ -21,6 +21,9 @@ import CustomHeader from "./components/CustomHeader";
 import { TrafficSign } from "./types";
 import { initI18n } from "./services/initI18n";
 initI18n();
+
+const { width, height } = Dimensions.get("window");
+const isWeb = Platform.OS === "web";
 
 const TrafficSignsScreen = () => {
   const [searchValue, setSearchValue] = useState<string>("");
@@ -154,7 +157,7 @@ const TrafficSignsScreen = () => {
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
       {Platform.OS === "web" && (
-        <CustomHeader title="Traffic Signs" showBackButton={true} />
+        <CustomHeader title={i18n.t("trafficSigns")} showBackButton={true} />
       )}
       <View style={styles.searchContainer}>
         <Input
@@ -276,6 +279,9 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     marginTop: 10,
     height: 50,
+    width:"100%",
+    alignSelf: "center",
+    paddingHorizontal: width > 950 ? "18%" : 0,
   },
   searchInputContainer: {
     backgroundColor: "#fff",
@@ -298,16 +304,19 @@ const styles = StyleSheet.create({
     }),
   },
   listContainer: {
-    paddingHorizontal: 16,
+    paddingHorizontal: width > 950 ? "20%" : 15,
     paddingTop: 5,
     paddingBottom: Platform.OS !== "web" ? "30%" : 20,
   },
   signContainer: {
+    width: "100%",
+    alignSelf: "center",
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
     borderRadius: 12,
-    padding: 16,
+    padding: 10,
+    marginLeft: width > 950 ? 10 : 0,
     marginBottom: 12,
   },
   signImage: {

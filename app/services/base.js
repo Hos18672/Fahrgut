@@ -1,6 +1,4 @@
-import BQuestions from "../assets/Questions/B.json";
-import GWQuestions from "../assets/Questions/GW.json";
-import React, { useState, useEffect, useCallback } from "react";
+
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { supabase } from "./supabase"; // Import Supabase client
 

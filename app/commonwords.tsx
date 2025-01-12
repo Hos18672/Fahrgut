@@ -15,12 +15,14 @@ import { useRouter } from "expo-router"; // Expo Router's navigation hook
 import wordsData from "./assets/words.json"; // Ensure the path is correct
 import CustomHeader from "./components/CustomHeader";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import i18n from "i18next";
-import { initI18n } from "./services/initI18n";
 import { WordItem } from "./types";
 import { bgColor } from "./assets/colors";
+import i18n from "i18next";
+import { initI18n } from "./services/initI18n";
 initI18n();
 
+const { width, height } = Dimensions.get("window");
+const isWeb = Platform.OS === "web";
 const WordsScreen: React.FC = () => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [filteredWords, setFilteredWords] = useState<WordItem[]>([]);
@@ -92,7 +94,7 @@ const WordsScreen: React.FC = () => {
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
-      {Platform.OS === "web" && <CustomHeader title="Words" showBackButton={true} />}
+      {Platform.OS === "web" && <CustomHeader title={i18n.t("commonWords")} showBackButton={true} />}
       <View style={styles.searchContainer}>
         <Input
           placeholder={i18n.t("Suchen")}
@@ -130,6 +132,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     marginTop: 10,
     marginBottom: 0,
+    paddingHorizontal: width > 950 ? "20%" : 0,
     height: 50,
   },
   searchInputContainer: {
@@ -156,6 +159,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     width: "98%",
     paddingTop: 5,
+    paddingHorizontal: width > 950 ? "20%" : 20,
   },
   smListContainer: {
     alignSelf: "center",
@@ -170,6 +174,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 10,
     marginBottom: 10,
+    marginLeft: width > 950 ? 10 : 0,
 
   },
   word: {
