@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useRef , useEffect, useState } from "react";
 import {
   StatusBar,
   Text,
@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { bgColor, blueColor } from "./assets/colors";
+import {insertQuestions} from "./base"
 import CustomHeader from "./components/CustomHeader";
 import { useUser } from "@clerk/clerk-expo";
 import {
@@ -26,13 +27,15 @@ initI18n();
 const { width, height } = Dimensions.get("window");
 const isWeb = Platform.OS === "web";
 
+
+
+
 const BookmarksScreen = () => {
   const router = useRouter(); // Use Expo Router
   const [bookmarkedQuestions, setBookmarkedQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // Loading state
   const { user } = useUser();
   const cureentUserEmail = user?.emailAddresses[0].emailAddress;
-
   useEffect(() => {
     fetchBookmarkedQuestions();
   }, []);

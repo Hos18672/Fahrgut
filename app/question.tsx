@@ -533,6 +533,7 @@ const QuizScreen = () => {
       flex: 1,
       padding: 5,
       borderRadius: 10,
+      paddingHorizontal: width > 950 ? "10%" : 5,
     },
     skeletonCategory: {
       height: 20,
@@ -628,7 +629,7 @@ const QuizScreen = () => {
       marginBottom: isWeb ? 40:20,
     },
     answersContainer: {
-      marginBottom: isWeb ? 20: 5,
+      marginBottom: isWeb ? 10: 0,
     },
     answerButton: {
       padding: isWeb ? 10: 5,

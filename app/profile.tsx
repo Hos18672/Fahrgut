@@ -150,13 +150,13 @@ const ProfileScreen = () => {
                     onPress={handleUpdateProfile}
                   >
                     <Ionicons name="save-outline" size={20} color="#fff" />
-                    <Text style={styles.saveButtonText}>Save Changes</Text>
+                    <Text style={styles.saveButtonText}>{i18n.t("save")}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.CancelEditButton}
                     onPress={() => setIsEditing(false)}
                   >
-                    <Text style={styles.editButtonText}>Cancel</Text>
+                    <Text style={styles.editButtonText}>{i18n.t("cancel")}</Text>
                   </TouchableOpacity>
                 </View>
               </>

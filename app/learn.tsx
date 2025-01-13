@@ -212,6 +212,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   skeletonContainer: {
+    paddingHorizontal: Platform.OS === "web" ? "18%" : 0,
     flex: 1,
     padding: 10,
     paddingTop: 15
