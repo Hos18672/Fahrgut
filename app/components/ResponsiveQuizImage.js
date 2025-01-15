@@ -9,7 +9,7 @@ import {
 import { Image } from "expo-image";
 import placeholderImage from "../assets/image.png"; // Ensure this path is correct
 
-const ResponsiveQuizImage = ({ imageURL, maxWidth=0 }) => {
+const ResponsiveQuizImage = ({ imageURL, maxWidth = 0 }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageLoadFailed, setImageLoadFailed] = useState(false);
 
@@ -18,7 +18,7 @@ const ResponsiveQuizImage = ({ imageURL, maxWidth=0 }) => {
   const screenHeight = Dimensions.get("window").height;
 
   // Calculate the image width and height dynamically
-  const imageWidth = Math.min(screenWidth * 0.86, maxWidth || 450); // Use 90% of screen width or maxWidth, whichever is smaller
+  const imageWidth = Math.min(screenWidth * 0.86, maxWidth || 450); // Use 86% of screen width or maxWidth, whichever is smaller
   const imageHeight = (imageWidth * 2) / 3; // Maintain 3:2 aspect ratio
 
   // Preload the image
@@ -32,45 +32,37 @@ const ResponsiveQuizImage = ({ imageURL, maxWidth=0 }) => {
 
   return (
     <View style={styles.imageContainerMain}>
-      <View
-        style={[
-          styles.imageContainer,
-          {
-            width: imageWidth,
-            height: imageHeight,
-          },
-        ]}
-      >
-        {/* Show loading indicator while the image is loading */}
-        {imageURL && !imageLoaded && !imageLoadFailed && (
-          <ActivityIndicator
-            size="small"
-            color="#0000ff"
-            style={styles.loadingIndicator}
-          />
-        )}
+      {/* Show loading indicator while the image is loading */}
+      {imageURL && !imageLoaded && !imageLoadFailed && (
+        <ActivityIndicator
+          style={styles.loadingIndicator}
+          size="large"
+          color="#0000ff"
+        />
+      )}
 
-        {/* Show the remote image once it's loaded */}
-        {imageURL && !imageLoadFailed && (
+      {/* Show the remote image once it's loaded */}
+      {imageURL && !imageLoadFailed && (
+        <View style={[styles.imageContainer, { width: imageWidth, height: imageHeight }]}>
           <Image
             source={{ uri: imageURL }}
             style={styles.questionImage}
-            resizeMode="contain"
-            transition={100} // Reduced transition duration
             onLoad={() => setImageLoaded(true)}
             onError={() => setImageLoadFailed(true)}
           />
-        )}
+        </View>
+      )}
 
-        {/* Show placeholder if image fails to load or no image URL is provided */}
-        {(imageLoadFailed || !imageURL) && (
+      {/* Show placeholder if image fails to load or no image URL is provided */}
+      {(imageLoadFailed || !imageURL) && (
+        <View style={[styles.imageContainer, { width: imageWidth, height: imageHeight }]}>
           <Image
             source={placeholderImage}
             style={styles.placeholderImage}
-            resizeMode="contain"
+            contentFit="contain"
           />
-        )}
-      </View>
+        </View>
+      )}
     </View>
   );
 };

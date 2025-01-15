@@ -4,7 +4,6 @@
     "slug": "Fahrgut",
     "version": "1.0.0",
     "orientation": "portrait",
-    // "icon": "./app/assets/logo7.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,19 +12,18 @@
     },
     "android": {
       "adaptiveIcon": {
-        // "foregroundImage": "./app/assets/logo7.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.rezaafg.Fahrgut"
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
-      // "favicon": "./app/assets/logo7.png"
+      "output": "static"
     },
     "plugins": [
       "expo-router",
-      "expo-localization"
+      "expo-localization",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
