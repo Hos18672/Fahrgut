@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
   StatusBar,
   View,
@@ -9,9 +9,10 @@ import {
   SafeAreaView,
   ActivityIndicator,
   Platform,
-  Modal,Dimensions,
+  Modal,
+  Dimensions,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons"; 
+import { Ionicons } from "@expo/vector-icons";
 import { Input, Text, Icon } from "react-native-elements";
 import trafficSigns from "./assets/traffic_signs/traffic_signs.json";
 import i18n from "i18next";
@@ -20,6 +21,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CustomHeader from "./components/CustomHeader";
 import { TrafficSign } from "./types";
 import { initI18n } from "./services/initI18n";
+
 initI18n();
 
 const { width, height } = Dimensions.get("window");
@@ -35,18 +37,27 @@ const TrafficSignsScreen = () => {
   const [error, setError] = useState<string | null>(null);
   const insets = useSafeAreaInsets();
 
-  const fetchImageUrls = async (signs: TrafficSign[]) => {
+  const fetchImageUrls = useCallback(async (signs: TrafficSign[]) => {
     const assets: { [key: string]: string } = {};
     try {
       for (const sign of signs) {
-        let imagUrl = `https://osfxlrmxaifoehvxztqv.supabase.co/storage/v1/object/public/traffic_signs/${sign.filename}`;
-        assets[sign.filename] = imagUrl;
+        let cleanedName = sign.filename
+          .replace(/[Ää]/g, (match) => (match === "Ä" ? "Ae" : "ae"))
+          .replace(/[Öö]/g, (match) => (match === "Ö" ? "Oe" : "oe"))
+          .replace(/[Üü]/g, (match) => (match === "Ü" ? "Ue" : "ue"))
+          .replace(/ß/g, "ss")
+          .replace(/[:–\-_,.]/g, "")
+          .replace("png", "")
+          .replace(/\s+/g, "")
+          .trim();
+        let imageUrl = `https://osfxlrmxaifoehvxztqv.supabase.co/storage/v1/object/public/traffic_signs/${cleanedName}.png`.replace(/­/g, "");
+        assets[sign.filename] = imageUrl;
       }
     } catch (error) {
       setError("Failed to load images. Please check your internet connection.");
     }
     return assets;
-  };
+  }, []);
 
   useEffect(() => {
     const loadInitialSigns = async () => {
@@ -64,7 +75,7 @@ const TrafficSignsScreen = () => {
     };
 
     loadInitialSigns();
-  }, []);
+  }, [fetchImageUrls]);
 
   useEffect(() => {
     const filterSigns = async () => {
@@ -93,14 +104,14 @@ const TrafficSignsScreen = () => {
     } else {
       setVisibleSigns(trafficSigns);
     }
-  }, [searchValue]);
+  }, [searchValue, fetchImageUrls]);
 
-  const handleOpenTrafficSign = (sign: TrafficSign) => {
+  const handleOpenTrafficSign = useCallback((sign: TrafficSign) => {
     setSelectedSign(sign);
     setIsModalVisible(true);
-  };
+  }, []);
 
-  const handlePreviousSign = () => {
+  const handlePreviousSign = useCallback(() => {
     if (selectedSign) {
       const currentIndex = visibleSigns.findIndex(
         (sign) => sign.filename === selectedSign.filename
@@ -109,9 +120,9 @@ const TrafficSignsScreen = () => {
         setSelectedSign(visibleSigns[currentIndex - 1]);
       }
     }
-  };
+  }, [selectedSign, visibleSigns]);
 
-  const handleNextSign = () => {
+  const handleNextSign = useCallback(() => {
     if (selectedSign) {
       const currentIndex = visibleSigns.findIndex(
         (sign) => sign.filename === selectedSign.filename
@@ -120,7 +131,23 @@ const TrafficSignsScreen = () => {
         setSelectedSign(visibleSigns[currentIndex + 1]);
       }
     }
-  };
+  }, [selectedSign, visibleSigns]);
+
+  const isPreviousDisabled = useMemo(() => {
+    if (!selectedSign) return true;
+    const currentIndex = visibleSigns.findIndex(
+      (sign) => sign.filename === selectedSign.filename
+    );
+    return currentIndex === 0;
+  }, [selectedSign, visibleSigns]);
+
+  const isNextDisabled = useMemo(() => {
+    if (!selectedSign) return true;
+    const currentIndex = visibleSigns.findIndex(
+      (sign) => sign.filename === selectedSign.filename
+    );
+    return currentIndex === visibleSigns.length - 1;
+  }, [selectedSign, visibleSigns]);
 
   const renderTrafficSign = useCallback(
     ({ item }: { item: TrafficSign }) => {
@@ -132,25 +159,22 @@ const TrafficSignsScreen = () => {
           onPress={() => handleOpenTrafficSign(item)}
         >
           {imageUri ? (
-            <Image
-              source={{ uri: imageUri }}
-              style={styles.signImage}
-            />
+            <Image source={{ uri: imageUri }} style={styles.signImage} />
           ) : (
             <ActivityIndicator size="small" color={blueColor} />
           )}
           <View style={styles.signTitleContainer}>
             <Text style={styles.signTitle}>
-              {item.title ? item.title.split(":")[1] : "No Title"}
+              {item.title ? item.title : "No Title"}
             </Text>
             <Text style={styles.signTitleFa}>
-              {item.title_fa ? item.title_fa.split(":")[1] : "No Title (FA)"}
+              {item.title_fa ? item.title_fa : "No Title (FA)"}
             </Text>
           </View>
         </TouchableOpacity>
       );
     },
-    [imageAssets]
+    [imageAssets, handleOpenTrafficSign]
   );
 
   return (
@@ -190,7 +214,7 @@ const TrafficSignsScreen = () => {
 
       <FlatList
         data={visibleSigns}
-        keyExtractor={(item) => item.title}
+        keyExtractor={(item) => item.filename}
         renderItem={renderTrafficSign}
         contentContainerStyle={styles.listContainer}
       />
@@ -211,14 +235,10 @@ const TrafficSignsScreen = () => {
                 />
                 <View>
                   <Text style={styles.modalTitle}>
-                    {selectedSign.title
-                      ? selectedSign.title.split(":")[1]
-                      : "No Title"}
+                    {selectedSign.title ? selectedSign.title : "No Title"}
                   </Text>
                   <Text style={styles.modalTitleFa}>
-                    {selectedSign.title_fa
-                      ? selectedSign.title_fa.split(":")[1]
-                      : "No Title (FA)"}
+                    {selectedSign.title_fa ? selectedSign.title_fa : "No Title (FA)"}
                   </Text>
                 </View>
                 <View>
@@ -226,31 +246,23 @@ const TrafficSignsScreen = () => {
                     <TouchableOpacity
                       style={styles.navButton}
                       onPress={handlePreviousSign}
-                      disabled={
-                        visibleSigns.findIndex(
-                          (sign) => sign.filename === selectedSign.filename
-                        ) === 0
-                      }>                      
+                      disabled={isPreviousDisabled}
+                    >
                       <Ionicons
                         name={"arrow-back"}
                         size={20}
-                        color={blueColor}
+                        color={isPreviousDisabled ? "#ccc" : blueColor}
                       />
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={styles.navButton}
                       onPress={handleNextSign}
-                      disabled={
-                        visibleSigns.findIndex(
-                          (sign) => sign.filename === selectedSign.filename
-                        ) ===
-                        visibleSigns.length - 1
-                      }
+                      disabled={isNextDisabled}
                     >
                       <Ionicons
                         name={"arrow-forward"}
                         size={20}
-                        color={blueColor}
+                        color={isNextDisabled ? "#ccc" : blueColor}
                       />
                     </TouchableOpacity>
                   </View>
@@ -279,7 +291,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     marginTop: 10,
     height: 50,
-    width:"100%",
+    width: "100%",
     alignSelf: "center",
     paddingHorizontal: width > 950 ? "18%" : 0,
   },
@@ -361,7 +373,8 @@ const styles = StyleSheet.create({
     height: "50%",
     width: "50%",
     resizeMode: "contain",
-    marginBottom: 16,
+    marginBottom: 10,
+    marginTop: 10,
   },
   modalTitle: {
     fontSize: 20,

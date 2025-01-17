@@ -13,3 +13,4 @@ export const initI18n = () => {
     });
     
 }
+export default initI18n;

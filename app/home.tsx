@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
-  Text,
   View,
   Platform,
   SafeAreaView,
@@ -10,16 +9,12 @@ import {
   Image,
   PanResponder,
   StatusBar,
-  ScrollView,
 } from "react-native";
 import { bgColor } from "./assets/colors";
 import HomeLearnCategories from "./components/HomeLearnCategories";
 import { useRouter } from "expo-router"; // Added useRouter for navigation
-import SelectOption from "./components/SelectOptions";
 import MenuCard from "./components/MenuCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { languageOptions } from "./services/base";
-import { flags } from "./base";
 import { useUser } from "@clerk/clerk-expo";
 import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
@@ -29,9 +24,6 @@ const HomeScreen = () => {
   const { user } = useUser();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const [selectedLanguage, setSelectedLanguage] = useState<string>(
-    i18n.language in flags ? i18n.language : "de"
-  );
   const slideAnimation = useRef(new Animated.Value(-300)).current;
   const isWeb = Platform.OS === "web";
   console.log(user?.emailAddresses[0].emailAddress);
@@ -45,27 +37,16 @@ const HomeScreen = () => {
     },
   });
 
-  // Change language
-  const handleChangeLanguage = (language: string) => {
-    setSelectedLanguage(language);
-    i18n.changeLanguage(language);
-  };
-
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
       <View style={styles.header}>
         <Image
-          source={require("./assets/logo7.png")}
+          source={require("./assets/logo.png")}
           style={styles.logo}
           resizeMode="contain"
         />
         <View style={styles.profileContainer}>
-          <SelectOption
-            options={languageOptions}
-            selectedValue={selectedLanguage}
-            onValueChange={handleChangeLanguage}
-          />
           {Platform.OS === "web" && (
             <TouchableOpacity
               onPress={() => router.push("/profile")} // Use router.push for navigation
@@ -97,7 +78,7 @@ const HomeScreen = () => {
       >
         <MenuCard
           sideColor={"#007bff"}
-          icon={require("./assets/bookmark.png")}
+          icon={require("./assets/bookmark_icon.png")}
           title={"bookmarks"}
           route={() => router.push("/bookmarks")} // Use router.push for navigation
           isWeb={isWeb}
@@ -133,7 +114,7 @@ const HomeScreen = () => {
         />
         <MenuCard
           sideColor={"#ff00e1"}
-          icon={require("./assets/deadline.png")}
+          icon={require("./assets/exam_icon.png")}
           title={"exam"}
           route={() =>
             router.push({ pathname: "/question", params: { isExam: true } })

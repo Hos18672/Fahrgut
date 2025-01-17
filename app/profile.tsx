@@ -14,17 +14,17 @@ import {
   Platform,
   TextInput,
   Alert,
-  Image,
   KeyboardAvoidingView,
-  Keyboard,
   ScrollView,
 } from "react-native";
 import { bgColor } from "./assets/colors";
-import { supabase } from "./services/supabase"; // Ensure Supabase is configured
-import { Ionicons } from "@expo/vector-icons"; // For icons
+import { supabase } from "./services/supabase";
+import { Ionicons } from "@expo/vector-icons";
 import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
-initI18n();;
+import { Picker } from "@react-native-picker/picker";
+import { languageOptions } from "./services/base";
+initI18n();
 
 const ProfileScreen = () => {
   const insets = useSafeAreaInsets();
@@ -37,12 +37,13 @@ const ProfileScreen = () => {
   const [email, setEmail] = useState(
     user?.emailAddresses[0]?.emailAddress || ""
   );
+  const [selectedLanguage, setSelectedLanguage] = useState<string>(
+    i18n.language
+  );
 
-  const screenWidth = Dimensions.get("window").width;
   const screenHeight = Dimensions.get("window").height;
 
   useEffect(() => {
-    // Define an async function to fetch user data
     const fetchUserData = async () => {
       try {
         const { data, error } = await supabase
@@ -55,17 +56,16 @@ const ProfileScreen = () => {
         }
 
         if (data && data.length > 0) {
-          setFirstName(data[0].first_name); // Set first name
-          setLastName(data[0].last_name); // Set last name
+          setFirstName(data[0].first_name);
+          setLastName(data[0].last_name);
         }
       } catch (err) {
         console.error("Error fetching user data:", err);
       }
     };
 
-    // Call the async function
     fetchUserData();
-  }, [user]); // Add `user` as a dependency to re-run the effect when `user` changes
+  }, [user]);
 
   const handleSignOut = async () => {
     try {
@@ -95,6 +95,11 @@ const ProfileScreen = () => {
     }
   };
 
+  const handleChangeLanguage = (language: string) => {
+    setSelectedLanguage(language);
+    i18n.changeLanguage(language);
+  };
+
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
@@ -114,11 +119,29 @@ const ProfileScreen = () => {
           <View style={styles.profileCard}>
             {/* Profile Header */}
             <View style={styles.profileHeader}>
-              <Image
-                source={{ uri: user?.profileImageUrl }}
-                style={styles.profileImage}
-              />
-              <Text style={styles.profileGreeting}>{i18n.t("hello")}, {firstName}!</Text>
+              <Text style={styles.profileGreeting}>
+                {i18n.t("hello")}, {firstName}!
+              </Text>
+            </View>
+
+            {/* Language Selector */}
+            <View style={styles.languageSelector}>
+              <Text style={styles.label}>{i18n.t("selectLanguage")}</Text>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={selectedLanguage}
+                  onValueChange={handleChangeLanguage}
+                  style={styles.picker}
+                >
+                  {languageOptions.map((option) => (
+                    <Picker.Item
+                      key={option.value}
+                      label={option.label}
+                      value={option.value}
+                    />
+                  ))}
+                </Picker>
+              </View>
             </View>
 
             {/* User Information */}
@@ -128,19 +151,19 @@ const ProfileScreen = () => {
                   style={styles.input}
                   value={firstName}
                   onChangeText={setFirstName}
-                  placeholder={i18n.t('firstName')}
+                  placeholder={i18n.t("firstName")}
                 />
                 <TextInput
                   style={styles.input}
                   value={lastName}
                   onChangeText={setLastName}
-                  placeholder={i18n.t('lastName')}
+                  placeholder={i18n.t("lastName")}
                 />
                 <TextInput
                   style={styles.input}
                   value={email}
                   disabled={true}
-                  placeholder={i18n.t('email')}
+                  placeholder={i18n.t("email")}
                   keyboardType="email-address"
                 />
 
@@ -163,15 +186,15 @@ const ProfileScreen = () => {
             ) : (
               <>
                 <View style={styles.infoContainer}>
-                  <Text style={styles.infoLabel}>{i18n.t('firstName')}</Text>
+                  <Text style={styles.infoLabel}>{i18n.t("firstName")}</Text>
                   <Text style={styles.infoValue}>{firstName}</Text>
                 </View>
                 <View style={styles.infoContainer}>
-                  <Text style={styles.infoLabel}>{i18n.t('lastName')}</Text>
+                  <Text style={styles.infoLabel}>{i18n.t("lastName")}</Text>
                   <Text style={styles.infoValue}>{lastName}</Text>
                 </View>
                 <View style={styles.infoContainer}>
-                  <Text style={styles.infoLabel}>{i18n.t('email')}</Text>
+                  <Text style={styles.infoLabel}>{i18n.t("email")}</Text>
                   <Text style={styles.infoValue}>{email}</Text>
                 </View>
                 <TouchableOpacity
@@ -179,7 +202,7 @@ const ProfileScreen = () => {
                   onPress={() => setIsEditing(true)}
                 >
                   <Ionicons name="create-outline" size={20} color="#fff" />
-                  <Text style={styles.editButtonText}>{i18n.t('editrofile')}</Text>
+                  <Text style={styles.editButtonText}>{i18n.t("editProfile")}</Text>
                 </TouchableOpacity>
               </>
             )}
@@ -190,7 +213,7 @@ const ProfileScreen = () => {
               onPress={handleSignOut}
             >
               <Ionicons name="log-out-outline" size={20} color="#fff" />
-              <Text style={styles.signOutButtonText}>{i18n.t('signOut')} </Text>
+              <Text style={styles.signOutButtonText}>{i18n.t("signOut")}</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -232,6 +255,26 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     color: "#333",
+  },
+  languageSelector: {
+    width: "100%",
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 5,
+  },
+  pickerContainer: {
+    width: "100%",
+    borderColor: "#ddd",
+    borderWidth: 1,
+    borderRadius: 10,
+    backgroundColor: "#f9f9f9",
+  },
+  picker: {
+    width: "100%",
+    height: 50,
   },
   infoContainer: {
     width: "100%",
@@ -305,7 +348,9 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   signOutButton: {
-    width: "100%",
+    left:0,
+    alignSelf:"left",
+    width: "50%",
     height: 50,
     backgroundColor: "#ff4444",
     borderRadius: 10,
@@ -313,10 +358,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     gap: 10,
-    marginTop: 20, // Moved to the bottom with some spacing
+    marginTop: 20,
   },
   signOutButtonText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
     color: "#fff",
   },

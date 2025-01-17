@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSignIn } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 import {
   Text,
   TextInput,
@@ -11,9 +11,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Image,
 } from "react-native";
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL
-const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY 
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 const supabase = createClient(`${supabaseUrl}`, `${supabaseKey}`);
 const LoginScreen = () => {
   const { signIn, setActive, isLoaded } = useSignIn();
@@ -21,7 +22,7 @@ const LoginScreen = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // State to store error messages
   const router = useRouter();
-  console.log(supabaseUrl)
+  console.log(supabaseUrl);
   const onSignInPress = React.useCallback(async () => {
     if (!isLoaded) return;
 
@@ -41,26 +42,25 @@ const LoginScreen = () => {
 
         // Check if the user exists in the Supabase `users` table
         const { data: user, error: userError } = await supabase
-          .from('users')
-          .select('*')
-          .eq('email', emailAddress)
+          .from("users")
+          .select("*")
+          .eq("email", emailAddress)
           .single();
 
-        if (userError && userError.code !== 'PGRST116') {
+        if (userError && userError.code !== "PGRST116") {
           throw userError;
         }
 
         // If the user does not exist, insert them into the `users` table
         if (!user) {
           const { error: insertError } = await supabase
-            .from('users')
-            .insert([{email: emailAddress }]);
+            .from("users")
+            .insert([{ email: emailAddress }]);
 
           if (insertError) {
             throw insertError;
           }
         }
-
 
         router.replace("/home");
       } else {
@@ -73,7 +73,11 @@ const LoginScreen = () => {
       // Handle specific Clerk errors
       if (err.errors && err.errors.length > 0) {
         const clerkError = err.errors[0];
-        setError(clerkError.longMessage || clerkError.message || "An error occurred during sign-in.");
+        setError(
+          clerkError.longMessage ||
+            clerkError.message ||
+            "An error occurred during sign-in."
+        );
       } else {
         setError("An unexpected error occurred. Please try again.");
       }
@@ -91,7 +95,12 @@ const LoginScreen = () => {
         keyboardShouldPersistTaps="handled" // Prevent keyboard dismissal on tap
       >
         <View style={styles.formContainer}>
-          <Text style={styles.title}>Welcome Back</Text>
+          <Image
+            source={require("./assets/logo.png")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <Text style={styles.title}>Welcome</Text>
           <Text style={styles.subtitle}>Sign in to continue</Text>
 
           {/* Display error message */}
@@ -127,13 +136,14 @@ const LoginScreen = () => {
             <Text style={styles.buttonText}>Sign In</Text>
           </TouchableOpacity>
 
-          {/* Sign Up Link */}
+          {/* Sign Up Link
           <View style={styles.signUpContainer}>
             <Text style={styles.signUpText}>Don't have an account?</Text>
             <TouchableOpacity onPress={() => router.replace("/signup")}>
               <Text style={styles.signUpLink}>Sign up</Text>
             </TouchableOpacity>
           </View>
+           */}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -150,6 +160,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingVertical: 20, // Add padding to avoid content being cut off
+  },
+  logo:{
+    width:200,
+    height: 200,
+    alignSelf: "center",
   },
   formContainer: {
     width: "90%",

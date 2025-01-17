@@ -27,9 +27,6 @@ initI18n();
 const { width, height } = Dimensions.get("window");
 const isWeb = Platform.OS === "web";
 
-
-
-
 const BookmarksScreen = () => {
   const router = useRouter(); // Use Expo Router
   const [bookmarkedQuestions, setBookmarkedQuestions] = useState([]);

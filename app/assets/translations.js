@@ -1,6 +1,7 @@
 export const resources = {
   en: {
     translation: {
+      selectLanguage: "Language",
       home: "Home",
       welcome: "Welcome",
       trafficSigns: "Traffic Signs",
@@ -58,7 +59,7 @@ export const resources = {
       GreatNoWrongAnswers: "Great! No wrong answers",
       Profile: "Profile",
       Username: "Username",
-      email: "email",
+      email: "Email",
       emailAddress: "email Address",
       Password: "Password",
       UpdateProfile: "Update Profile",
@@ -72,7 +73,7 @@ export const resources = {
       YourAnswer: "Your answers",
       reviewAll: "Review All",
       filters: "Filters",
-      editrofile: "Edit profile",
+      editProfile: "Edit profile",
       firstName: "First Name",
       lastName: "Last Name",
       hello: "Hello",
@@ -81,6 +82,7 @@ export const resources = {
   },
   de: {
     translation: {
+      selectLanguage: "Sprache",
       home: "Hauptseite",
       welcome: "Willkommen",
       trafficSigns: "Verkehrszeichen",
@@ -154,15 +156,16 @@ export const resources = {
       YourAnswer: "Deine Antworten",
       reviewAll: "Alle überprüfen",
       filters: "Filter",
-      editrofile: "Profil bearbeiten",
+      editProfile: "Profil bearbeiten",
       firstName: "Vorname",
       lastName: "Nachname",
-       hello: "Hallo",
+      hello: "Hallo",
       profile: "Profil",
     },
   },
   fa: {
     translation: {
+      selectLanguage: "زبان",
       home: "صفحه اصلی",
       welcome: "خوش آمدید",
       trafficSigns: "علائم راهنمایی و رانندگی",
@@ -232,7 +235,7 @@ export const resources = {
       YourAnswer: "پاسخ شما",
       reviewAll: "بررسی همه",
       filters: "فیلترها",
-      editrofile: "ویرایش نمایه",
+      editProfile: "ویرایش نمایه",
       firstName: "نام",
       lastName: "نام خانوادگی",
       hello: "سلام",

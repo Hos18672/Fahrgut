@@ -3,20 +3,24 @@
     "name": "Fahrgut",
     "slug": "Fahrgut",
     "version": "1.0.0",
+    "icon": "./assets/icon.png",
     "orientation": "portrait",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "icon": "./assets/icon.png",
       "supportsTablet": true
     },
     "android": {
+      "icon": "./assets/icon.png",
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
       },
       "package": "com.rezaafg.Fahrgut"
     },
     "web": {
+      "name": "Fahrgut",
       "bundler": "metro",
       "output": "static"
     },
@@ -37,7 +41,7 @@
       }
     },
     "splash": {
-      "image": "./assets/logo7.png",
+      "image": "./assets/logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     }

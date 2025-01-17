@@ -119,7 +119,7 @@ export const downloadImage = async (questionNumber) => {
 
   // Language options for the dropdown
   export const languageOptions = [
-    { label: "English", value: "en", flag: require("../assets/us.png") },
+   // { label: "English", value: "en", flag: require("../assets/us.png") },
     { label: "Deutsch", value: "de", flag: require("../assets/at.png") },
     { label: "Persisch", value: "fa", flag: require("../assets/ir.png") },
   ];
