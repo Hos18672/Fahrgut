@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@clerk/clerk-expo": "^2.6.6",
+    "@expo/metro-runtime": "~4.0.1",
     "@expo/vector-icons": "^14.0.2",
     "@expo/webpack-config": "^19.0.1",
     "@freakycoder/react-native-bounceable": "^1.0.3",
