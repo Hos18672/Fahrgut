@@ -3,6 +3,7 @@
     "name": "Fahrgut",
     "slug": "Fahrgut",
     "version": "1.0.0",
+    "platforms": ["web"],
     "icon": "./assets/icon.png",
     "orientation": "portrait",
     "scheme": "myapp",
