@@ -193,9 +193,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: Platform.OS === "web" ? "18%" : 0,
     flex: 1,
     backgroundColor: bgColor,
+    paddingBottom: 50,
   },
   contentContainer: {
     padding: 16,
+    paddingBottom: 100,
   },
   loadingContainer: {
     flex: 1,

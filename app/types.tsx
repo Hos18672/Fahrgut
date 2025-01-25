@@ -31,6 +31,11 @@ export interface WrongAnswer {
   question_number: string;
   correctAnswers: string[];
 }
+export interface CorrectAnswer {
+  question_text: string;
+  question_number: string;
+  correctAnswers: string[];
+}
 
 
 export interface CustomTabProps {

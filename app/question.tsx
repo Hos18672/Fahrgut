@@ -39,7 +39,7 @@ const QuizScreen = () => {
   const { user } = useUser();
   const cureentUserEmail = user?.emailAddresses[0].emailAddress;
   const params = useLocalSearchParams<QuizScreenParams>();
-  const { isExam, category, subCategoryQuestions, BookmarkedQuestions } =
+  const { isExam, category, BookmarkedQuestions } =
     params;
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
@@ -169,8 +169,9 @@ const QuizScreen = () => {
     } else {
       setIsChecked(true);
     }
+    console.log('check')
     if (currentQuestion + 1 >= questions.length) {
-      if (subCategoryQuestions) {
+      if (category) {
         router.push("/learn");
       } else if (BookmarkedQuestions) {
         isChecked && router.push("/bookmarks");

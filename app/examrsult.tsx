@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import ResponsiveQuizImage from "./components/ResponsiveQuizImage";
-import { ExamResultScreenProps, WrongAnswer } from "./types";
+import { ExamResultScreenProps, WrongAnswer,CorrectAnswer } from "./types";
 import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
 import { bgColor } from "./assets/colors";
@@ -23,9 +23,7 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({
   examAnsweredQuestions,
 }) => {
   const [wrongAnswersList, setWrongAnswersList] = useState<WrongAnswer[]>([]);
-  const [correctAnswersList, setCorrectAnswersList] = useState<
-    Array<{ question: string; answers: string[] }>
-  >([]);
+  const [correctAnswersList, setCorrectAnswersList] = useState<CorrectAnswer[]>([]);
   const [expandedItems, setExpandedItems] = useState<{ [key: number]: boolean }>(
     {}
   );
@@ -42,7 +40,7 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({
   }
 
   useEffect(() => {
-    const correctList: Array<{ question: string; answers: string[] }> = [];
+    const correctList: CorrectAnswer[] = [];
     const wrongList: WrongAnswer[] = [];
     examAnsweredQuestions.forEach((obj) => {
       const answers = obj.userAnswers || [];
@@ -54,8 +52,9 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({
 
       if (allCorrect) {
         correctList.push({
-          question: obj.question.question_text,
-          answers: answers,
+          question_text: obj.question.question_text,
+          question_number: obj.question.question_number,
+          correctAnswers,
         });
       } else {
         wrongList.push({
@@ -256,14 +255,50 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({
                 </Text>
               )
             ) : (
-              correctAnswersList.map((item, index) => (
-                <View key={index} style={styles.correctListItem}>
-                  <Text style={styles.questionText}>{item.question}</Text>
-                  <Text style={styles.correctAnswerText}>
-                    {i18n.t("YourAnswer")} {item.answers.join(", ")}
-                  </Text>
-                </View>
-              ))
+                correctAnswersList.map((item, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.listItem}
+                    onPress={() => toggleExpand(index, item.question_number)}
+                  >
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.questionText}>
+                        {item.question_text}
+                      </Text>
+                      {expandedItems[index] && (
+                        <View style={styles.correctAnswerContainer}>
+                          {imageURLs[item.question_number] && (
+                            <ResponsiveQuizImage
+                              imageURL={imageURLs[item.question_number] || ""}
+                              maxWidth={250}
+                            />
+                          )}
+                          <Text style={styles.correctAnswerHeader}>
+                            {i18n.t("CorrectAnswers")}
+                          </Text>
+                          {item.correctAnswers.map((answer, idx) => (
+                            <Text
+                              key={idx}
+                              style={styles.correctAnswerText}
+                            >
+                              {idx + 1}) {answer}
+                            </Text>
+                          ))}
+                        </View>
+                      )}
+                    </View>
+                    <Ionicons
+                      name={
+                        expandedItems[index]
+                          ? "chevron-down-outline"
+                          : "chevron-forward-outline"
+                      }
+                      type="material"
+                      color="#333"
+                      size={22}
+                    />
+                  </TouchableOpacity>
+                ))         
             )}
           </ScrollView>
         </View>
@@ -379,7 +414,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   tabContent: {
-    width: Platform.OS === "web" ? "95%" : "98%",
+    width: "100%",
     maxHeight: Platform.OS === "web" ? "60vh" : "auto",
     overflow: "auto",
   },

@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: Platform.OS === "web" ? 10 : 5,
     backgroundColor: bgColor,
+  
   },
   backButton: {
     flexDirection: "row",
@@ -160,11 +161,13 @@ const styles = StyleSheet.create({
     width: "98%",
     paddingTop: 5,
     paddingHorizontal: width > 950 ? "20%" : 20,
+    paddingBottom: 90,
   },
   smListContainer: {
     alignSelf: "center",
     width: "95%",
     padding: 5,
+    paddingBottom: 90,
   },
   wordContainer: {
     display: "flex",
