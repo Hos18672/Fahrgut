@@ -12,11 +12,11 @@ import {
 } from "react-native";
 import { Input, Icon } from "react-native-elements";
 import { useRouter } from "expo-router"; // Expo Router's navigation hook
-import wordsData from "./assets/words.json"; // Ensure the path is correct
+import wordsData from "./assets/base/words.json"; // Ensure the path is correct
 import CustomHeader from "./components/CustomHeader";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { WordItem } from "./types";
-import { bgColor } from "./assets/colors";
+import { bgColor, fontSizeNormal, fontSizeSmall } from "./assets/base/styles_assets";
 import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
 initI18n();
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   translation: {
-    fontSize: 16,
+    fontSize: fontSizeSmall,
     color: "#888",
     marginTop: 5,
   },

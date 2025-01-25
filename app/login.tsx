@@ -13,6 +13,10 @@ import {
   ScrollView,
   Image,
 } from "react-native";
+import i18n from "i18next";
+import { initI18n } from "./services/initI18n";
+initI18n
+import { fontSizeSmall } from "./assets/base/styles_assets";
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 const supabase = createClient(`${supabaseUrl}`, `${supabaseKey}`);
@@ -86,7 +90,7 @@ const LoginScreen = () => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"} // Use "height" for Android
+      behavior={Platform.OS === "ios" ? "padding" : "padding"} // Use "padding" for both iOS and Android
       style={styles.container}
       keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0} // Adjust offset if needed
     >
@@ -96,12 +100,12 @@ const LoginScreen = () => {
       >
         <View style={styles.formContainer}>
           <Image
-            source={require("./assets/logo.png")}
+            source={require("./assets/icon/logo.png")}
             style={styles.logo}
             resizeMode="contain"
           />
-          <Text style={styles.title}>Welcome</Text>
-          <Text style={styles.subtitle}>Sign in to continue</Text>
+          <Text style={styles.title}>{i18n.t("welcome")}</Text>
+          <Text style={styles.subtitle}>{i18n.t("signInToContinue")}</Text>
 
           {/* Display error message */}
           {error ? (
@@ -115,7 +119,7 @@ const LoginScreen = () => {
             style={styles.input}
             autoCapitalize="none"
             value={emailAddress}
-            placeholder="Enter email"
+            placeholder={i18n.t("enterEmail")}
             placeholderTextColor="#999"
             onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
             keyboardType="email-address"
@@ -125,7 +129,7 @@ const LoginScreen = () => {
           <TextInput
             style={styles.input}
             value={password}
-            placeholder="Enter password"
+            placeholder={i18n.t("enterPassword")}
             placeholderTextColor="#999"
             secureTextEntry={true}
             onChangeText={(password) => setPassword(password)}
@@ -133,7 +137,7 @@ const LoginScreen = () => {
 
           {/* Sign In Button */}
           <TouchableOpacity style={styles.button} onPress={onSignInPress}>
-            <Text style={styles.buttonText}>Sign In</Text>
+            <Text style={styles.buttonText}>{i18n.t("signIn")}</Text>
           </TouchableOpacity>
 
           {/* Sign Up Link
@@ -160,6 +164,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingVertical: 20, // Add padding to avoid content being cut off
+    paddingBottom: 100, // Add extra padding at the bottom to accommodate the keyboard
   },
   logo:{
     width:200,
@@ -186,7 +191,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: fontSizeSmall,
     color: "#666",
     textAlign: "center",
     marginBottom: 20,
@@ -198,7 +203,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 15,
     marginBottom: 15,
-    fontSize: 16,
+    fontSize: fontSizeSmall,
     backgroundColor: "#f9f9f9",
   },
   button: {
@@ -207,10 +212,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 15,
+    marginVertical: "10%",
+
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: fontSizeSmall,
     fontWeight: "bold",
     color: "#fff",
   },
@@ -221,11 +227,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   signUpText: {
-    fontSize: 14,
+    fontSize: fontSizeSmall,
     color: "#666",
   },
   signUpLink: {
-    fontSize: 14,
+    fontSize: fontSizeSmall,
     color: "#007bff",
     fontWeight: "bold",
     marginLeft: 5,
@@ -238,7 +244,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: "#c62828",
-    fontSize: 14,
+    fontSize: fontSizeSmall,
     textAlign: "center",
   },
 });

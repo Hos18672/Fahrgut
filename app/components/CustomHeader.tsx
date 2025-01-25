@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router"; // Expo Router's navigation hook
 import { Ionicons } from "@expo/vector-icons"; // For the back button icon
-import { blackColor, blueColor } from "../assets/colors";
+import { blackColor, blueColor } from "../assets/base/styles_assets";
 
 interface CustomHeaderProps {
   title: string; // Title to display in the header

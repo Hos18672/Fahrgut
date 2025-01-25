@@ -8,16 +8,19 @@ import {
   SafeAreaView,
   ActivityIndicator,
   Text,
+  Dimensions,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CustomHeader from "./components/CustomHeader";
 import { groupByCategory, CustomTab, SubCategoryItem } from "./base";
-import { bgColor } from "./assets/colors";
+import { bgColor , fontSizeNormal, fontSizeSmall} from "./assets/base/styles_assets";
 import { supabase } from "./services/supabase"; // Import Supabase client
 import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
 initI18n();
+
+const { width } = Dimensions.get("window");
 
 const LearnScreen = () => {
   const insets = useSafeAreaInsets();
@@ -182,21 +185,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 4,
     alignSelf: "center",
-    marginHorizontal: 10,
+    marginHorizontal: 0,
     borderWidth: 1,
     borderRadius: 10,
     borderColor: "#0084ff",
     marginTop: 10,
-    width: Platform.OS === "web" ? "60%" : "95%",
+    width: width > 768 ? "60%" : "95%", // Adjust width based on screen size
   },
   tabContent: {
-    paddingHorizontal: Platform.OS === "web" ? "18%" : 0,
+    paddingHorizontal: width > 768 ? "18%" :5, // Adjust padding based on screen size
     flex: 1,
     backgroundColor: bgColor,
     paddingBottom: 50,
   },
   contentContainer: {
-    padding: 16,
+    paddingTop: 5,
+    padding: width > 768 ? 15 : 2, 
     paddingBottom: 100,
   },
   loadingContainer: {
@@ -211,10 +215,10 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: "red",
-    fontSize: 16,
+    fontSize: fontSizeSmall,
   },
   skeletonContainer: {
-    paddingHorizontal: Platform.OS === "web" ? "18%" : 0,
+    paddingHorizontal: width > 768 ? "18%" : 10, // Adjust padding based on screen size
     flex: 1,
     padding: 10,
     paddingTop: 15

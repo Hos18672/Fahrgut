@@ -6,17 +6,13 @@ import {
   Animated,
   Platform,
   StyleSheet,
-  Dimensions,
-  View,
 } from "react-native";
 
-import Icon from "react-native-vector-icons/FontAwesome";
-import { lightblueColor } from "../assets/colors";
-import { resources } from "../assets/translations";
+import { fontSizeSmall } from "../assets/base/styles_assets";
+import { resources } from "../assets/base/translations";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import * as Localization from "expo-localization"; // Replace react-native-localize
-import { SafeAreaView } from "react-native-safe-area-context";
 
 i18n.use(initReactI18next).init({
   resources,
@@ -25,7 +21,7 @@ i18n.use(initReactI18next).init({
   interpolation: { escapeValue: false },
 });
 
-const MenuCard = ({sideColor, icon, title, route, isWeb }) => {
+const MenuCard = ({ sideColor, icon, title, route, isWeb }) => {
   const slideAnimation = useRef(new Animated.Value(-300)).current;
 
   const CardContainer = isWeb
@@ -45,7 +41,7 @@ const MenuCard = ({sideColor, icon, title, route, isWeb }) => {
                 outputRange: [0.8, 1],
               }),
         },
-        {borderColor: sideColor}
+        { borderColor: sideColor },
       ]}
       onPress={route}
     >
@@ -81,7 +77,7 @@ const styles = StyleSheet.create({
   },
   cardText: {
     marginTop: 12,
-    fontSize: 16,
+    fontSize: fontSizeSmall,
     fontWeight: "500",
     color: "#333",
     textAlign: "center",

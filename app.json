@@ -23,7 +23,9 @@
     "web": {
       "name": "Fahrgut",
       "bundler": "metro",
-      "output": "server"
+      "build": {
+        "output": "web-build"
+      }
     },
     "plugins": [
       "expo-router",

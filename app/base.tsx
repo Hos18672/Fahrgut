@@ -6,14 +6,15 @@ import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
 initI18n();
 import { supabase } from "./services/supabase";
+import { fontSizeSmall } from "./assets/base/styles_assets";
 export const removeCharacters = (name) => {
   return name.replace(/[ -\/\\]/g, "");
 };
 
 export const flags = {
-  de: { name: "At", url: require("./assets/at.png") },
-  en: { name: "En", url: require("./assets/us.png") },
-  fa: { name: "Fa", url: require("./assets/ir.png") },
+  de: { name: "At", url: require("./assets/icon/at.png") },
+  en: { name: "En", url: require("./assets/icon/us.png") },
+  fa: { name: "Fa", url: require("./assets/icon/ir.png") },
 };
 export const groupByCategory = (questions: any[]) => {
   const categories: { [key: string]: any[] } = {};
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
   tab: {
     flex: 1,
     paddingVertical: 12,
-    paddingHorizontal: Platform.OS === "web" ? "20%" : 20,
+    paddingHorizontal: Platform.OS === "web" ? "10%" : 20,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   tabText: {
-    fontSize: 14,
+    fontSize: fontSizeSmall,
     fontWeight: "600",
     color: "#292929",
   },
@@ -148,13 +149,13 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   subCategoryText: {
-    fontSize: 16,
+    fontSize: fontSizeSmall,
     fontWeight: "600",
     color: "#333",
     width: "93%",
   },
   subCategoryCount: {
-    fontSize: 14,
+    fontSize: fontSizeSmall,
     color: "#666",
     fontWeight: "500",
   },

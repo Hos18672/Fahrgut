@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import { fontSizeSmall } from "../assets/base/styles_assets";
 import { useRouter } from "expo-router"; // Use Expo Router
 import BQuestions from "../assets/Questions/B.json";
 import GWQuestions from "../assets/Questions/GW.json";
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   categoryText: {
-    fontSize: 14,
+    fontSize: fontSizeSmall,
     fontWeight: "500",
     alignContent: "center",
     alignItems: "center",

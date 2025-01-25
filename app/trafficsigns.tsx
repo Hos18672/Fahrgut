@@ -16,12 +16,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { Input, Text, Icon } from "react-native-elements";
 import trafficSigns from "./assets/traffic_signs/traffic_signs.json";
 import i18n from "i18next";
-import { blueColor, bgColor } from "./assets/colors";
+import { blueColor, bgColor, fontSizeNormal, fontSizeSmall } from "./assets/base/styles_assets";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CustomHeader from "./components/CustomHeader";
 import { TrafficSign } from "./types";
 import { initI18n } from "./services/initI18n";
-
 initI18n();
 
 const { width, height } = Dimensions.get("window");
@@ -208,7 +207,7 @@ const TrafficSignsScreen = () => {
 
       {visibleSigns.length === 0 && !isLoading && (
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>No traffic signs found.</Text>
+          <Text style={styles.errorText}>{i18n.t("noTrafficSignsFound")}</Text>
         </View>
       )}
 
@@ -235,10 +234,10 @@ const TrafficSignsScreen = () => {
                 />
                 <View>
                   <Text style={styles.modalTitle}>
-                    {selectedSign.title ? selectedSign.title : "No Title"}
+                    {selectedSign.title ? selectedSign.title : i18n.t("noTitle")}
                   </Text>
                   <Text style={styles.modalTitleFa}>
-                    {selectedSign.title_fa ? selectedSign.title_fa : "No Title (FA)"}
+                    {selectedSign.title_fa ? selectedSign.title_fa : i18n.t("noTitleFA")}
                   </Text>
                 </View>
                 <View>
@@ -270,7 +269,7 @@ const TrafficSignsScreen = () => {
                     style={styles.closeButton}
                     onPress={() => setIsModalVisible(false)}
                   >
-                    <Text style={styles.closeButtonText}>Close</Text>
+                    <Text style={styles.closeButtonText}>{i18n.t('close')}</Text>
                   </TouchableOpacity>
                 </View>
               </>
@@ -288,17 +287,15 @@ const styles = StyleSheet.create({
     backgroundColor: bgColor,
   },
   searchContainer: {
-    marginBottom: 0,
     marginTop: 10,
+    marginBottom: 0,
+    paddingHorizontal: width > 950 ? "19%" : 0,
     height: 50,
-    width: "100%",
-    alignSelf: "center",
-    paddingHorizontal: width > 950 ? "18%" : 0,
   },
   searchInputContainer: {
     backgroundColor: "#fff",
     borderRadius: 10,
-    borderBottomWidth: 0,
+    borderBottomWidth: 0, // Remove the default underline
     paddingHorizontal: 10,
     ...Platform.select({
       ios: {
@@ -316,7 +313,7 @@ const styles = StyleSheet.create({
     }),
   },
   listContainer: {
-    paddingHorizontal: width > 950 ? "20%" : 15,
+    paddingHorizontal: width > 950 ? "20%" : width > 768 ? 15 : 12, // Adjusted for small screens
     paddingTop: 5,
     paddingBottom: Platform.OS !== "web" ? "30%" : 20,
   },
@@ -327,28 +324,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fff",
     borderRadius: 12,
-    padding: 10,
+    padding: width > 768 ? 10 : 8, // Adjusted for small screens
     marginLeft: width > 950 ? 10 : 0,
-    marginBottom: 12,
+    marginBottom: width > 768 ? 12 : 8, // Adjusted for small screens
   },
   signImage: {
-    width: 80,
-    height: 80,
+    width: width > 768 ? 80 : 60, // Smaller image for small screens
+    height: width > 768 ? 80 : 60, // Smaller image for small screens
     resizeMode: "contain",
     borderRadius: 8,
   },
   signTitleContainer: {
     flex: 1,
-    marginLeft: 16,
+    marginLeft: width > 768 ? 16 : 12, // Adjusted for small screens
   },
   signTitle: {
-    fontSize: 16,
+    fontSize: fontSizeSmall, // Smaller font size for small screens
     fontWeight: "600",
     color: "#333",
-    marginBottom: 4,
+    marginBottom: width > 768 ? 4 : 2, // Adjusted for small screens
   },
   signTitleFa: {
-    fontSize: 14,
+    fontSize: fontSizeSmall, // Smaller font size for small screens
     color: "#666",
   },
   modalContainer: {
@@ -362,41 +359,41 @@ const styles = StyleSheet.create({
   modalContent: {
     display: "flex",
     justifyContent: "space-between",
-    height: Platform.OS == "web" ? "80%" : "80%",
-    width: Platform.OS == "web" ? "70%" : "95%",
+    height: Platform.OS === "web" ? (width > 768 ? "80%" : "90%") : "80%", // Adjusted for small screens
+    width: Platform.OS === "web" ? (width > 768 ? "70%" : "90%") : "95%", // Adjusted for small screens
     backgroundColor: "#fff",
     borderRadius: 12,
-    padding: 10,
+    padding: width > 768 ? 20 : 12, // Adjusted for small screens
     alignItems: "center",
   },
   modalImage: {
-    height: "50%",
-    width: "50%",
+    height: width > 768 ? "50%" : "40%", // Smaller image for small screens
+    width: width > 768 ? "50%" : "80%", // Smaller image for small screens
     resizeMode: "contain",
-    marginBottom: 10,
-    marginTop: 10,
+    marginBottom: width > 768 ? 10 : 5, // Adjusted for small screens
+    marginTop: width > 768 ? 10 : 5, // Adjusted for small screens
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: width > 768 ? 20 : 18, // Smaller font size for small screens
     fontWeight: "600",
     color: "#333",
-    marginBottom: 8,
+    marginBottom: width > 768 ? 8 : 4, // Adjusted for small screens
     textAlign: "center",
   },
   modalTitleFa: {
-    fontSize: 16,
+    fontSize: fontSizeSmall, // Smaller font size for small screens
     color: "#666",
     textAlign: "center",
   },
   navigationButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: Platform.OS == "web" ? 400 : "95%",
-    marginTop: 16,
-    gap: 40,
+    width: Platform.OS === "web" ? (width > 768 ? 400 : "90%") : "95%", // Adjusted for small screens
+    marginTop: width > 768 ? 16 : 12, // Adjusted for small screens
+    gap: width > 768 ? 40 : 20, // Adjusted for small screens
   },
   navButton: {
-    padding: 10,
+    padding: width > 768 ? 15 : 10, // Increased padding for small screens
     backgroundColor: "white",
     borderRadius: 8,
     flex: 1,
@@ -404,35 +401,37 @@ const styles = StyleSheet.create({
     borderColor: blueColor,
     marginHorizontal: 0,
     alignItems: "center",
+    minWidth: width > 768 ? 0 : 100, // Ensure buttons have a minimum width on small screens
   },
   navButtonText: {
-    fontSize: 16,
+    fontSize: fontSizeSmall, // Adjusted font size for small screens
     fontWeight: "600",
     color: blueColor,
   },
   closeButton: {
-    marginTop: 20,
-    marginBottom: 10,
-    padding: 13,
+    marginTop: width > 768 ? 20 : 16, // Adjusted for small screens
+    marginBottom: width > 768 ? 10 : 8, // Adjusted for small screens
+    padding: 13, // Adjusted for small screens
     backgroundColor: blueColor,
     borderRadius: 8,
     alignItems: "center",
   },
   closeButtonText: {
-    fontSize: 16,
+    fontSize: fontSizeSmall, // Smaller font size for small screens
     fontWeight: "600",
     color: "#fff",
   },
   errorContainer: {
     backgroundColor: "#ffebee",
-    padding: 10,
+    padding: width > 768 ? 10 : 8, // Adjusted for small screens
     borderRadius: 8,
-    marginBottom: 16,
-    marginHorizontal: 16,
+    marginTop: 10,
+    marginBottom: width > 768 ? 16 : 12, // Adjusted for small screens
+    marginHorizontal: width > 768 ? 16 : 12, // Adjusted for small screens
   },
   errorText: {
     color: "#c62828",
-    fontSize: 14,
+    fontSize:fontSizeSmall, // Smaller font size for small screens
     textAlign: "center",
   },
 });

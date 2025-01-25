@@ -7,7 +7,7 @@ import {
   Dimensions,
 } from "react-native";
 import { Image } from "expo-image";
-import placeholderImage from "../assets/image.png"; // Ensure this path is correct
+import placeholderImage from "../assets/icon/image.png"; // Ensure this path is correct
 
 const ResponsiveQuizImage = ({ imageURL, maxWidth = 0 }) => {
   const [imageLoaded, setImageLoaded] = useState(false);

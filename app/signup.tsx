@@ -12,6 +12,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
+import { fontSizeSmall } from "./assets/base/styles_assets";
 
 const SignUpScreen = () => {
   const { signUp, setActive, isLoaded } = useSignUp();
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: fontSizeSmall,
     color: "#666",
     textAlign: "center",
     marginBottom: 20,
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 15,
     marginBottom: 15,
-    fontSize: 16,
+    fontSize: fontSizeSmall,
     backgroundColor: "#f9f9f9",
   },
   button: {
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: fontSizeSmall,
     fontWeight: "bold",
     color: "#fff",
   },
@@ -161,11 +162,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   signUpText: {
-    fontSize: 14,
+    fontSize: fontSizeSmall,
     color: "#666",
   },
   signUpLink: {
-    fontSize: 14,
+    fontSize: fontSizeSmall,
     color: "#007bff",
     fontWeight: "bold",
     marginLeft: 5,

@@ -1,15 +1,14 @@
-import { Stack, useRouter } from "expo-router"; // Added useRouter for navigation
+import { Stack, useRouter, usePathname } from "expo-router"; // Added usePathname
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
-import { ClerkProvider, ClerkLoaded, useAuth } from "@clerk/clerk-expo"; // Added useAuth
-import { Slot, useSegments } from "expo-router"; // Added useSegments
+import { ClerkProvider, ClerkLoaded, useAuth } from "@clerk/clerk-expo";
+import { Slot, useSegments } from "expo-router";
 import { tokenCache } from '@/utils/cache';
 import { View, StyleSheet } from "react-native";
 import CustomBottomNav from "./components/CustomNavBar";
-import {
-  Platform,
-} from "react-native";
+import { Platform } from "react-native";
+
 export default function RootLayout() {
   const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 
@@ -29,24 +28,27 @@ export default function RootLayout() {
   );
 }
 
-// Component to handle authentication redirects
 function AuthRedirectHandler() {
-  const router = useRouter(); // Use the router for navigation
-  const { isLoaded, isSignedIn } = useAuth(); // Check authentication status
-  const segments = useSegments(); // Get the current route segments
+  const router = useRouter();
+  const { isLoaded, isSignedIn } = useAuth();
+  const segments = useSegments();
+  const pathname = usePathname(); // Get the current path
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
-      // Redirect to the Login Screen if the user is not signed in
-      router.replace("/login");
+      // Only redirect to login if not already on the login page
+      if (pathname !== "/login") {
+        router.replace("/login");
+      }
     } else if (isLoaded && isSignedIn) {
-      // Redirect to the Home Screen if the user is signed in
-      router.replace("/home");
+      // Only redirect to home if not already on a protected page
+      if (pathname === "/login" || pathname === "/") {
+        router.replace("/home");
+      }
     }
-  }, [isLoaded, isSignedIn]);
+  }, [isLoaded, isSignedIn, pathname]);
 
-  // Determine if the current screen should show the bottom navigation bar
-  const showBottomNav = isSignedIn && !segments.includes("login") && !segments.includes("question") && Platform.OS !== "web"
+  const showBottomNav = isSignedIn && !segments.includes("login") && !segments.includes("question") && Platform.OS !== "web";
 
   return (
     <View style={styles.container}>

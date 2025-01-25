@@ -1,7 +1,7 @@
 // LoadingIndicator.js
 import React from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
-import { lightblueColor, blueColor } from "../assets/colors";
+import { lightblueColor, blueColor } from "../assets/base/styles_assets";
 const LoadingIndicator = () => {
     return (
         <View style={styles.container}>

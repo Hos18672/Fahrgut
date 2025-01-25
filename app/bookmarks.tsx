@@ -11,8 +11,7 @@ import {
   Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { bgColor, blueColor } from "./assets/colors";
-import {insertQuestions} from "./base"
+import { bgColor, blueColor, fontSizeNormal, fontSizeSmall } from "./assets/base/styles_assets";
 import CustomHeader from "./components/CustomHeader";
 import { useUser } from "@clerk/clerk-expo";
 import {
@@ -202,6 +201,9 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === "web" ? 10 : 80,
     paddingHorizontal: width > 950 ? "20%" : 5,
   },
+  list:{
+    marginTop: Platform.OS !== "web" ? 40 : 0,
+  },
   noBookmaks:{
     width: "100%",
     height: "100%",
@@ -210,9 +212,6 @@ const styles = StyleSheet.create({
     paddingVertical: "10%",
     backgroundColor: bgColor
   } ,
-  list: {
-    marginTop: 40,
-  },
   item: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -229,7 +228,7 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   title: {
-    fontSize: 16,
+    fontSize: fontSizeSmall,
     color: "#333",
     flexShrink: 1,
   },
@@ -246,14 +245,14 @@ const styles = StyleSheet.create({
   },
   reviewButton: {
     backgroundColor: blueColor,
-    padding: 10,
+    padding: 15,
     borderRadius: 12,
     alignItems: "center",
     marginHorizontal: 10,
     marginBottom: 20,
   },
   reviewButtonText: {
-    fontSize: 16,
+    fontSize: fontSizeSmall,
     color: "white",
     fontWeight: "bold",
   },

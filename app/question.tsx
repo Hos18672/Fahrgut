@@ -21,7 +21,7 @@ import CheckboxField from "./components/CheckBoxField";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QuizScreenParams, Question } from "./types";
 import { renderFilters } from "./base";
-import { bgColor } from "./assets/colors";
+import { bgColor, fontSizeNormal, fontSizeSmall } from "./assets/base/styles_assets";
 import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
 import { useUser } from "@clerk/clerk-expo";
@@ -337,7 +337,7 @@ const QuizScreen = () => {
                     }/${questions.length}`}</Text>
                     {isExam && (
                       <View style={{ width: 50 }}>
-                        <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                        <Text style={{ fontSize: fontSizeSmall, fontWeight: "bold" }}>
                           {formatTime(timer)}
                         </Text>
                       </View>
@@ -356,7 +356,7 @@ const QuizScreen = () => {
                     onPress={toggleFilterModal}
                   >
                     <Image
-                      source={require("./assets/hamburger.png")}
+                      source={require("./assets/icon/hamburger.png")}
                       style={styles.hamburgerIcon}
                       resizeMode="contain"
                     />
@@ -525,7 +525,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: width > 950 ? "2%" : 16,
+    paddingHorizontal: width > 950 ? "2%" : width > 768 ? 16 : 12, // Adjusted for small screens
     maxWidth: isWeb ? 1200 : "100%",
     alignSelf: "center",
     width: "100%",
@@ -534,8 +534,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     borderRadius: 15,
-    marginVertical: 10,
-    padding: isWeb ? 20 : 15,
+    marginVertical: width > 768 ? 10 : 5, // Adjusted for small screens
+    padding: width > 768 ? 15 : 12, // Adjusted for small screens
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -544,33 +544,31 @@ const styles = StyleSheet.create({
     maxWidth: isWeb ? 900 : "100%",
     alignSelf: "center",
     width: "100%",
+    gap: width > 768 ? 10 : 5,
   },
   progressContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start", // Changed to flex-start for better alignment
-    marginBottom: 5,
+    alignItems: "flex-start",
+    marginBottom: width > 768 ? 5 : 3, // Adjusted for small screens
     maxWidth: 800,
     alignSelf: "center",
     width: "100%",
-    gap: 12, // Add gap between progress section and hamburger
+    gap: width > 768 ? 12 : 8, // Adjusted for small screens
   },
-
   progressSection: {
     flex: 1,
-    marginRight: 8, // Add space between progress and hamburger
+    marginRight: width > 768 ? 8 : 4, // Adjusted for small screens
   },
-
   questionCountContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-
   hamburgerButton: {
-    padding: 8,
+    padding: width > 768 ? 8 : 6, // Adjusted for small screens
     alignSelf: "flex-start",
-    marginTop: 4, // Align with question count
+    marginTop: width > 768 ? 4 : 2, // Adjusted for small screens
     backgroundColor: "transparent",
     borderRadius: 6,
     width: width <= 380 ? 40 : 40,
@@ -578,30 +576,26 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
   hamburgerIcon: {
     width: width <= 380 ? 20 : 24,
     height: width <= 380 ? 20 : 24,
     opacity: 0.8,
   },
-
   questionContainer: {
     width: "100%",
   },
-
   questionCount: {
-    fontSize: width <= 380 ? 14 : 16,
+    fontSize: fontSizeSmall,
     fontWeight: "600",
     color: "#333",
   },
-
   progressBar: {
     height: 8,
     width: "100%",
     backgroundColor: "#f0f0f0",
     borderRadius: 4,
     overflow: "hidden",
-    marginTop: 8,
+    marginTop: width > 768 ? 8 : 4, // Adjusted for small screens
   },
   progressFill: {
     height: "100%",
@@ -609,23 +603,23 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   questionText: {
-    fontSize: isWeb ? 20 : 18,
-    lineHeight: isWeb ? 30 : 26,
+    fontSize: fontSizeNormal, // Adjusted for small screens
+    lineHeight:  width > 768 ? 26 : 20, // Adjusted for small screens
     color: "#333",
-    marginTop: isWeb ? 30 : 0,
-    marginBottom: isWeb ? 30 : 5,
+    marginTop:  width > 768 ? 10 : 5, // Adjusted for small screens
+    marginBottom: width > 768 ? 10 : 5, // Adjusted for small screens
     maxWidth: 800,
     alignSelf: "center",
     width: "100%",
-    paddingHorizontal: 8,
+    paddingHorizontal: width > 768 ? 8 : 4, // Adjusted for small screens
   },
   questionNumber: {
     fontWeight: "600",
-    marginRight: 8,
+    marginRight: width > 768 ? 8 : 4, // Adjusted for small screens
   },
   questionImage: {
     alignItems: "center",
-    marginBottom: isWeb ? 30 :10,
+    marginBottom: width > 768 ? 10 : 8, // Adjusted for small screens
     maxWidth: 800,
     alignSelf: "center",
     width: "100%",
@@ -634,14 +628,14 @@ const styles = StyleSheet.create({
     maxWidth: 800,
     alignSelf: "center",
     width: "100%",
-    marginBottom: 5,
+    marginBottom: width > 768 ? 5 : 3, // Adjusted for small screens
   },
   bottomButtonsContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: '2%',
-    gap: 16,
+    marginTop: width > 768 ? "2%" : "1%", // Adjusted for small screens
+    gap: width > 768 ? 16 : 12, // Adjusted for small screens
     alignSelf: "center",
     width: "100%",
     maxWidth: 800,
@@ -650,9 +644,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#007bff",
     borderColor: "#007bff",
     borderWidth: 4,
-    padding: isWeb ? 11 : 11,
+    padding:  width > 768 ? 13 : 10, // Adjusted for small screens
     borderRadius: 8,
     flex: 1,
+    minHeight: 40,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -660,7 +655,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     borderWidth: 2,
     borderColor: "#007bff",
-    padding: isWeb ? 11 : 13,
+    padding: width > 768 ? 13 : 10, // Adjusted for small screens
     borderRadius: 8,
     flex: 1,
     alignItems: "center",
@@ -668,34 +663,33 @@ const styles = StyleSheet.create({
   },
   submitButtonText: {
     color: "#444",
-    fontSize: isWeb ? 18 : 16,
+    fontSize: fontSizeSmall, // Adjusted for small screens
     fontWeight: "600",
   },
   submitButtonTextUnchecked: {
     color: "#fff",
-    fontSize: isWeb ? 18 : 14,
+    fontSize:fontSizeSmall, // Adjusted for small screens
     fontWeight: "600",
   },
   translateButton: {
     backgroundColor: "#ffffff",
-    padding: 10,
+    padding: width > 768 ? 13 : 10, // Adjusted for small screens
     borderWidth: 2,
     borderColor: "#333",
     borderRadius: 8,
-    width: 50,
-    height: 50,
+    width: 50 , // Adjusted for small screens
     justifyContent: "center",
     alignItems: "center",
   },
   languageText: {
-    fontSize: 16,
+    fontSize: fontSizeSmall, // Adjusted for small screens
     fontWeight: "600",
     color: "#333",
   },
   sidebar: {
     width: width > 950 ? 300 : "100%",
-    padding: 24,
-    margin: isWeb ? 10 : 5,
+    padding: width > 768 ? 24 : 16, // Adjusted for small screens
+    margin: isWeb ? 10 : width > 768 ? 5 : 3, // Adjusted for small screens
     marginTop: 0,
     borderRadius: 15,
     backgroundColor: "#ffffff",
@@ -711,12 +705,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
-    padding: 16,
+    padding: width > 768 ? 16 : 12, // Adjusted for small screens
   },
   modalContent: {
     width: width > 950 ? "50%" : "90%",
     maxWidth: 500,
-    padding: 24,
+    padding: width > 768 ? 24 : 16, // Adjusted for small screens
     backgroundColor: "#fff",
     borderRadius: 15,
     shadowColor: "#000",
@@ -728,7 +722,7 @@ const styles = StyleSheet.create({
   // Skeleton styles
   skeletonContainer: {
     flex: 1,
-    padding: 16,
+    padding: width > 768 ? 16 : 12, // Adjusted for small screens
     borderRadius: 15,
     maxWidth: 900,
     alignSelf: "center",
@@ -738,44 +732,44 @@ const styles = StyleSheet.create({
     height: 24,
     width: "30%",
     backgroundColor: "#e1e1e1",
-    marginBottom: 16,
+    marginBottom: width > 768 ? 16 : 12, // Adjusted for small screens
     borderRadius: 8,
   },
   skeletonProgressBar: {
     height: 8,
     width: "100%",
     backgroundColor: "#e1e1e1",
-    marginBottom: 32,
+    marginBottom: width > 768 ? 32 : 24, // Adjusted for small screens
     borderRadius: 4,
   },
   skeletonQuestionText: {
-    height: 60,
+    height: 50,
     width: "100%",
     backgroundColor: "#e1e1e1",
-    marginBottom: 24,
+    marginBottom: width > 768 ? 24 : 16, // Adjusted for small screens
     borderRadius: 8,
   },
   skeletonImage: {
-    height: 240,
-    width: "100%",
+    height:  width > 768 ? 300 : 220,
+    width: width > 768 ? 500 : 300,
+    alignSelf: "center",
     backgroundColor: "#e1e1e1",
-    marginBottom: 32,
+    marginBottom: width > 768 ? 32 : 24, // Adjusted for small screens
     borderRadius: 12,
   },
   skeletonAnswerOption: {
-    height: 48,
+    height: 40,
     width: "100%",
     backgroundColor: "#e1e1e1",
-    marginBottom: 16,
+    marginBottom: width > 768 ? 16 : 10, // Adjusted for small screens
     borderRadius: 8,
   },
   skeletonBottomButtons: {
-    height: 56,
+    height: 50,
     width: "100%",
     backgroundColor: "#e1e1e1",
-    marginTop: 24,
+    marginTop: width > 768 ? 24 : 16, // Adjusted for small screens
     borderRadius: 8,
   },
 });
-
 export default QuizScreen;

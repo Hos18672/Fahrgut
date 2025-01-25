@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Switch, StyleSheet,Platform } from 'react-native';
-
+import {fontSizeSmall } from "../assets/base/styles_assets";
 const ToggleSwitch = ({ label, value, onValueChange }) => {
   return (
     <View style={styles.container}>
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   },
   label: {
     width: Platform.OS === 'web' ? 200 : 150,
-    fontSize: 16,
+    fontSize: fontSizeSmall,
     color: '#333',
   },
 });

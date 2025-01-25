@@ -10,7 +10,8 @@ import {
   PanResponder,
   StatusBar,
 } from "react-native";
-import { bgColor } from "./assets/colors";
+import { Ionicons } from "@expo/vector-icons"; 
+import { bgColor, fontSizeNormal, fontSizeSmall } from "./assets/base/styles_assets";
 import HomeLearnCategories from "./components/HomeLearnCategories";
 import { useRouter } from "expo-router"; // Added useRouter for navigation
 import MenuCard from "./components/MenuCard";
@@ -42,7 +43,7 @@ const HomeScreen = () => {
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
       <View style={styles.header}>
         <Image
-          source={require("./assets/logo.png")}
+          source={require("./assets/icon/logo.png")}
           style={styles.logo}
           resizeMode="contain"
         />
@@ -50,12 +51,7 @@ const HomeScreen = () => {
           {Platform.OS === "web" && (
             <TouchableOpacity
               onPress={() => router.push("/profile")} // Use router.push for navigation
-            >
-              <Image
-                source={require("./assets/user.png")}
-                style={styles.user}
-                resizeMode="contain"
-              />
+            >  <Ionicons name={"person-outline"}  size={30} />
             </TouchableOpacity>
           )}
         </View>
@@ -64,7 +60,7 @@ const HomeScreen = () => {
       {/* Background Image (only for non-small screens) */}
 
       <Image
-        source={require("./assets/street.png")}
+        source={require("./assets/icon/street.png")}
         style={styles.backgroundStreet}
         resizeMode="cover"
       />
@@ -78,21 +74,21 @@ const HomeScreen = () => {
       >
         <MenuCard
           sideColor={"#007bff"}
-          icon={require("./assets/bookmark_icon.png")}
+          icon={require("./assets/icon/bookmark_icon.png")}
           title={"bookmarks"}
           route={() => router.push("/bookmarks")} // Use router.push for navigation
           isWeb={isWeb}
         />
         <MenuCard
           sideColor={"#f72d00"}
-          icon={require("./assets/road-sign.png")}
+          icon={require("./assets/icon/road-sign.png")}
           title={"trafficSigns"}
           route={() => router.push("/trafficsigns")} // Use router.push for navigation
           isWeb={isWeb}
         />
         <MenuCard
           sideColor={"#00e31a"}
-          icon={require("./assets/book.png")}
+          icon={require("./assets/icon/book.png")}
           title={"commonWords"}
           route={() => router.push("/commonwords")} // Use router.push for navigation
           isWeb={isWeb}
@@ -100,21 +96,21 @@ const HomeScreen = () => {
 
         <MenuCard
           sideColor={"#9f00a2"}
-          icon={require("./assets/study.png")}
+          icon={require("./assets/icon/study.png")}
           title={"learn"}
           route={() => router.push("/learn")} // Use router.push for navigation
           isWeb={isWeb}
         />
         <MenuCard
           sideColor={"#ff9100"}
-          icon={require("./assets/quiz.png")}
+          icon={require("./assets/icon/quiz.png")}
           title={"quiz"}
           route={() => router.push("/question")} // Use router.push for navigation
           isWeb={isWeb}
         />
         <MenuCard
           sideColor={"#ff00e1"}
-          icon={require("./assets/exam_icon.png")}
+          icon={require("./assets/icon/exam_icon.png")}
           title={"exam"}
           route={() =>
             router.push({ pathname: "/question", params: { isExam: true } })
@@ -145,8 +141,7 @@ const styles = StyleSheet.create({
   profileContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 5,
-    width: Platform.OS !== "web" ? 20 : 100,
+    marginVertical: 5,
   },
   backgroundStreet: {
     position: "absolute",

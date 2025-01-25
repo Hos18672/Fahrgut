@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import i18n from "i18next";
 import { initI18n } from "../services/initI18n";
+import { fontSizeSmall } from "../assets/base/styles_assets";
 initI18n();;
 
 // Define the type for an option
@@ -45,9 +46,9 @@ const SelectOption: React.FC<SelectOptionProps> = ({
   };
 
   const flags: Flags = {
-    de: { name: "At", url: require("../assets/at.png") },
-    en: { name: "En", url: require("../assets/us.png") },
-    fa: { name: "Fa", url: require("../assets/ir.png") },
+    de: { name: "At", url: require("../assets/icon/at.png") },
+    en: { name: "En", url: require("../assets/icon/us.png") },
+    fa: { name: "Fa", url: require("../assets/icon/ir.png") },
   };
 
   return (
@@ -110,7 +111,7 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
     color: "#000",
-    fontSize: 16,
+    fontSize: fontSizeSmall,
     gap: 5,
   },
   modalOverlay: {
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   optionText: {
-    fontSize: 16,
+    fontSize: fontSizeSmall,
   },
   closeButton: {
     padding: 10,
@@ -149,7 +150,7 @@ const styles = StyleSheet.create({
   },
   closeText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: fontSizeSmall,
     textAlign: "center",
   },
 });

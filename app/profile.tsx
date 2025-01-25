@@ -17,7 +17,7 @@ import {
   KeyboardAvoidingView,
   ScrollView,
 } from "react-native";
-import { bgColor } from "./assets/colors";
+import { bgColor, fontSizeNormal, fontSizeSmall } from "./assets/base/styles_assets";
 import { supabase } from "./services/supabase";
 import { Ionicons } from "@expo/vector-icons";
 import i18n from "i18next";
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   label: {
-    fontSize: 14,
+    fontSize: fontSizeSmall,
     color: "#666",
     marginBottom: 5,
   },
@@ -281,12 +281,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   infoLabel: {
-    fontSize: 14,
+    fontSize: fontSizeSmall,
     color: "#666",
     marginBottom: 5,
   },
   infoValue: {
-    fontSize: 18,
+    fontSize: fontSizeNormal,
     fontWeight: "500",
     color: "#333",
   },
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 15,
     marginBottom: 15,
-    fontSize: 16,
+    fontSize: fontSizeSmall,
     backgroundColor: "#f9f9f9",
   },
   buttonsContainer: {
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   editButtonText: {
-    fontSize: 16,
+    fontSize: fontSizeSmall,
     fontWeight: "bold",
     color: "#fff",
   },
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   saveButtonText: {
-    fontSize: 16,
+    fontSize: fontSizeSmall,
     fontWeight: "bold",
     color: "#fff",
   },
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   signOutButtonText: {
-    fontSize: 14,
+    fontSize: fontSizeSmall,
     fontWeight: "bold",
     color: "#fff",
   },
