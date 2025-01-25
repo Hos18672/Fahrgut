@@ -21,7 +21,12 @@ import CheckboxField from "./components/CheckBoxField";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QuizScreenParams, Question } from "./types";
 import { renderFilters } from "./base";
-import { bgColor, fontSizeNormal, fontSizeSmall } from "./assets/base/styles_assets";
+import {
+  bgColor,
+  blueColor,
+  fontSizeNormal,
+  fontSizeSmall,
+} from "./assets/base/styles_assets";
 import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
 import { useUser } from "@clerk/clerk-expo";
@@ -30,6 +35,7 @@ import { removeCharacters } from "./base";
 import CustomHeader from "./components/CustomHeader";
 import { supabase } from "./services/supabase";
 import { Image as ExpoImage } from "expo-image"; // Use expo-image for better performance
+import { Ionicons } from "@expo/vector-icons";
 
 initI18n();
 const { width, height } = Dimensions.get("window");
@@ -39,8 +45,7 @@ const QuizScreen = () => {
   const { user } = useUser();
   const cureentUserEmail = user?.emailAddresses[0].emailAddress;
   const params = useLocalSearchParams<QuizScreenParams>();
-  const { isExam, category, BookmarkedQuestions } =
-    params;
+  const { isExam, category, BookmarkedQuestions } = params;
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
   const [isChecked, setIsChecked] = useState(false);
@@ -66,18 +71,21 @@ const QuizScreen = () => {
   const router = useRouter();
 
   // Preload images for the current and next question
-  const preloadImages = useCallback(async (currentNum: string, nextNum: string) => {
-    if (currentNum) {
-      const currentURL = `${question_images_url}/${currentNum}.jpg`;
-      await ExpoImage.prefetch(currentURL); // Preload the current image
-      setImageURL(currentURL);
-    }
-    if (nextNum) {
-      const nextURL = `${question_images_url}/${nextNum}.jpg`;
-      await ExpoImage.prefetch(nextURL); // Preload the next image
-      setNextImageURL(nextURL);
-    }
-  }, []);
+  const preloadImages = useCallback(
+    async (currentNum: string, nextNum: string) => {
+      if (currentNum) {
+        const currentURL = `${question_images_url}/${currentNum}.jpg`;
+        await ExpoImage.prefetch(currentURL); // Preload the current image
+        setImageURL(currentURL);
+      }
+      if (nextNum) {
+        const nextURL = `${question_images_url}/${nextNum}.jpg`;
+        await ExpoImage.prefetch(nextURL); // Preload the next image
+        setNextImageURL(nextURL);
+      }
+    },
+    []
+  );
 
   // Fetch questions by category from Supabase
   const fetchQuestionsByCategory = async (category: string) => {
@@ -162,23 +170,28 @@ const QuizScreen = () => {
 
   const handleCheck = () => {
     if (isChecked) {
-      setCurrentQuestion(currentQuestion + 1);
-      setSelectedAnswers([]);
-      setIsChecked(filterCorrectAnswersOnly);
-      setImageURL(nextImageURL); // Set the next image URL
+      const nextQuestion = currentQuestion + 1; // Calculate the next question index
+
+      // Check if the next question exceeds the questions array length
+      if (nextQuestion >= questions.length) {
+        if (category) {
+          router.push("/learn");
+        } else if (BookmarkedQuestions) {
+          isChecked && router.push("/bookmarks");
+        } else {
+          router.push("/home");
+        }
+      } else {
+        setCurrentQuestion(nextQuestion); // Update the current question
+        setSelectedAnswers([]);
+        setIsChecked(filterCorrectAnswersOnly);
+        setImageURL(nextImageURL); // Set the next image URL
+      }
     } else {
       setIsChecked(true);
     }
-    console.log('check')
-    if (currentQuestion + 1 >= questions.length) {
-      if (category) {
-        router.push("/learn");
-      } else if (BookmarkedQuestions) {
-        isChecked && router.push("/bookmarks");
-      } else {
-        router.push("/home");
-      }
-    }
+
+    console.log("check");
   };
 
   const handleNextQuestion = () => {
@@ -204,6 +217,19 @@ const QuizScreen = () => {
     }
   };
 
+  const handlePreviousQuestion = () => {
+    if (currentQuestion > 0) {
+      const previousQuestion = currentQuestion - 1;
+      setCurrentQuestion(previousQuestion);
+      setSelectedAnswers([]); // Reset selected answers
+      setIsChecked(false); // Reset checked state
+
+      // Preload images for the previous question
+      const previousNum = questions[previousQuestion]?.question_number;
+      const currentNum = questions[currentQuestion]?.question_number;
+      preloadImages(previousNum, currentNum);
+    }
+  };
   const toggleTranslation = () => {
     setIsTranslated(!isTranslated);
   };
@@ -337,7 +363,12 @@ const QuizScreen = () => {
                     }/${questions.length}`}</Text>
                     {isExam && (
                       <View style={{ width: 50 }}>
-                        <Text style={{ fontSize: fontSizeSmall, fontWeight: "bold" }}>
+                        <Text
+                          style={{
+                            fontSize: fontSizeSmall,
+                            fontWeight: "bold",
+                          }}
+                        >
                           {formatTime(timer)}
                         </Text>
                       </View>
@@ -409,12 +440,29 @@ const QuizScreen = () => {
                 </View>
                 {!isExam && (
                   <View style={styles.bottomButtonsContainer}>
+                    {/* Back Button */}
                     <TouchableOpacity
-                      style={
+                      style={[
+                        styles.commonButton,
+                        styles.backButton,
+                        currentQuestion === 0 && styles.disabledButton, // Apply disabled style if it's the first question
+                      ]}
+                      onPress={handlePreviousQuestion}
+                      disabled={currentQuestion === 0}
+                    >
+                      <Ionicons
+                        name={"chevron-back-outline"}
+                        size={20}
+                        color={"#ffffff"}
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[
+                        styles.commonButton,
                         isChecked
                           ? styles.submitButton
-                          : styles.submitButtonUnchecked
-                      }
+                          : styles.submitButtonUnchecked,
+                      ]}
                       onPress={handleCheck}
                     >
                       <Text
@@ -435,7 +483,7 @@ const QuizScreen = () => {
                     {/* Translation Button */}
                     {!filterAlwaysShowTranslation && !isExam && (
                       <TouchableOpacity
-                        style={styles.translateButton}
+                        style={[styles.commonButton, styles.translateButton]}
                         onPress={toggleTranslation}
                       >
                         <View style={styles.languageIcon}>
@@ -450,11 +498,12 @@ const QuizScreen = () => {
                 {!quizEnded && isExam && (
                   <View style={styles.bottomButtonsContainer}>
                     <TouchableOpacity
-                      style={
+                      style={[
+                        styles.commonButton,
                         isChecked || isExam
                           ? styles.submitButton
-                          : styles.submitButtonUnchecked
-                      }
+                          : styles.submitButtonUnchecked,
+                      ]}
                       onPress={handleNextQuestion}
                     >
                       <Text
@@ -550,7 +599,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: width > 768 ? 5 : 3, // Adjusted for small screens
+    marginBottom: width > 768 ? 5 : 0, // Adjusted for small screens
     maxWidth: 800,
     alignSelf: "center",
     width: "100%",
@@ -577,8 +626,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   hamburgerIcon: {
-    width: width <= 380 ? 20 : 24,
-    height: width <= 380 ? 20 : 24,
+    width:  24,
+    height: 24,
     opacity: 0.8,
   },
   questionContainer: {
@@ -604,9 +653,9 @@ const styles = StyleSheet.create({
   },
   questionText: {
     fontSize: fontSizeNormal, // Adjusted for small screens
-    lineHeight:  width > 768 ? 26 : 20, // Adjusted for small screens
+    lineHeight: width > 768 ? 26 : 20, // Adjusted for small screens
     color: "#333",
-    marginTop:  width > 768 ? 10 : 5, // Adjusted for small screens
+    marginTop: width > 768 ? 10 : 0, // Adjusted for small screens
     marginBottom: width > 768 ? 10 : 5, // Adjusted for small screens
     maxWidth: 800,
     alignSelf: "center",
@@ -635,56 +684,65 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: width > 768 ? "2%" : "1%", // Adjusted for small screens
-    gap: width > 768 ? 16 : 12, // Adjusted for small screens
+    gap: width > 768 ? 10 : 5, // Adjusted for small screens
     alignSelf: "center",
     width: "100%",
     maxWidth: 800,
   },
+  commonButton: {
+    padding: width > 768 ? 13 : 10, // Consistent padding
+    borderWidth: 1, // Consistent border width
+    borderRadius: 8, // Consistent border radius
+    minHeight: 40, // Consistent minimum height
+    justifyContent: "center", // Center content vertically
+    alignItems: "center", // Center content horizontall
+    marginHorizontal: width > 768 ? 5 : 2, // Consistent margin between buttons
+  },
+
+  backButton: {
+    width: 50,
+    backgroundColor: blueColor,
+    borderColor: blueColor,
+  },
+  disabledButton: {
+    width: 50,
+    backgroundColor: "#ccc",
+    borderColor: "#ccc",
+  },
+
   submitButton: {
-    backgroundColor: "#007bff",
-    borderColor: "#007bff",
-    borderWidth: 4,
-    padding:  width > 768 ? 13 : 10, // Adjusted for small screens
-    borderRadius: 8,
-    flex: 1,
-    minHeight: 40,
-    alignItems: "center",
-    justifyContent: "center",
+    flex: 2, // Allow buttons to share equal width
+    backgroundColor: blueColor,
+    borderColor: blueColor,
+    borderWidth: 2,
+    minHeight: 42,
   },
   submitButtonUnchecked: {
+    flex: 1, // Allow buttons to share equal width
     backgroundColor: "#ffffff",
+    borderColor: blueColor,
     borderWidth: 2,
-    borderColor: "#007bff",
-    padding: width > 768 ? 13 : 10, // Adjusted for small screens
-    borderRadius: 8,
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    minHeight: 42,
   },
   submitButtonText: {
-    color: "#444",
+    color:  blueColor,
     fontSize: fontSizeSmall, // Adjusted for small screens
-    fontWeight: "600",
+    fontWeight: "bold",
   },
   submitButtonTextUnchecked: {
     color: "#fff",
-    fontSize:fontSizeSmall, // Adjusted for small screens
-    fontWeight: "600",
+    fontSize: fontSizeSmall, // Adjusted for small screens
+    fontWeight: "bold",
   },
   translateButton: {
-    backgroundColor: "#ffffff",
-    padding: width > 768 ? 13 : 10, // Adjusted for small screens
-    borderWidth: 2,
-    borderColor: "#333",
-    borderRadius: 8,
-    width: 50 , // Adjusted for small screens
-    justifyContent: "center",
-    alignItems: "center",
+    width: 50,
+    backgroundColor: blueColor,
+    borderColor: blueColor,
   },
   languageText: {
     fontSize: fontSizeSmall, // Adjusted for small screens
     fontWeight: "600",
-    color: "#333",
+    color: "#ffffff",
   },
   sidebar: {
     width: width > 950 ? 300 : "100%",
@@ -750,7 +808,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   skeletonImage: {
-    height:  width > 768 ? 300 : 220,
+    height: width > 768 ? 300 : 220,
     width: width > 768 ? 500 : 300,
     alignSelf: "center",
     backgroundColor: "#e1e1e1",

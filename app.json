@@ -21,11 +21,29 @@
       "package": "com.rezaafg.Fahrgut"
     },
     "web": {
+      "manifest": {
+        "icons": [
+          {
+            "src": "./assets/icons/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+          },
+          {
+            "src": "./assets/icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+          }
+        ]
+      },
+      "favicon": "./assets/icon_appstore.png",
       "name": "Fahrgut",
+      "startUrl": "/home",
+      "scope": "/",
       "bundler": "metro",
       "build": {
         "output": "web-build"
-      }
+      }, 
+       "pwa": true
     },
     "plugins": [
       "expo-router",
