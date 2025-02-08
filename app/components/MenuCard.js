@@ -41,7 +41,7 @@ const MenuCard = ({ sideColor, icon, title, route, isWeb }) => {
                 outputRange: [0.8, 1],
               }),
         },
-        { borderColor: sideColor },
+     
       ]}
       onPress={route}
     >
@@ -62,18 +62,10 @@ const styles = StyleSheet.create({
     aspectRatio: 4 / 3,
     backgroundColor: "#fff", // Ensure this is white
     borderRadius: 12,
-    borderLeftWidth: 5,
+  
     padding: 16,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-    elevation: 5,
   },
   cardText: {
     marginTop: 12,

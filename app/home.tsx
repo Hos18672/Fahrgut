@@ -9,14 +9,20 @@ import {
   Image,
   PanResponder,
   StatusBar,
+  Dimensions,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons"; 
-import { bgColor, fontSizeNormal, fontSizeSmall } from "./assets/base/styles_assets";
+import { Ionicons } from "@expo/vector-icons";
+import {
+  bgColor,
+  fontSizeNormal,
+  fontSizeSmall,
+} from "./assets/base/styles_assets";
 import HomeLearnCategories from "./components/HomeLearnCategories";
 import { useRouter } from "expo-router"; // Added useRouter for navigation
 import MenuCard from "./components/MenuCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useUser } from "@clerk/clerk-expo";
+const { width, height } = Dimensions.get("window");
 import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
 initI18n();
@@ -41,30 +47,41 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
-      <View style={styles.header}>
-        <Image
-          source={require("./assets/icon/logo.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-        <View style={styles.profileContainer}>
-          {Platform.OS === "web" && (
-            <TouchableOpacity
-              onPress={() => router.push("/profile")} // Use router.push for navigation
-            >  <Ionicons name={"person-outline"}  size={30} />
-            </TouchableOpacity>
-          )}
+      {width < 768 && (
+        <View style={styles.header}>
+          <Image
+            source={require("./assets/icon/logo.png")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
         </View>
-      </View>
+      )}
+      {width > 768 && (
+        <View style={styles.header}>
+          <Image
+            source={require("./assets/icon/logo.png")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
 
-      {/* Background Image (only for non-small screens) */}
-
+          <View style={styles.profileContainer}>
+            {Platform.OS === "web" && (
+              <TouchableOpacity onPress={() => router.push("/profile")}>
+                {" "}
+                <Ionicons name={"person-outline"} size={30} />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      )}
+       {width > 768 && (
       <Image
         source={require("./assets/icon/street.png")}
         style={styles.backgroundStreet}
         resizeMode="cover"
       />
-      {Platform.OS !== "web" && <HomeLearnCategories />}
+    )}
+      {Platform.OS !== "web" || (width < 768 && <HomeLearnCategories />)}
       {/* Main Content Section */}
       <View
         style={[
@@ -131,7 +148,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: Platform.OS === "web" ? "#ffffff" : "transparent",
+    backgroundColor: Platform.OS === "web" && width > 768 ? "#ffffff" : "transparent",
     paddingHorizontal: 16,
     paddingVertical: 5,
     gap: 0,

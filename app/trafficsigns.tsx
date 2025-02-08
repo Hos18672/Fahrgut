@@ -240,7 +240,7 @@ const TrafficSignsScreen = () => {
                     {selectedSign.title_fa ? selectedSign.title_fa : i18n.t("noTitleFA")}
                   </Text>
                 </View>
-                <View>
+                <View style={styles.navigationButtonsContainer}>
                   <View style={styles.navigationButtons}>
                     <TouchableOpacity
                       style={styles.navButton}
@@ -385,15 +385,20 @@ const styles = StyleSheet.create({
     color: "#666",
     textAlign: "center",
   },
+  navigationButtonsContainer:{
+    width: "100%",
+    alignContent: "center",
+  },
   navigationButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: Platform.OS === "web" ? (width > 768 ? 400 : "90%") : "95%", // Adjusted for small screens
-    marginTop: width > 768 ? 16 : 12, // Adjusted for small screens
-    gap: width > 768 ? 40 : 20, // Adjusted for small screens
+    width: Platform.OS === "web" ? (width > 768 ? 700 : "95%") : "95%", 
+    marginTop: width > 768 ? 16 : 12, 
+    gap: width > 768 ? 40 : 20, 
+    alignSelf: "center"
   },
   navButton: {
-    padding: width > 768 ? 15 : 10, // Increased padding for small screens
+    padding: width > 768 ? 15 : 10,
     backgroundColor: "white",
     borderRadius: 8,
     flex: 1,
@@ -415,6 +420,10 @@ const styles = StyleSheet.create({
     backgroundColor: blueColor,
     borderRadius: 8,
     alignItems: "center",
+    marginLeft: 10,
+    marginRight: 10,
+    alignSelf: "center",
+    width: Platform.OS === "web" ? (width > 768 ? 700 : "95%") : "95%", 
   },
   closeButtonText: {
     fontSize: fontSizeSmall, // Smaller font size for small screens

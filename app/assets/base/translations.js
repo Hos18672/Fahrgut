@@ -88,6 +88,8 @@ export const resources = {
       dontHaveAnAccount:"Don't have an account?",
       enterPassword:  "Passwort eingeben",
       enterEmail:   "Enter email",
+      personalInfo: "Personal Info",
+
     },
   },
   de: {
@@ -181,6 +183,8 @@ export const resources = {
       dontHaveAnAccount: "Sie haben kein Konto?",
       enterPassword:  "Passwort eingeben",
       enterEmail:  "E-Mail eingeben",
+      personalInfo: "Persönliche Informationen",
+
     },
   },
   fa: {
@@ -270,6 +274,7 @@ export const resources = {
       dontHaveAnAccount: "حساب کاربری ندارید؟",
       enterPassword:  "رمز عبور را وارد کنید",
       enterEmail: "ایمیل را وارد کنید",
+      personalInfo: "اطلاعات شخصی"
       
     },
   },

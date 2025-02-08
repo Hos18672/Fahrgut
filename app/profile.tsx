@@ -17,7 +17,11 @@ import {
   KeyboardAvoidingView,
   ScrollView,
 } from "react-native";
-import { bgColor, fontSizeNormal, fontSizeSmall } from "./assets/base/styles_assets";
+import {
+  bgColor,
+  fontSizeNormal,
+  fontSizeSmall,
+} from "./assets/base/styles_assets";
 import { supabase } from "./services/supabase";
 import { Ionicons } from "@expo/vector-icons";
 import i18n from "i18next";
@@ -125,8 +129,10 @@ const ProfileScreen = () => {
             </View>
 
             {/* Language Selector */}
-            <View style={styles.languageSelector}>
-              <Text style={styles.label}>{i18n.t("selectLanguage")}</Text>
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>
+                {i18n.t("selectLanguage")}
+              </Text>
               <View style={styles.pickerContainer}>
                 <Picker
                   selectedValue={selectedLanguage}
@@ -145,75 +151,92 @@ const ProfileScreen = () => {
             </View>
 
             {/* User Information */}
-            {isEditing ? (
-              <>
-                <TextInput
-                  style={styles.input}
-                  value={firstName}
-                  onChangeText={setFirstName}
-                  placeholder={i18n.t("firstName")}
-                />
-                <TextInput
-                  style={styles.input}
-                  value={lastName}
-                  onChangeText={setLastName}
-                  placeholder={i18n.t("lastName")}
-                />
-                <TextInput
-                  style={styles.input}
-                  value={email}
-                  disabled={true}
-                  placeholder={i18n.t("email")}
-                  keyboardType="email-address"
-                />
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>{i18n.t("personalInfo")}</Text>
+              {isEditing ? (
+                <>
+                  <TextInput
+                    style={styles.input}
+                    value={firstName}
+                    onChangeText={setFirstName}
+                    placeholder={i18n.t("firstName")}
+                  />
+                  <TextInput
+                    style={styles.input}
+                    value={lastName}
+                    onChangeText={setLastName}
+                    placeholder={i18n.t("lastName")}
+                  />
+                  <TextInput
+                    style={styles.input}
+                    value={email}
+                    disabled={true}
+                    placeholder={i18n.t("email")}
+                    keyboardType="email-address"
+                  />
 
-                <View style={styles.buttonsContainer}>
-                  <TouchableOpacity
-                    style={styles.saveButton}
-                    onPress={handleUpdateProfile}
+                  <View style={styles.buttonsContainer}>
+                    <TouchableOpacity
+                      style={[styles.button, styles.saveButton]}
+                      onPress={handleUpdateProfile}
+                    >
+                      <Text style={styles.buttonText}>{i18n.t("save")}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[styles.button, styles.cancelButton]}
+                      onPress={() => setIsEditing(false)}
+                    >
+                      <Text style={styles.buttonText}>{i18n.t("cancel")}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              ) : (
+                <>
+                  <View
+                    style={[
+                      styles.infoRow,
+                      i18n.language === "fa" && styles.infoRowRTL,
+                    ]}
                   >
-                    <Ionicons name="save-outline" size={20} color="#fff" />
-                    <Text style={styles.saveButtonText}>{i18n.t("save")}</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.CancelEditButton}
-                    onPress={() => setIsEditing(false)}
+                    <Text style={styles.infoLabel}>{i18n.t("firstName")}</Text>
+                    <Text style={styles.infoValue}>{firstName}</Text>
+                  </View>
+                  <View
+                    style={[
+                      styles.infoRow,
+                      i18n.language === "fa" && styles.infoRowRTL,
+                    ]}
                   >
-                    <Text style={styles.editButtonText}>{i18n.t("cancel")}</Text>
+                    <Text style={styles.infoLabel}>{i18n.t("lastName")}</Text>
+                    <Text style={styles.infoValue}>{lastName}</Text>
+                  </View>
+                  <View
+                    style={[
+                      styles.infoRow,
+                      i18n.language === "fa" && styles.infoRowRTL,
+                    ]}
+                  >
+                    <Text style={styles.infoLabel}>{i18n.t("email")}</Text>
+                    <Text style={styles.infoValue}>{email}</Text>
+                  </View>
+                  <TouchableOpacity
+                    style={[styles.button, styles.editButton]}
+                    onPress={() => setIsEditing(true)}
+                  >
+                    <Text style={styles.buttonText}>
+                      {i18n.t("editProfile")}
+                    </Text>
                   </TouchableOpacity>
-                </View>
-              </>
-            ) : (
-              <>
-                <View style={styles.infoContainer}>
-                  <Text style={styles.infoLabel}>{i18n.t("firstName")}</Text>
-                  <Text style={styles.infoValue}>{firstName}</Text>
-                </View>
-                <View style={styles.infoContainer}>
-                  <Text style={styles.infoLabel}>{i18n.t("lastName")}</Text>
-                  <Text style={styles.infoValue}>{lastName}</Text>
-                </View>
-                <View style={styles.infoContainer}>
-                  <Text style={styles.infoLabel}>{i18n.t("email")}</Text>
-                  <Text style={styles.infoValue}>{email}</Text>
-                </View>
-                <TouchableOpacity
-                  style={styles.editButton}
-                  onPress={() => setIsEditing(true)}
-                >
-                  <Ionicons name="create-outline" size={20} color="#fff" />
-                  <Text style={styles.editButtonText}>{i18n.t("editProfile")}</Text>
-                </TouchableOpacity>
-              </>
-            )}
+                </>
+              )}
+            </View>
 
             {/* Sign Out Button */}
             <TouchableOpacity
-              style={styles.signOutButton}
+              style={[styles.button, styles.signOutButton]}
               onPress={handleSignOut}
             >
-              <Ionicons name="log-out-outline" size={20} color="#fff" />
-              <Text style={styles.signOutButtonText}>{i18n.t("signOut")}</Text>
+              <Text style={styles.buttonText}>{i18n.t("signOut")}</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -229,140 +252,113 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
+    padding: 16,
+    gap: 10,
+    alignSelf: 'center',
+    width: '100%',
   },
   profileCard: {
     width: "100%",
     maxWidth: 500,
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    padding: 25,
-    paddingVertical: 40,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 5,
+    borderRadius: 12,
+    padding: 20,
+    gap: 10,
+    alignSelf: 'center',
   },
   profileHeader: {
     alignItems: "center",
-    marginBottom: 30,
+    marginBottom: 24,
   },
   profileGreeting: {
-    fontSize: 22,
-    fontWeight: "bold",
+    fontSize: 20,
+    fontWeight: "600",
     color: "#333",
   },
-  languageSelector: {
+  section: {
     width: "100%",
-    marginBottom: 20,
+    marginBottom: 24,
+    gap: 5,
   },
-  label: {
-    fontSize: fontSizeSmall,
-    color: "#666",
-    marginBottom: 5,
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: 12,
   },
   pickerContainer: {
     width: "100%",
     borderColor: "#ddd",
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 8,
     backgroundColor: "#f9f9f9",
   },
   picker: {
     width: "100%",
-    height: 50,
+    height: 48,
   },
-  infoContainer: {
-    width: "100%",
-    marginBottom: 20,
+  infoRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+  infoRowRTL: {
+    flexDirection: "row-reverse", // Right-to-left for Persian
   },
   infoLabel: {
-    fontSize: fontSizeSmall,
+    fontSize: 14,
     color: "#666",
-    marginBottom: 5,
   },
   infoValue: {
-    fontSize: fontSizeNormal,
+    fontSize: 14,
     fontWeight: "500",
     color: "#333",
   },
   input: {
     width: "100%",
-    height: 50,
+    height: 48,
     borderColor: "#ddd",
     borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    marginBottom: 15,
-    fontSize: fontSizeSmall,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    marginBottom: 12,
+    fontSize: 14,
     backgroundColor: "#f9f9f9",
   },
   buttonsContainer: {
-    width: "100%",
     flexDirection: "row",
-    gap: 10,
+    justifyContent: "space-between",
+    marginTop: 16,
+  },
+  button: {
+    flex: 1,
+    height: 48,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 4,
   },
   editButton: {
-    width: "100%",
-    height: 50,
+    marginTop: 10,
+    minHeight: 48,
     backgroundColor: "#007bff",
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 15,
-    flexDirection: "row",
-  },
-  CancelEditButton: {
-    width: "32%",
-    height: 50,
-    backgroundColor: "#ff4444",
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 15,
-    flexDirection: "row",
-  },
-  editButtonText: {
-    fontSize: fontSizeSmall,
-    fontWeight: "bold",
-    color: "#fff",
   },
   saveButton: {
-    width: "65%",
-    height: 50,
     backgroundColor: "#28a745",
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 15,
-    flexDirection: "row",
-    gap: 10,
   },
-  saveButtonText: {
-    fontSize: fontSizeSmall,
-    fontWeight: "bold",
-    color: "#fff",
+  cancelButton: {
+    backgroundColor: "#ff4444",
   },
   signOutButton: {
-    left:0,
-    alignSelf:"left",
-    width: "50%",
-    height: 50,
+    minHeight: 48,
     backgroundColor: "#ff4444",
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "row",
-    gap: 10,
-    marginTop: 20,
+    marginTop: 24,
   },
-  signOutButtonText: {
-    fontSize: fontSizeSmall,
-    fontWeight: "bold",
+  buttonText: {
+    fontSize: 14,
+    fontWeight: "600",
     color: "#fff",
   },
 });

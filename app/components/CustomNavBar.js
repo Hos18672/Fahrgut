@@ -138,7 +138,7 @@ const CustomBottomNav = React.memo(({ screenName }) => {
                 </View>
                 <Text
                   style={{
-                    fontSize: 12,
+                    fontSize: 10,
                     marginTop: 4,
                     fontWeight: isSelected ? "600" : "400",
                     color: isSelected ? "#111827" : "#6B7280",

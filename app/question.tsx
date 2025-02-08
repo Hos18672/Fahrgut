@@ -65,11 +65,21 @@ const QuizScreen = () => {
   const [bookmarked, setBookmarked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [textAlign, setTextAlign] = useState("left");
+  const [userAnswers, setUserAnswers] = useState<{ [key: number]: string[] }>(
+    {}
+  ); // Store user answers for each question
+  const [answerHistory, setAnswerHistory] = useState<{ [key: number]: string[] }>({});
+  const [answeredQuestions, setAnsweredQuestions] = useState<Set<number>>(new Set());
+
   const question_images_url =
     "https://osfxlrmxaifoehvxztqv.supabase.co/storage/v1/object/public/question_images";
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
+  useEffect(() => {
+    // Initialize first question as visited
+   setAnsweredQuestions(new Set());
+  }, []);
   // Preload images for the current and next question
   const preloadImages = useCallback(
     async (currentNum: string, nextNum: string) => {
@@ -159,20 +169,19 @@ const QuizScreen = () => {
 
     preloadImages(firstQuestionNumber, nextQuestionNumber);
   }, []);
-
-  const handleCheckboxChange = (option: string) => {
-    if (isChecked) return; // Prevent changing answers after checking
-    const updatedAnswers = selectedAnswers.includes(option)
-      ? selectedAnswers.filter((answer) => answer !== option)
-      : [...selectedAnswers, option];
-    setSelectedAnswers(updatedAnswers);
-  };
-
   const handleCheck = () => {
     if (isChecked) {
-      const nextQuestion = currentQuestion + 1; // Calculate the next question index
+      const nextQuestion = currentQuestion + 1;
 
-      // Check if the next question exceeds the questions array length
+      // Store current answers in history
+      setAnswerHistory(prev => ({
+        ...prev,
+        [currentQuestion]: selectedAnswers
+      }));
+      
+      // Mark current question as answered
+      setAnsweredQuestions(prev => new Set([...prev, currentQuestion]));
+
       if (nextQuestion >= questions.length) {
         if (category) {
           router.push("/learn");
@@ -182,16 +191,46 @@ const QuizScreen = () => {
           router.push("/home");
         }
       } else {
-        setCurrentQuestion(nextQuestion); // Update the current question
-        setSelectedAnswers([]);
-        setIsChecked(filterCorrectAnswersOnly);
-        setImageURL(nextImageURL); // Set the next image URL
+        setCurrentQuestion(nextQuestion);
+        // Only restore answers if the question was previously answered
+        if (answeredQuestions.has(nextQuestion)) {
+          setSelectedAnswers(answerHistory[nextQuestion] || []);
+          setIsChecked(true);
+        } else {
+          setSelectedAnswers([]);
+          setIsChecked(filterCorrectAnswersOnly);
+        }
+        setImageURL(nextImageURL);
       }
     } else {
       setIsChecked(true);
     }
+  };
 
-    console.log("check");
+  const handlePreviousQuestion = () => {
+    if (currentQuestion > 0) {
+      const previousQuestion = currentQuestion - 1;
+      
+      // If current question was checked, store its answers
+      if (isChecked) {
+        setAnswerHistory(prev => ({
+          ...prev,
+          [currentQuestion]: selectedAnswers
+        }));
+        setAnsweredQuestions(prev => new Set([...prev, currentQuestion]));
+      }
+
+      // Restore previous question's answers
+      setSelectedAnswers(answerHistory[previousQuestion] || []);
+      setCurrentQuestion(previousQuestion);
+      // Only show as checked if it was previously answered
+      setIsChecked(answeredQuestions.has(previousQuestion));
+
+      // Preload images for the previous question
+      const previousNum = questions[previousQuestion]?.question_number;
+      const currentNum = questions[currentQuestion]?.question_number;
+      preloadImages(previousNum, currentNum);
+    }
   };
 
   const handleNextQuestion = () => {
@@ -202,13 +241,29 @@ const QuizScreen = () => {
         userAnswers: selectedAnswers,
       };
 
+      // Store current answers in history
+      setAnswerHistory(prev => ({
+        ...prev,
+        [currentQuestion]: selectedAnswers
+      }));
+      setAnsweredQuestions(prev => new Set([...prev, currentQuestion]));
+
       setExamAnsweredQuestions([...examAnsweredQuestions, currentQuestionData]);
 
       if (currentQuestion + 1 < questions.length) {
-        setCurrentQuestion(currentQuestion + 1);
-        setSelectedAnswers([]);
-        setIsChecked(false);
-        setImageURL(nextImageURL); // Set the next image URL
+        const nextQuestion = currentQuestion + 1;
+        setCurrentQuestion(nextQuestion);
+        
+        // Only restore answers if question was previously answered
+        if (answeredQuestions.has(nextQuestion)) {
+          setSelectedAnswers(answerHistory[nextQuestion] || []);
+          setIsChecked(true);
+        } else {
+          setSelectedAnswers([]);
+          setIsChecked(false);
+        }
+        
+        setImageURL(nextImageURL);
         setTimer((prevTimer) => prevTimer - 1);
       } else {
         setQuizEnded(true);
@@ -217,19 +272,17 @@ const QuizScreen = () => {
     }
   };
 
-  const handlePreviousQuestion = () => {
-    if (currentQuestion > 0) {
-      const previousQuestion = currentQuestion - 1;
-      setCurrentQuestion(previousQuestion);
-      setSelectedAnswers([]); // Reset selected answers
-      setIsChecked(false); // Reset checked state
-
-      // Preload images for the previous question
-      const previousNum = questions[previousQuestion]?.question_number;
-      const currentNum = questions[currentQuestion]?.question_number;
-      preloadImages(previousNum, currentNum);
-    }
+  const handleCheckboxChange = (option: string) => {
+    // Allow changes only if not checked
+    if (isChecked) return;
+    
+    const updatedAnswers = selectedAnswers.includes(option)
+      ? selectedAnswers.filter((answer) => answer !== option)
+      : [...selectedAnswers, option];
+    setSelectedAnswers(updatedAnswers);
   };
+
+
   const toggleTranslation = () => {
     setIsTranslated(!isTranslated);
   };
@@ -456,6 +509,7 @@ const QuizScreen = () => {
                         color={"#ffffff"}
                       />
                     </TouchableOpacity>
+                    {/* Check/Next Button */}
                     <TouchableOpacity
                       style={[
                         styles.commonButton,
@@ -626,7 +680,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   hamburgerIcon: {
-    width:  24,
+    width: 24,
     height: 24,
     opacity: 0.8,
   },
@@ -725,7 +779,7 @@ const styles = StyleSheet.create({
     minHeight: 42,
   },
   submitButtonText: {
-    color:  blueColor,
+    color: blueColor,
     fontSize: fontSizeSmall, // Adjusted for small screens
     fontWeight: "bold",
   },

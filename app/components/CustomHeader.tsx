@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router"; // Expo Router's navigation hook
 import { Ionicons } from "@expo/vector-icons"; // For the back button icon
-import { blackColor, blueColor } from "../assets/base/styles_assets";
+import { blackColor, blueColor,bgColor, fontSizeNormal, fontSizeSmall } from "../assets/base/styles_assets";
 
 interface CustomHeaderProps {
   title: string; // Title to display in the header
@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
+    backgroundColor: bgColor,
     justifyContent: "space-between",
     paddingTop: Platform.OS === "web" ? 10 : 5, // Adjust for iOS status bar
     paddingBottom: 10,
@@ -94,8 +95,9 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   title: {
+    paddingTop: 3,
     minWidth: 200,
-    fontSize: 18,
+    fontSize: fontSizeNormal,
     fontWeight: "bold",
     color: "#000",
     textAlign: "left",

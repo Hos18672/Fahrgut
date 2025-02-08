@@ -5,10 +5,10 @@ import "react-native-reanimated";
 import { ClerkProvider, ClerkLoaded, useAuth } from "@clerk/clerk-expo";
 import { Slot, useSegments } from "expo-router";
 import { tokenCache } from '@/utils/cache';
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Dimensions, } from "react-native";
 import CustomBottomNav from "./components/CustomNavBar";
 import { Platform } from "react-native";
-
+const { width, height } = Dimensions.get("window");
 export default function RootLayout() {
   const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 
@@ -48,12 +48,12 @@ function AuthRedirectHandler() {
     }
   }, [isLoaded, isSignedIn, pathname]);
 
-  const showBottomNav = isSignedIn && !segments.includes("login") && !segments.includes("question") && Platform.OS !== "web";
+  const showBottomNav = isSignedIn && !segments.includes("login") && !segments.includes("question");
 
   return (
     <View style={styles.container}>
       <Slot />
-      {showBottomNav && <CustomBottomNav screenName={segments[0]} />}
+      { width < 768 && showBottomNav && <CustomBottomNav screenName={segments[0]} />}
     </View>
   );
 }
