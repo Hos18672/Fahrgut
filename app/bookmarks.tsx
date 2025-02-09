@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: bgColor,
     flex: 1,
-    paddingBottom: Platform.OS === "web" ? 10 : 80,
+    paddingBottom: Platform.OS === "web" || width < 750 ? 10 : 180,
     paddingHorizontal: width > 950 ? "20%" : 5,
   },
   list:{
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
     marginHorizontal: 10,
-    marginBottom: 20,
+    marginBottom: width < 750 ? 90 : 20,
   },
   reviewButtonText: {
     fontSize: fontSizeSmall,

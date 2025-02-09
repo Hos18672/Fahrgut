@@ -75,7 +75,7 @@ const CustomBottomNav = React.memo(({ screenName }) => {
         backgroundColor: "white",
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,
-        shadowColor: "#000",
+        shadowColor: "#888",
         shadowOffset: {
           width: 0,
           height: -2,

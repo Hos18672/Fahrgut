@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
   View,
+  ScrollView,
   Platform,
   SafeAreaView,
   StyleSheet,
@@ -46,95 +47,98 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
-      <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
-      {width < 768 && (
-        <View style={styles.header}>
-          <Image
-            source={require("./assets/icon/logo.png")}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-        </View>
-      )}
       {width > 768 && (
-        <View style={styles.header}>
-          <Image
-            source={require("./assets/icon/logo.png")}
-            style={styles.logo}
-            resizeMode="contain"
+        <Image
+          source={require("./assets/icon/street.png")}
+          style={styles.backgroundStreet}
+          resizeMode="cover"
+        />
+      )}
+      <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
+      <ScrollView style={styles.ScrollView}>
+        {width < 768 && (
+          <View style={styles.header}>
+            <Image
+              source={require("./assets/icon/logo.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+          </View>
+        )}
+        {width > 768 && (
+          <View style={styles.header}>
+            <Image
+              source={require("./assets/icon/logo.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+
+            <View style={styles.profileContainer}>
+              {Platform.OS === "web" && (
+                <TouchableOpacity onPress={() => router.push("/profile")}>
+                  {" "}
+                  <Ionicons name={"person-outline"} size={30} />
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        )}
+
+        {Platform.OS !== "web" || (width < 768 && <HomeLearnCategories />)}
+        {/* Main Content Section */}
+        <View
+          style={[
+            styles.mainContent,
+            Platform.OS != "web" && styles.mainContentSmall,
+          ]}
+        >
+          <MenuCard
+            sideColor={"#9f00a2"}
+            icon={require("./assets/icon/study.png")}
+            title={"learn"}
+            route={() => router.push("/learn")} // Use router.push for navigation
+            isWeb={isWeb}
+          />
+          <MenuCard
+            sideColor={"#ff9100"}
+            icon={require("./assets/icon/quiz.png")}
+            title={"quiz"}
+            route={() => router.push("/question")} // Use router.push for navigation
+            isWeb={isWeb}
+          />
+          <MenuCard
+            sideColor={"#ff00e1"}
+            icon={require("./assets/icon/exam_icon.png")}
+            title={"exam"}
+            route={() =>
+              router.push({ pathname: "/exam", params: { isExam: true } })
+            }
+            isWeb={isWeb}
           />
 
-          <View style={styles.profileContainer}>
-            {Platform.OS === "web" && (
-              <TouchableOpacity onPress={() => router.push("/profile")}>
-                {" "}
-                <Ionicons name={"person-outline"} size={30} />
-              </TouchableOpacity>
-            )}
-          </View>
+          <MenuCard
+            sideColor={"#f72d00"}
+            icon={require("./assets/icon/road-sign.png")}
+            title={"trafficSigns"}
+            route={() => router.push("/trafficsigns")} // Use router.push for navigation
+            isWeb={isWeb}
+          />
+          <MenuCard
+            sideColor={"#00e31a"}
+            icon={require("./assets/icon/book.png")}
+            title={"commonWords"}
+            route={() => router.push("/commonwords")} // Use router.push for navigation
+            isWeb={isWeb}
+          />
+          <MenuCard
+            sideColor={"#007bff"}
+            icon={require("./assets/icon/bookmark_icon.png")}
+            title={"bookmarks"}
+            route={() => router.push("/bookmarks")} // Use router.push for navigation
+            isWeb={isWeb}
+          />
         </View>
-      )}
-       {width > 768 && (
-      <Image
-        source={require("./assets/icon/street.png")}
-        style={styles.backgroundStreet}
-        resizeMode="cover"
-      />
-    )}
-      {Platform.OS !== "web" || (width < 768 && <HomeLearnCategories />)}
-      {/* Main Content Section */}
-      <View
-        style={[
-          styles.mainContent,
-          Platform.OS != "web" && styles.mainContentSmall,
-        ]}
-      >
-        <MenuCard
-          sideColor={"#007bff"}
-          icon={require("./assets/icon/bookmark_icon.png")}
-          title={"bookmarks"}
-          route={() => router.push("/bookmarks")} // Use router.push for navigation
-          isWeb={isWeb}
-        />
-        <MenuCard
-          sideColor={"#f72d00"}
-          icon={require("./assets/icon/road-sign.png")}
-          title={"trafficSigns"}
-          route={() => router.push("/trafficsigns")} // Use router.push for navigation
-          isWeb={isWeb}
-        />
-        <MenuCard
-          sideColor={"#00e31a"}
-          icon={require("./assets/icon/book.png")}
-          title={"commonWords"}
-          route={() => router.push("/commonwords")} // Use router.push for navigation
-          isWeb={isWeb}
-        />
-
-        <MenuCard
-          sideColor={"#9f00a2"}
-          icon={require("./assets/icon/study.png")}
-          title={"learn"}
-          route={() => router.push("/learn")} // Use router.push for navigation
-          isWeb={isWeb}
-        />
-        <MenuCard
-          sideColor={"#ff9100"}
-          icon={require("./assets/icon/quiz.png")}
-          title={"quiz"}
-          route={() => router.push("/question")} // Use router.push for navigation
-          isWeb={isWeb}
-        />
-        <MenuCard
-          sideColor={"#ff00e1"}
-          icon={require("./assets/icon/exam_icon.png")}
-          title={"exam"}
-          route={() =>
-            router.push({ pathname: "/question", params: { isExam: true } })
-          }
-          isWeb={isWeb}
-        />
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -144,11 +148,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: bgColor,
   },
+  ScrollView: {
+    flex: 1,
+    height: "100%",
+    paddingBottom: width < 750 ? 90 : 10,
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: Platform.OS === "web" && width > 768 ? "#ffffff" : "transparent",
+    backgroundColor:
+      Platform.OS === "web" && width > 768 ? "#ffffff" : "transparent",
     paddingHorizontal: 16,
     paddingVertical: 5,
     gap: 0,

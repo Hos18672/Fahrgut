@@ -13,6 +13,7 @@ import { blackColor, blueColor,bgColor, fontSizeNormal, fontSizeSmall } from "..
 
 interface CustomHeaderProps {
   title: string; // Title to display in the header
+  customRoute: String,
   showBackButton?: boolean; // Whether to show the back button
   iconRight?: string;
   iconRightHandler?: () => void; // Callback function for icon press
@@ -20,19 +21,20 @@ interface CustomHeaderProps {
 
 const CustomHeader: React.FC<CustomHeaderProps> = ({
   title,
+  customRoute= 'home',
   showBackButton = true,
   iconRight = "",
   iconRightHandler,
 }) => {
   const router = useRouter(); // Expo Router's navigation hook
   const handleBack = () => {
-    router.replace("/home"); // Navigate back to the previous screen
+    router.replace(`/${customRoute}`); // Navigate back to the previous screen
   };
 
   // Handle Android hardware back button
   useEffect(() => {
     const backAction = () => {
-      router.replace("/home"); // Navigate back to the previous screen
+      router.replace(`/${customRoute}`); // Navigate back to the previous screen
     };
 
     // Add event listener for hardware back button

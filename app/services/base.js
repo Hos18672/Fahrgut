@@ -30,12 +30,13 @@ const shuffleArray = (array) => {
 };
 
 
-export const GetRandomQuestions = async () => {
+export const GetRandomQuestions = async (selectedTypes) => {
   try {
+    console.log(selectedTypes)
     // Fetch all questions from Supabase
     const { data: allQuestions, error } = await supabase
       .from("question")
-      .select("*");
+      .select("*").in("type", selectedTypes);
 
     if (error) throw error;
 

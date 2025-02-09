@@ -17,7 +17,7 @@ import { useLocalSearchParams, useRouter } from "expo-router"; // Use Expo Route
 import { SafeAreaView } from "react-native-safe-area-context";
 import ResponsiveQuizImage from "./components/ResponsiveQuizImage";
 import ExamResultScreen from "./examrsult";
-import CheckboxField from "./components/CheckBoxField";
+import CheckboxField from "./components/QuestionCheckBoxField";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QuizScreenParams, Question } from "./types";
 import { renderFilters } from "./base";
@@ -45,7 +45,8 @@ const QuizScreen = () => {
   const { user } = useUser();
   const cureentUserEmail = user?.emailAddresses[0].emailAddress;
   const params = useLocalSearchParams<QuizScreenParams>();
-  const { isExam, category, BookmarkedQuestions } = params;
+  const { isExam, category, BookmarkedQuestions, GWIsSelected, BIsSelected } =
+    params;
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
   const [isChecked, setIsChecked] = useState(false);
@@ -61,15 +62,17 @@ const QuizScreen = () => {
   const [timer, setTimer] = useState(1800);
   const [quizEnded, setQuizEnded] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [questionsLength, setQuestionsLength] = useState(0);
   const [examAnsweredNums, setExamAnsweredNums] = useState(0);
   const [bookmarked, setBookmarked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [textAlign, setTextAlign] = useState("left");
-  const [userAnswers, setUserAnswers] = useState<{ [key: number]: string[] }>(
-    {}
-  ); // Store user answers for each question
-  const [answerHistory, setAnswerHistory] = useState<{ [key: number]: string[] }>({});
-  const [answeredQuestions, setAnsweredQuestions] = useState<Set<number>>(new Set());
+  const [answerHistory, setAnswerHistory] = useState<{
+    [key: number]: string[];
+  }>({});
+  const [answeredQuestions, setAnsweredQuestions] = useState<Set<number>>(
+    new Set()
+  );
 
   const question_images_url =
     "https://osfxlrmxaifoehvxztqv.supabase.co/storage/v1/object/public/question_images";
@@ -78,7 +81,7 @@ const QuizScreen = () => {
 
   useEffect(() => {
     // Initialize first question as visited
-   setAnsweredQuestions(new Set());
+    setAnsweredQuestions(new Set());
   }, []);
   // Preload images for the current and next question
   const preloadImages = useCallback(
@@ -119,14 +122,16 @@ const QuizScreen = () => {
       let questionSet = (await AllQuestions()) || [];
 
       if (isExam) {
-        questionSet = await GetRandomQuestions();
+        const gw = GWIsSelected  == 'true' && "GW";
+        const b = BIsSelected == 'true' && "B" ;
+        questionSet = await GetRandomQuestions([gw, b]);
+        setQuestionsLength(questionSet.length);
       } else if (category) {
         // Fetch questions from Supabase based on the category
         questionSet = await fetchQuestionsByCategory(category);
       } else if (BookmarkedQuestions) {
         questionSet = JSON.parse(BookmarkedQuestions);
       }
-
       setQuestions(questionSet);
       setLoading(false);
     };
@@ -134,18 +139,9 @@ const QuizScreen = () => {
     initQuestions();
   }, [isExam, category, BookmarkedQuestions]);
 
-  useEffect(() => {
-    if (questions.length > 0) {
-      getBookmarked();
-      const currentNum = questions[currentQuestion]?.question_number;
-      const nextNum = questions[currentQuestion + 1]?.question_number;
-      preloadImages(currentNum, nextNum);
-    }
-  }, [questions, currentQuestion, preloadImages]);
-
   // Timer functionality
   useEffect(() => {
-    if (timer <= 0 || examAnsweredNums === GetRandomQuestions().length) {
+    if (timer <= 0 || (examAnsweredNums > 0 && examAnsweredNums === questionsLength)) {
       setQuizEnded(true);
       return; // Stop timer
     }
@@ -162,6 +158,14 @@ const QuizScreen = () => {
     setTextAlign(isTranslated === "fa" ? "right" : "left");
   }, [timer, examAnsweredNums, textAlign]);
 
+  useEffect(() => {
+    if (questions.length > 0) {
+      getBookmarked();
+      const currentNum = questions[currentQuestion]?.question_number;
+      const nextNum = questions[currentQuestion + 1]?.question_number;
+      preloadImages(currentNum, nextNum);
+    }
+  }, [questions, currentQuestion, preloadImages]);
   // Preload the image for the first question on mount
   useEffect(() => {
     const firstQuestionNumber = questions[0]?.question_number;
@@ -174,13 +178,13 @@ const QuizScreen = () => {
       const nextQuestion = currentQuestion + 1;
 
       // Store current answers in history
-      setAnswerHistory(prev => ({
+      setAnswerHistory((prev) => ({
         ...prev,
-        [currentQuestion]: selectedAnswers
+        [currentQuestion]: selectedAnswers,
       }));
-      
+
       // Mark current question as answered
-      setAnsweredQuestions(prev => new Set([...prev, currentQuestion]));
+      setAnsweredQuestions((prev) => new Set([...prev, currentQuestion]));
 
       if (nextQuestion >= questions.length) {
         if (category) {
@@ -210,14 +214,14 @@ const QuizScreen = () => {
   const handlePreviousQuestion = () => {
     if (currentQuestion > 0) {
       const previousQuestion = currentQuestion - 1;
-      
+
       // If current question was checked, store its answers
       if (isChecked) {
-        setAnswerHistory(prev => ({
+        setAnswerHistory((prev) => ({
           ...prev,
-          [currentQuestion]: selectedAnswers
+          [currentQuestion]: selectedAnswers,
         }));
-        setAnsweredQuestions(prev => new Set([...prev, currentQuestion]));
+        setAnsweredQuestions((prev) => new Set([...prev, currentQuestion]));
       }
 
       // Restore previous question's answers
@@ -242,18 +246,18 @@ const QuizScreen = () => {
       };
 
       // Store current answers in history
-      setAnswerHistory(prev => ({
+      setAnswerHistory((prev) => ({
         ...prev,
-        [currentQuestion]: selectedAnswers
+        [currentQuestion]: selectedAnswers,
       }));
-      setAnsweredQuestions(prev => new Set([...prev, currentQuestion]));
+      setAnsweredQuestions((prev) => new Set([...prev, currentQuestion]));
 
       setExamAnsweredQuestions([...examAnsweredQuestions, currentQuestionData]);
 
       if (currentQuestion + 1 < questions.length) {
         const nextQuestion = currentQuestion + 1;
         setCurrentQuestion(nextQuestion);
-        
+
         // Only restore answers if question was previously answered
         if (answeredQuestions.has(nextQuestion)) {
           setSelectedAnswers(answerHistory[nextQuestion] || []);
@@ -262,7 +266,7 @@ const QuizScreen = () => {
           setSelectedAnswers([]);
           setIsChecked(false);
         }
-        
+
         setImageURL(nextImageURL);
         setTimer((prevTimer) => prevTimer - 1);
       } else {
@@ -275,13 +279,12 @@ const QuizScreen = () => {
   const handleCheckboxChange = (option: string) => {
     // Allow changes only if not checked
     if (isChecked) return;
-    
+
     const updatedAnswers = selectedAnswers.includes(option)
       ? selectedAnswers.filter((answer) => answer !== option)
       : [...selectedAnswers, option];
     setSelectedAnswers(updatedAnswers);
   };
-
 
   const toggleTranslation = () => {
     setIsTranslated(!isTranslated);
@@ -368,6 +371,7 @@ const QuizScreen = () => {
             ? i18n.t("exam")
             : i18n.t("quiz")
         }
+        customRoute={isExam ? "exam" : category ? "learn" : "home"}
         showBackButton={true}
         iconRight={
           !quizEnded ? (bookmarked ? "bookmark" : "bookmark-outline") : ""
