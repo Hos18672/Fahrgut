@@ -1,27 +1,43 @@
 
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { supabase } from "./supabase"; // Import Supabase client
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export const AllQuestions = async () => {
   try {
-    // Fetch all questions from Supabase
-    const { data: allQuestions, error } = await supabase
-      .from("question")
-      .select("*");
+    let allQuestions = [];
+    let from = 0;
+    let to = 999;  // Fetch 1000 rows at a time
+    let moreData = true;
 
-    if (error) throw error;
+    // Loop to fetch all pages until no more data is left
+    while (moreData) {
+      const { data, error } = await supabase
+        .from("question")
+        .select("*")
+        .range(from, to);
 
-    // Shuffle the questions array to return them in a random order
-    const shuffledQuestions = shuffleArray(allQuestions);
+      if (error) throw error;
 
-    return shuffledQuestions;
+      if (data && data.length > 0) {
+        allQuestions = [...allQuestions, ...data]; // Append data to allQuestions
+        from += 1000;
+        to += 1000;
+      } else {
+        moreData = false; // Stop if no more data
+      }
+    }
+
+    console.log('Fetched all questions successfully');
+    return allQuestions;
   } catch (err) {
     console.error("Error fetching all questions:", err.message);
     return []; // Return an empty array in case of error
   }
 };
+
+
 // Helper function to shuffle an array
-const shuffleArray = (array) => {
+export const shuffleArray = (array) => {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1)); // Random index
     [array[i], array[j]] = [array[j], array[i]]; // Swap elements
@@ -32,15 +48,11 @@ const shuffleArray = (array) => {
 
 export const GetRandomQuestions = async (selectedTypes) => {
   try {
-    console.log(selectedTypes)
-    // Fetch all questions from Supabase
-    const { data: allQuestions, error } = await supabase
-      .from("question")
-      .select("*").in("type", selectedTypes);
+    const storedQuestions = await AsyncStorage.getItem('questions');
+    if (!storedQuestions) return []; // Return an empty array if no questions are found
 
-    if (error) throw error;
+    const allQuestions = JSON.parse(storedQuestions); // Parse the stored string into an array
 
-    // Group questions by category
     const categories = {};
     allQuestions.forEach((question) => {
       if (!categories[question.category]) {
@@ -49,17 +61,18 @@ export const GetRandomQuestions = async (selectedTypes) => {
       categories[question.category].push(question);
     });
 
-    // Select one random question from each category
-    const selectedQuestions = Object.values(categories).map(
-      (categoryQuestions) => {
-        const randomIndex = Math.floor(Math.random() * categoryQuestions.length);
-        return categoryQuestions[randomIndex];
+    // Select one random question from each selected category
+    const selectedQuestions = selectedTypes.map((type) => {
+      if (categories[type]) {
+        const randomIndex = Math.floor(Math.random() * categories[type].length);
+        return categories[type][randomIndex];
       }
-    );
+      return null; // If the category doesn't exist, return null
+    }).filter((question) => question !== null); // Remove any null values if category doesn't exist
 
-    // Filter out the selected questions to get the remaining questions
+    // Filter out the selected questions from the remaining questions
     const remainingQuestions = allQuestions.filter(
-      (question) => !selectedQuestions.includes(question)
+      (question) => !selectedQuestions.some((selected) => selected.id === question.id)
     );
 
     // Calculate how many more questions are needed to reach 30

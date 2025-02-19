@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
+  Alert,  // Added for alert
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -28,14 +29,24 @@ initI18n();
 const { width, height } = Dimensions.get("window");
 const isWeb = Platform.OS === "web";
 
-const BookmarksScreen = () => {
+const ExamScreen = () => {
   const router = useRouter();
   const [GCheked, setGCheked] = useState(false);
   const [BCheked, setBCheked] = useState(false);
 
- const handleButton =()=>{
-    router.push({ pathname: "/question", params: { isExam: true , GWIsSelected:GCheked, BIsSelected: BCheked } });
- }
+  const handleButton = () => {
+    // Check if at least one checkbox is selected
+    if (GCheked || BCheked) {
+      router.push({ pathname: "/question", params: { isExam: true , GWIsSelected:GCheked, BIsSelected: BCheked } });
+    } else {
+      // Show warning if neither checkbox is selected
+      Alert.alert(
+        i18n.t("warning"),
+        i18n.t("select_one_option_warning"),
+        [{ text: i18n.t("ok"), style: "default" }]
+      );
+    }
+  };
 
   return (
     <SafeAreaView style={{ backgroundColor: bgColor, height: "100%" }}>
@@ -83,11 +94,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginHorizontal: 10,
     marginBottom: 20,
-
   },
-  textStyle:{
+  textStyle: {
     color: "white",
   }
 });
 
-export default BookmarksScreen;
+export default ExamScreen;

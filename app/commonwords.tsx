@@ -16,7 +16,11 @@ import wordsData from "./assets/base/words.json"; // Ensure the path is correct
 import CustomHeader from "./components/CustomHeader";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { WordItem } from "./types";
-import { bgColor, fontSizeNormal, fontSizeSmall } from "./assets/base/styles_assets";
+import {
+  bgColor,
+  fontSizeNormal,
+  fontSizeSmall,
+} from "./assets/base/styles_assets";
 import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
 initI18n();
@@ -94,7 +98,9 @@ const WordsScreen: React.FC = () => {
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
-      {Platform.OS === "web" && <CustomHeader title={i18n.t("commonWords")} showBackButton={true} />}
+      {Platform.OS === "web" && (
+        <CustomHeader title={i18n.t("commonWords")} showBackButton={true} />
+      )}
       <View style={styles.searchContainer}>
         <Input
           placeholder={i18n.t("Suchen")}
@@ -104,15 +110,16 @@ const WordsScreen: React.FC = () => {
           leftIcon={<Icon name="search" type="material" color="#999" />}
         />
       </View>
-
       <FlatList
-        data={filteredWords}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={renderWord}
-        contentContainerStyle={
-          screenWidth >= 768 ? styles.listContainer : styles.smListContainer
-        }
-      />
+      data={filteredWords}
+      keyExtractor={(item, index) => index.toString()}
+      renderItem={renderWord}
+      contentContainerStyle={[
+        screenWidth >= 768 ? styles.listContainer : styles.smListContainer,
+        { flexGrow: 1 }, // Add this
+      ]}
+      style={{ flex: 1 }} // Ensure FlatList takes full height
+    />
     </SafeAreaView>
   );
 };
@@ -122,7 +129,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: Platform.OS === "web" ? 10 : 5,
     backgroundColor: bgColor,
-  
+    minHeight: Platform.OS === "web" ? "100vh" : undefined,
   },
   backButton: {
     flexDirection: "row",
@@ -178,7 +185,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 10,
     marginLeft: width > 950 ? 10 : 0,
-
   },
   word: {
     fontSize: 18,

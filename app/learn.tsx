@@ -19,7 +19,7 @@ import { supabase } from "./services/supabase"; // Import Supabase client
 import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
 initI18n();
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const { width } = Dimensions.get("window");
 
 const LearnScreen = () => {
@@ -30,16 +30,26 @@ const LearnScreen = () => {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  // Fetch all questions from Supabase once when the screen loads
   useEffect(() => {
     const fetchAllQuestions = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        let allQuestions = [];
+        // First check AsyncStorage for stored questions
+        const storedData = await AsyncStorage.getItem('questions');
+        if (storedData) {
+          // Parse stored questions and set to state
+          const parsedQuestions = JSON.parse(storedData);
+          setAllQuestions(parsedQuestions);
+          setLoading(false);
+          return; // If data is found in AsyncStorage, return early
+        }
+
+        // If no questions in AsyncStorage, fetch from Supabase
+        let all_Questions = [];
         let offset = 0;
-        const limit = 1000; // Number of rows to fetch per request
+        const limit = 10000; // Number of rows to fetch per request
 
         while (true) {
           const { data, error } = await supabase
@@ -51,11 +61,14 @@ const LearnScreen = () => {
 
           if (data.length === 0) break; // Stop if no more rows are returned
 
-          allQuestions = [...allQuestions, ...data];
+          all_Questions = [...all_Questions, ...data];
           offset += limit;
         }
 
-        setAllQuestions(allQuestions);
+        // Save fetched questions to AsyncStorage
+        await AsyncStorage.setItem('questions', JSON.stringify(all_Questions));
+
+        setAllQuestions(all_Questions);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -64,7 +77,8 @@ const LearnScreen = () => {
     };
 
     fetchAllQuestions();
-  }, []);
+  }, []); // Empty dependency array to run only once when the component mounts
+
 
   // Calculate the number of GW and B questions
   const [gwCount, bCount] = useMemo(() => {

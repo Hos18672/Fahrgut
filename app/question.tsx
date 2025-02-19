@@ -31,6 +31,7 @@ import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
 import { useUser } from "@clerk/clerk-expo";
 import { GetRandomQuestions, formatTime, AllQuestions } from "./services/base";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { removeCharacters } from "./base";
 import CustomHeader from "./components/CustomHeader";
 import { supabase } from "./services/supabase";
@@ -101,37 +102,58 @@ const QuizScreen = () => {
   );
 
   // Fetch questions by category from Supabase
+  // Fetch questions from AsyncStorage
   const fetchQuestionsByCategory = async (category: string) => {
     try {
-      const { data, error } = await supabase
-        .from("question")
-        .select("*")
-        .eq("category", category); // Filter questions by category
-
-      if (error) throw error;
-
-      return data || [];
+      const storedData = await AsyncStorage.getItem("questions");
+      if (storedData) {
+        const questions = JSON.parse(storedData); // Parse stored JSON string into an array
+        return questions.filter((question) => question.category === category); // Filter by category
+      }
+      return []; // Return empty array if no data is found
     } catch (err) {
       console.error("Error fetching questions by category:", err.message);
-      return [];
+      return []; // Return empty array if there's an error
     }
   };
 
   useEffect(() => {
     const initQuestions = async () => {
-      let questionSet = (await AllQuestions()) || [];
+      let questionSet = [];
 
+      try {
+        // Get the questions from AsyncStorage
+        const storedQuestions = await AsyncStorage.getItem("questions");
+        if (storedQuestions) {
+          questionSet = JSON.parse(storedQuestions);
+        }
+      } catch (error) {
+        console.error(
+          "Error parsing questions from AsyncStorage:",
+          error.message
+        );
+        questionSet = []; // In case of parsing error, fallback to empty array
+      }
+
+      // Modify questionSet based on conditions
       if (isExam) {
-        const gw = GWIsSelected  == 'true' && "GW";
-        const b = BIsSelected == 'true' && "B" ;
+        const gw = GWIsSelected === "true" && "GW";
+        const b = BIsSelected === "true" && "B";
         questionSet = await GetRandomQuestions([gw, b]);
         setQuestionsLength(questionSet.length);
       } else if (category) {
         // Fetch questions from Supabase based on the category
         questionSet = await fetchQuestionsByCategory(category);
       } else if (BookmarkedQuestions) {
-        questionSet = JSON.parse(BookmarkedQuestions);
+        // Parse the BookmarkedQuestions if provided
+        try {
+          questionSet = JSON.parse(BookmarkedQuestions);
+        } catch (error) {
+          console.error("Error parsing BookmarkedQuestions:", error.message);
+          questionSet = []; // Fallback to empty array if parsing fails
+        }
       }
+
       setQuestions(questionSet);
       setLoading(false);
     };
@@ -141,7 +163,10 @@ const QuizScreen = () => {
 
   // Timer functionality
   useEffect(() => {
-    if (timer <= 0 || (examAnsweredNums > 0 && examAnsweredNums === questionsLength)) {
+    if (
+      timer <= 0 ||
+      (examAnsweredNums > 0 && examAnsweredNums === questionsLength)
+    ) {
       setQuizEnded(true);
       return; // Stop timer
     }
@@ -174,6 +199,7 @@ const QuizScreen = () => {
     preloadImages(firstQuestionNumber, nextQuestionNumber);
   }, []);
   const handleCheck = () => {
+    console.log("test");
     if (isChecked) {
       const nextQuestion = currentQuestion + 1;
 
@@ -205,9 +231,65 @@ const QuizScreen = () => {
           setIsChecked(filterCorrectAnswersOnly);
         }
         setImageURL(nextImageURL);
+        console.log("test");
+        if (category) {
+          updateProgressTable();
+        }
       }
     } else {
       setIsChecked(true);
+    }
+  };
+  const updateProgressTable = async () => {
+    try {
+      const currentQuestionData = questions[currentQuestion];
+      const questionId = parseInt(currentQuestionData?.question_number);
+      const correctAnswers = currentQuestionData.correct_answers;
+
+      // Check if all selected answers are completely correct
+      const isAllCorrect =
+        selectedAnswers.length === correctAnswers.length &&
+        selectedAnswers.every((answer) => correctAnswers.includes(answer));
+
+      // Check if progress record exists for this user/question
+      const { data: existingProgress, error: fetchError } = await supabase
+        .from("progress")
+        .select("is_answer_correct")
+        .eq("question_id", questionId)
+        .eq("user_email", cureentUserEmail)
+        .single();
+
+      if (fetchError && !fetchError.details.includes("0 rows")) {
+        console.error("Error fetching progress:", fetchError);
+        return;
+      }
+
+      // Only update if:
+      // - No existing record (first attempt)
+      // - Existing record has is_answer_correct = false (previous wrong answer)
+
+      const { error } = await supabase.from("progress").upsert(
+        {
+          question_id: questionId,
+          user_email: cureentUserEmail,
+          is_answer_correct: isAllCorrect,
+          category: currentQuestionData.category,
+          last_attempted: new Date().toISOString(),
+          attempt_count: existingProgress
+            ? (existingProgress.attempt_count || 0) + 1
+            : 1,
+        },
+        {
+          onConflict: "question_id,user_email",
+          returning: "minimal",
+        }
+      );
+
+      if (error) {
+        console.error("Error updating progress:", error);
+      }
+    } catch (err) {
+      console.error("Error in updateProgressTable:", err.message);
     }
   };
 
@@ -467,13 +549,8 @@ const QuizScreen = () => {
                 </Text>
               </View>
               <View style={styles.questionImage}>
-                {imageURL ? (
-                  <ResponsiveQuizImage imageURL={imageURL} />
-                ) : (
-                  <Text></Text>
-                )}
+                <ResponsiveQuizImage imageURL={imageURL} />
               </View>
-
               <View>
                 <View style={styles.answersContainer}>
                   {questions[currentQuestion]?.answers.map((option, index) => (

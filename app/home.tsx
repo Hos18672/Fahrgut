@@ -6,25 +6,22 @@ import {
   SafeAreaView,
   StyleSheet,
   TouchableOpacity,
-  Animated,
   Image,
-  PanResponder,
   StatusBar,
   Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
   bgColor,
-  fontSizeNormal,
-  fontSizeSmall,
 } from "./assets/base/styles_assets";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AllQuestions,shuffleArray } from "./services/base";
 import HomeLearnCategories from "./components/HomeLearnCategories";
 import { useRouter } from "expo-router"; // Added useRouter for navigation
 import MenuCard from "./components/MenuCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useUser } from "@clerk/clerk-expo";
 const { width, height } = Dimensions.get("window");
-import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
 initI18n();
 
@@ -32,18 +29,17 @@ const HomeScreen = () => {
   const { user } = useUser();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const slideAnimation = useRef(new Animated.Value(-300)).current;
   const isWeb = Platform.OS === "web";
-  console.log(user?.emailAddresses[0].emailAddress);
-  // PanResponder for side menu
-  const panResponder = PanResponder.create({
-    onMoveShouldSetPanResponder: (_, gestureState) =>
-      Math.abs(gestureState.dx) > 20,
-    onPanResponderMove: (_, gestureState) => {
-      const translateX = Math.max(-300, Math.min(0, gestureState.dx - 300));
-      slideAnimation.setValue(translateX);
-    },
-  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const allQuestions = await AllQuestions();
+      const shuffledQuestions = shuffleArray(allQuestions);
+      await AsyncStorage.setItem('questions', JSON.stringify(shuffledQuestions)); // Ensure it's stored as a JSON string
+    };
+    fetchData();
+  }, []);
+  
 
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>

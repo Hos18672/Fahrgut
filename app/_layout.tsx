@@ -2,6 +2,7 @@ import { Stack, useRouter, usePathname } from "expo-router"; // Added usePathnam
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
+import './style/global.css';
 import { ClerkProvider, ClerkLoaded, useAuth } from "@clerk/clerk-expo";
 import { Slot, useSegments } from "expo-router";
 import { tokenCache } from '@/utils/cache';
@@ -59,6 +60,9 @@ function AuthRedirectHandler() {
 }
 
 const styles = StyleSheet.create({
+  html: { height: "100%"},
+  body: { height: "100%"},
+  root: { height: "100%"},
   container: {
     flex: 1,
     position: "relative",

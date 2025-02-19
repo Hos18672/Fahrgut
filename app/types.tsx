@@ -64,6 +64,7 @@ export interface Question {
   question_number: string;
   question_text: string;
   question_text_fa: string;
+  category: string;
   answers: string[];
   answers_fa: string[];
   correct_answers: string[];
