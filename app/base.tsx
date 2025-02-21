@@ -10,7 +10,6 @@ import { fontSizeSmall } from "./assets/base/styles_assets";
 export const removeCharacters = (name) => {
   return name.replace(/[ -\/\\]/g, "");
 };
-
 export const flags = {
   de: { name: "At", url: require("./assets/icon/at.png") },
   en: { name: "En", url: require("./assets/icon/us.png") },
@@ -51,23 +50,24 @@ export const CustomTab: React.FC<CustomTabProps> = ({
 
 export const SubCategoryItem: React.FC<SubCategoryItemProps> = ({
   item,
+  questions,
+  questions_progress,
   onPress,
-}) => (
-  <Pressable
-    onPress={onPress}
-    style={({ pressed }) => [
-      styles.subCategory,
-      pressed && styles.subCategoryPressed,
-    ]}
-  >
-    <View style={styles.subCategoryContent}>
-      <Text style={styles.subCategoryText}>
-        {i18n.t(removeCharacters(item.category))}
-      </Text>
-      <Text style={styles.subCategoryCount}>{item.questions.length}</Text>
-    </View>
-  </Pressable>
-);
+}) => {
+  const progressPercentage = (questions_progress /questions.length) * 100;
+ console.log('progress')
+  return (
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.subCategory, pressed && styles.subCategoryPressed]}>
+      <View style={[styles.progressBackground, { width: `${progressPercentage}%` }]} />
+      <View style={styles.backgroundContainer}>
+        <View style={styles.subCategoryContent}>
+          <Text style={styles.subCategoryText}>{i18n.t(removeCharacters(item.category))}</Text>
+          <Text style={styles.subCategoryCount}>{item.questions.length}</Text>
+        </View>
+      </View>
+    </Pressable>
+  );
+};
 
 export const renderFilters = ({
   filterCorrectAnswersOnly,
@@ -131,6 +131,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   subCategory: {
+    overflow: "hidden",
     alignSelf: "center",
     width: Platform.OS == "web" ? "95%" : "100%",
     padding: 16,
@@ -147,6 +148,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     gap: 10,
+  },
+  progressBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    height: "100%",
+    borderRadius: 3,
+    backgroundColor: 'rgba(17, 244, 24, 0.5)',
   },
   subCategoryText: {
     fontSize: fontSizeSmall,

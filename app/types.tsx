@@ -47,6 +47,8 @@ export interface CustomTabProps {
 
 export  interface SubCategoryItemProps {
   item: { category: string; questions: any[] };
+  questions : Question[],
+  questions_progress : number,
   onPress: () => void;
 }
 

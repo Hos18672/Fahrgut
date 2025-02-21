@@ -20,16 +20,22 @@ import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
 initI18n();
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getProgressQuestions, shuffleArray } from "./services/base";
+import { useUser } from "@clerk/clerk-expo";
 const { width } = Dimensions.get("window");
+
+
 
 const LearnScreen = () => {
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState(0);
   const [allQuestions, setAllQuestions] = useState([]); // Store all questions
+  const [allProgressQuestions, setAllProgressQuestions] = useState([]); // Store all questions
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const router = useRouter();
-
+  const { user } = useUser();
+  const cureentUserEmail = user?.emailAddresses[0].emailAddress;
   useEffect(() => {
     const fetchAllQuestions = async () => {
       try {
@@ -79,7 +85,13 @@ const LearnScreen = () => {
     fetchAllQuestions();
   }, []); // Empty dependency array to run only once when the component mounts
 
-
+  useEffect(() => {
+    const fetchData = async () => {
+      const allProgressQuestions = await getProgressQuestions(cureentUserEmail);
+      setAllProgressQuestions(allProgressQuestions)
+    };
+    fetchData();
+  }, []);
   // Calculate the number of GW and B questions
   const [gwCount, bCount] = useMemo(() => {
     const gwQuestions = allQuestions.filter((question) =>
@@ -106,10 +118,6 @@ const LearnScreen = () => {
 
   const handleSubCategorySelect = useCallback(
     (subCategory: string) => {
-      const subCategoryQuestions = filteredQuestions.filter(
-        (q) => q.category === subCategory
-      );
-
       router.push({
         pathname: "/question",
         params: {
@@ -136,6 +144,12 @@ const LearnScreen = () => {
     );
   };
 
+  const getCategoryQuestions= (category: string) => {
+    return allQuestions?.filter(item => item.category === category)
+  }
+  const getProgress= (category: string) => {
+    return allProgressQuestions?.filter(item => item.category === category && item.is_answer_correct == true).length
+  }
   const renderContent = () => {
     if (loading) {
       return renderSkeleton(); // Show skeleton while loading
@@ -158,6 +172,8 @@ const LearnScreen = () => {
           <SubCategoryItem
             key={item.category}
             item={item}
+            questions={getCategoryQuestions(item.category)}
+            questions_progress={getProgress(item.category)}
             onPress={() => handleSubCategorySelect(item.category)}
           />
         ))}

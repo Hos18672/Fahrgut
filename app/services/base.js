@@ -36,6 +36,41 @@ export const AllQuestions = async () => {
 };
 
 
+export const getProgressQuestions = async (cureentUserEmail) => {
+  try {
+    let allQuestions = [];
+    let from = 0;
+    let to = 999;  // Fetch 1000 rows at a time
+    let moreData = true;
+
+    // Loop to fetch all pages until no more data is left
+    while (moreData) {
+      const { data, error } = await supabase
+        .from("progress")
+        .select("*")
+        .eq("user_email", cureentUserEmail)
+        .range(from, to);
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        allQuestions = [...allQuestions, ...data]; // Append data to allQuestions
+        from += 1000;
+        to += 1000;
+      } else {
+        moreData = false; // Stop if no more data
+      }
+    }
+
+    console.log('Fetched all progress questions successfully');
+    return allQuestions;
+  } catch (err) {
+    console.error("Error fetching all progress questions:", err.message);
+    return []; // Return an empty array in case of error
+  }
+};
+
+
 // Helper function to shuffle an array
 export const shuffleArray = (array) => {
   for (let i = array.length - 1; i > 0; i--) {
