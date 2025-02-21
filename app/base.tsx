@@ -108,9 +108,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  activeTab: {
-    backgroundColor: "#0084ff",
-  },
+
   tabPressed: {
     opacity: 0.8,
   },
@@ -155,8 +153,8 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     height: "100%",
-    borderRadius: 3,
-    backgroundColor: 'rgba(17, 244, 24, 0.5)',
+    borderRadius: 2,
+    backgroundColor: '#00FF9C',
   },
   subCategoryText: {
     fontSize: fontSizeSmall,

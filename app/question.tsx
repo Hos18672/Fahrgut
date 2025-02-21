@@ -46,7 +46,7 @@ const QuizScreen = () => {
   const { user } = useUser();
   const cureentUserEmail = user?.emailAddresses[0].emailAddress;
   const params = useLocalSearchParams<QuizScreenParams>();
-  const { isExam, category, BookmarkedQuestions, GWIsSelected, BIsSelected } =
+  const { isExam, category, BookmarkedQuestions, GWIsSelected, BIsSelected, isBookmark } =
     params;
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
@@ -137,8 +137,8 @@ const QuizScreen = () => {
 
       // Modify questionSet based on conditions
       if (isExam) {
-        const gw = GWIsSelected === "true" && "GW";
-        const b = BIsSelected === "true" && "B";
+        const gw = GWIsSelected === true && "GW";
+        const b = BIsSelected === true && "B";
         questionSet = await GetRandomQuestions([gw, b]);
         setQuestionsLength(questionSet.length);
       } else if (category) {
@@ -451,9 +451,11 @@ const QuizScreen = () => {
             ? i18n.t(removeCharacters(category))
             : isExam
             ? i18n.t("exam")
+            : isBookmark 
+            ? i18n.t("bookmarks")
             : i18n.t("quiz")
         }
-        customRoute={isExam ? "exam" : category ? "learn" : "home"}
+        customRoute={isExam ? "exam" : category ? "learn" : isBookmark ? "bookmarks" : "home"}
         showBackButton={true}
         iconRight={
           !quizEnded ? (bookmarked ? "bookmark" : "bookmark-outline") : ""

@@ -128,6 +128,7 @@ const BookmarksScreen = () => {
     router.push({
       pathname: "/question",
       params: {
+        isBookmark: true,
         BookmarkedQuestions: JSON.stringify(bookmarkedQuestions),
       },
     });

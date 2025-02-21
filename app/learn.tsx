@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import {
   StatusBar,
   View,
@@ -6,7 +6,7 @@ import {
   StyleSheet,
   Platform,
   SafeAreaView,
-  ActivityIndicator,
+  Animated,
   Text,
   Dimensions,
 } from "react-native";
@@ -29,51 +29,53 @@ const { width } = Dimensions.get("window");
 const LearnScreen = () => {
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState(0);
-  const [allQuestions, setAllQuestions] = useState([]); // Store all questions
-  const [allProgressQuestions, setAllProgressQuestions] = useState([]); // Store all questions
+  const [allQuestions, setAllQuestions] = useState([]);
+  const [allProgressQuestions, setAllProgressQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const router = useRouter();
   const { user } = useUser();
+  // Initialize animation value without an initial animation
+  const tabAnim = useRef(new Animated.Value(0)).current;
   const cureentUserEmail = user?.emailAddresses[0].emailAddress;
+
+  // Initialize data and handle stored tab without animation
   useEffect(() => {
-    const fetchAllQuestions = async () => {
+    const initializeData = async () => {
       try {
         setLoading(true);
         setError(null);
-
-        // First check AsyncStorage for stored questions
+  
+        const storedTab = await AsyncStorage.getItem('currentTab');
+        const initialTab = storedTab ? parseInt(storedTab, 10) : 0;
+        setActiveTab(initialTab);
+        // Set initial position without animation
+        tabAnim.setValue(initialTab);
+  
         const storedData = await AsyncStorage.getItem('questions');
         if (storedData) {
-          // Parse stored questions and set to state
-          const parsedQuestions = JSON.parse(storedData);
-          setAllQuestions(parsedQuestions);
-          setLoading(false);
-          return; // If data is found in AsyncStorage, return early
+          setAllQuestions(JSON.parse(storedData));
+          return;
         }
-
-        // If no questions in AsyncStorage, fetch from Supabase
+  
         let all_Questions = [];
         let offset = 0;
-        const limit = 10000; // Number of rows to fetch per request
-
+        const limit = 10000;
+  
         while (true) {
           const { data, error } = await supabase
             .from("question")
             .select("*")
-            .range(offset, offset + limit - 1); // Fetch rows in chunks
-
+            .range(offset, offset + limit - 1);
+  
           if (error) throw error;
-
-          if (data.length === 0) break; // Stop if no more rows are returned
-
-          all_Questions = [...all_Questions, ...data];
+          if (!data.length) break;
+  
+          all_Questions = all_Questions.concat(data);
           offset += limit;
         }
-
-        // Save fetched questions to AsyncStorage
+  
         await AsyncStorage.setItem('questions', JSON.stringify(all_Questions));
-
         setAllQuestions(all_Questions);
       } catch (err) {
         setError(err.message);
@@ -81,9 +83,34 @@ const LearnScreen = () => {
         setLoading(false);
       }
     };
+  
+    initializeData();
+  }, []);
 
-    fetchAllQuestions();
-  }, []); // Empty dependency array to run only once when the component mounts
+  // Handle tab changes with animation
+  const handleTabPress = (tabIndex) => {
+    setActiveTab(tabIndex);
+    Animated.timing(tabAnim, {
+      toValue: tabIndex,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+    AsyncStorage.setItem('currentTab', tabIndex.toString());
+  };
+
+
+  useEffect(() => {
+    Animated.timing(tabAnim, {
+      toValue: activeTab,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+  }, [activeTab]);
+
+
+  useEffect(()=>{
+    AsyncStorage.setItem('currentTab', activeTab.toString());
+  },[activeTab])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -105,11 +132,14 @@ const LearnScreen = () => {
 
   // Filter questions based on the active tab
   const filteredQuestions = useMemo(() => {
-    return allQuestions.filter((question) => {
-      const prefix = question.category?.startsWith("GW") ? "GW" : "B";
-      return activeTab === 0 ? prefix === "GW" : prefix === "B";
-    });
-  }, [allQuestions, activeTab]);
+    return allQuestions
+        .filter((question) => {
+            const prefix = question.category?.startsWith("GW") ? "GW" : "B";
+            return activeTab === 0 ? prefix === "GW" : prefix === "B";
+        })
+        .sort((a, b) => a.category.localeCompare(b.category)); // Sorting by category
+}, [allQuestions, activeTab]);
+
 
   // Group questions by category
   const groupedQuestions = useMemo(() => {
@@ -181,22 +211,35 @@ const LearnScreen = () => {
     );
   };
 
+
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
       {Platform.OS === "web" && <CustomHeader title={i18n.t('learn')} showBackButton={true} />}
       <View style={[styles.tabsContainer]}>
+        <Animated.View 
+          style={[
+            styles.activeTabIndicator, 
+            { 
+              left: tabAnim.interpolate({
+                inputRange: [0, 1],
+                outputRange: ['.5%', '49.5%']
+              })
+            }
+          ]} 
+        />
+        
         <CustomTab
           style={{ flex: 1 }}
-          title={`${i18n.t("Grundwissen")} (${gwCount})`} // Always show GW count
+          title={`${i18n.t("Grundwissen")} (${gwCount})`}
           active={activeTab === 0}
-          onPress={() => setActiveTab(0)}
+          onPress={() => handleTabPress(0)}
         />
         <CustomTab
           style={{ flex: 1 }}
-          title={`${i18n.t("Basiswissen")} (${bCount})`} // Always show B count
+          title={`${i18n.t("Basiswissen")} (${bCount})`}
           active={activeTab === 1}
-          onPress={() => setActiveTab(1)}
+          onPress={() => handleTabPress(1)}
         />
       </View>
       {renderContent()}
@@ -222,11 +265,20 @@ const styles = StyleSheet.create({
     marginTop: 10,
     width: width > 768 ? "60%" : "95%", // Adjust width based on screen size
   },
+  activeTabIndicator: {
+    position: "absolute",
+    width: "50%",
+    height: "92%",
+    backgroundColor: "#0084ff",
+    borderRadius: 8,
+    bottom: 2,
+  },
   tabContent: {
     paddingHorizontal: width > 768 ? "18%" :5, // Adjust padding based on screen size
     flex: 1,
     backgroundColor: bgColor,
     paddingBottom: 50,
+    paddingTop: 5,
   },
   contentContainer: {
     paddingTop: 5,

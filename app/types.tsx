@@ -59,6 +59,9 @@ export interface QuizScreenParams {
   category?: string;
   subCategoryQuestions?: any[];
   BookmarkedQuestions?: any[];
+  GWIsSelected?: boolean;
+  BIsSelected?: boolean;
+  isBookmark?: boolean;
 }
 
 // Define types for the component state
