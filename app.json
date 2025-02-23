@@ -1,9 +1,12 @@
 {
   "expo": {
     "name": "Fahrgut",
-    "slug": "Fahrgut",
+    "slug": "fahrgut",
     "version": "1.0.0",
-    "platforms": ["web"],
+    "platforms": [
+      "web",
+      "android"
+    ],
     "icon": "./assets/icon.png",
     "orientation": "portrait",
     "scheme": "myapp",
@@ -42,8 +45,8 @@
       "bundler": "metro",
       "build": {
         "output": "web-build"
-      }, 
-       "pwa": true
+      },
+      "pwa": true
     },
     "plugins": [
       "expo-router",
@@ -58,13 +61,14 @@
         "origin": false
       },
       "eas": {
-        "projectId": "904705b7-740b-4d61-b315-508e95b08beb"
+        "projectId": "9bdf502d-6853-490a-b310-872eba01322f"
       }
     },
     "splash": {
       "image": "./assets/logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
-    }
+    },
+    "owner": "reza4030"
   }
 }

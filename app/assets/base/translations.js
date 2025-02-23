@@ -2,6 +2,8 @@ export const resources = {
   en: {
     translation: {
       selectLanguage: "Language",
+      questionStatusCorrect: 'Correct',
+      questionStatusWrong: 'Wrong',
       home: "Home",
       welcome: "Welcome",
       trafficSigns: "Traffic Signs",
@@ -95,6 +97,8 @@ export const resources = {
   de: {
     translation: {
       selectLanguage: "Sprache",
+      questionStatusCorrect: 'Richtig',
+      questionStatusWrong: 'Falsch',
       home: "Hauptseite",
       welcome: "Willkommen",
       trafficSigns: "Verkehrszeichen",
@@ -190,6 +194,8 @@ export const resources = {
   fa: {
     translation: {
       selectLanguage: "زبان",
+      questionStatusCorrect: 'صحیح',
+      questionStatusWrong: 'اشتباه',
       home: "صفحه اصلی",
       welcome: "خوش آمدید",
       trafficSigns: "علائم راهنمایی و رانندگی",

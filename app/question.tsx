@@ -46,8 +46,14 @@ const QuizScreen = () => {
   const { user } = useUser();
   const cureentUserEmail = user?.emailAddresses[0].emailAddress;
   const params = useLocalSearchParams<QuizScreenParams>();
-  const { isExam, category, BookmarkedQuestions, GWIsSelected, BIsSelected, isBookmark } =
-    params;
+  const {
+    isExam,
+    category,
+    BookmarkedQuestions,
+    GWIsSelected,
+    BIsSelected,
+    isBookmark,
+  } = params;
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
   const [isChecked, setIsChecked] = useState(false);
@@ -57,6 +63,9 @@ const QuizScreen = () => {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [filterCorrectAnswersOnly, setFilterCorrectAnswersOnly] =
     useState(false);
+  const [correctHistory, setCorrectHistory] = useState<{
+    [key: number]: boolean;
+  }>({});
   const [filterAlwaysShowTranslation, setFilterAlwaysShowTranslation] =
     useState(false);
   const [examAnsweredQuestions, setExamAnsweredQuestions] = useState<any[]>([]);
@@ -68,6 +77,7 @@ const QuizScreen = () => {
   const [bookmarked, setBookmarked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [textAlign, setTextAlign] = useState("left");
+  const [answeredCorrectly, setAnsweredCorrectly] = useState(false);
   const [answerHistory, setAnswerHistory] = useState<{
     [key: number]: string[];
   }>({});
@@ -199,10 +209,23 @@ const QuizScreen = () => {
     preloadImages(firstQuestionNumber, nextQuestionNumber);
   }, []);
   const handleCheck = () => {
-    console.log("test");
+    console.log("check button");
+    // In handleCheck function, update the correctness check:
+    const currentQuestionData = questions[currentQuestion];
+    // Convert correct answers to strings for proper comparison
+    const correctAnswers = currentQuestionData.correct_answers.map(String);
+
+    const isAllCorrect =
+      selectedAnswers.length === correctAnswers.length &&
+      selectedAnswers.every((answer) => correctAnswers.includes(answer));
+
+    // Update correct history
+    setCorrectHistory((prev) => ({
+      ...prev,
+      [currentQuestion]: isAllCorrect,
+    }));
     if (isChecked) {
       const nextQuestion = currentQuestion + 1;
-
       // Store current answers in history
       setAnswerHistory((prev) => ({
         ...prev,
@@ -230,16 +253,16 @@ const QuizScreen = () => {
           setSelectedAnswers([]);
           setIsChecked(filterCorrectAnswersOnly);
         }
-        setImageURL(nextImageURL);
-        console.log("test");
-        if (category) {
-          updateProgressTable();
-        }
+      }
+      setImageURL(nextImageURL);
+      if (category) {
+        updateProgressTable();
       }
     } else {
       setIsChecked(true);
     }
   };
+
   const updateProgressTable = async () => {
     try {
       const currentQuestionData = questions[currentQuestion];
@@ -451,11 +474,19 @@ const QuizScreen = () => {
             ? i18n.t(removeCharacters(category))
             : isExam
             ? i18n.t("exam")
-            : isBookmark 
+            : isBookmark
             ? i18n.t("bookmarks")
             : i18n.t("quiz")
         }
-        customRoute={isExam ? "exam" : category ? "learn" : isBookmark ? "bookmarks" : "home"}
+        customRoute={
+          isExam
+            ? "exam"
+            : category
+            ? "learn"
+            : isBookmark
+            ? "bookmarks"
+            : "home"
+        }
         showBackButton={true}
         iconRight={
           !quizEnded ? (bookmarked ? "bookmark" : "bookmark-outline") : ""
@@ -553,6 +584,35 @@ const QuizScreen = () => {
               <View style={styles.questionImage}>
                 <ResponsiveQuizImage imageURL={imageURL} />
               </View>
+              {!isExam && isChecked && (
+                <View
+                  style={[
+                    styles.feedbackContainer,
+                    correctHistory[currentQuestion]
+                      ? styles.correctFeedback
+                      : styles.wrongFeedback,
+                  ]}
+                >
+                  <View style={styles.feedbackContent}>
+                    <Ionicons
+                      name={
+                        correctHistory[currentQuestion]
+                          ? "checkmark-circle"
+                          : "close-circle"
+                      }
+                      size={24}
+                      color="#fff"
+                      style={styles.feedbackIcon}
+                    />
+                    <Text style={styles.feedbackText}>
+                      {correctHistory[currentQuestion]
+                        ? i18n.t("questionStatusCorrect")
+                        : i18n.t("questionStatusWrong")}
+                    </Text>
+                  </View>
+                </View>
+              )}
+
               <View>
                 <View style={styles.answersContainer}>
                   {questions[currentQuestion]?.answers.map((option, index) => (
@@ -965,6 +1025,36 @@ const styles = StyleSheet.create({
     backgroundColor: "#e1e1e1",
     marginTop: width > 768 ? 24 : 16, // Adjusted for small screens
     borderRadius: 8,
+  },
+
+  feedbackContainer: {
+    marginVertical: 5,
+    padding: 7,
+    borderRadius: 8,
+    width: '100%',
+    maxWidth: 800,
+    alignSelf: 'center',
+  },
+  feedbackContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  correctFeedback: {
+    backgroundColor: '#4CAF50', // Nice green
+  },
+  wrongFeedback: {
+    backgroundColor: '#F44336', // Alert red
+  },
+  feedbackIcon: {
+    marginRight: 8,
+  },
+  feedbackText: {
+    color: '#fff',
+    fontSize: fontSizeNormal,
+    fontWeight: '600',
+    textAlign: 'center',
   },
 });
 export default QuizScreen;
