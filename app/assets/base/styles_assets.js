@@ -9,6 +9,9 @@ export const whiteColor = "#FFFFFF";
 export const blackColor = "#000000";
 export const grayColor = "#757575";
 export const bgColor = "#F5F5F5";
+export const successColor = "#01a817";
+export const dangerColor ="#940000";
+export const warningColor ="#e66300"; 
 
 
 // font Sizes

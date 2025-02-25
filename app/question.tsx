@@ -493,13 +493,7 @@ const QuizScreen = () => {
         }
         iconRightHandler={bookMarkHandler}
       />
-      <View style={styles.mainContainer}>
-        <ScrollView
-          contentContainerStyle={[
-            styles.scrollContent,
-            { paddingHorizontal: quizEnded ? "2%" : 10 },
-          ]}
-        >
+      <View style={[styles.mainContainer,{alignSelf: !quizEnded ? "center" : 'auto',}]}>
           {/* Show loading skeleton if questions are not yet fetched */}
           {loading ? (
             <View style={styles.skeletonContainer}>
@@ -566,74 +560,83 @@ const QuizScreen = () => {
                   </TouchableOpacity>
                 )}
               </View>
-              <View style={styles.questionContainer}>
-                <Text
-                  style={[
-                    styles.questionText,
-                    { textAlign: isTranslated ? "right" : "left" },
-                  ]}
-                >
-                  <Text style={styles.questionNumber}>
-                    {questions[currentQuestion]?.question_number})
-                  </Text>
-                  {filterAlwaysShowTranslation || isTranslated
-                    ? questions[currentQuestion]?.question_text_fa
-                    : questions[currentQuestion]?.question_text}
-                </Text>
-              </View>
-              <View style={styles.questionImage}>
-                <ResponsiveQuizImage imageURL={imageURL} />
-              </View>
-              {!isExam && isChecked && (
-                <View
-                  style={[
-                    styles.feedbackContainer,
-                    correctHistory[currentQuestion]
-                      ? styles.correctFeedback
-                      : styles.wrongFeedback,
-                  ]}
-                >
-                  <View style={styles.feedbackContent}>
-                    <Ionicons
-                      name={
-                        correctHistory[currentQuestion]
-                          ? "checkmark-circle"
-                          : "close-circle"
-                      }
-                      size={24}
-                      color="#fff"
-                      style={styles.feedbackIcon}
-                    />
-                    <Text style={styles.feedbackText}>
-                      {correctHistory[currentQuestion]
-                        ? i18n.t("questionStatusCorrect")
-                        : i18n.t("questionStatusWrong")}
+              <ScrollView
+                contentContainerStyle={[
+                  styles.scrollContent,
+                ]}
+              >
+                <View style={styles.questionContainer}>
+                  <Text
+                    style={[
+                      styles.questionText,
+                      { textAlign: isTranslated ? "right" : "left" },
+                    ]}
+                  >
+                    <Text style={styles.questionNumber}>
+                      {questions[currentQuestion]?.question_number})
                     </Text>
+                    {filterAlwaysShowTranslation || isTranslated
+                      ? questions[currentQuestion]?.question_text_fa
+                      : questions[currentQuestion]?.question_text}
+                  </Text>
+                </View>
+                <View style={styles.questionImage}>
+                  <ResponsiveQuizImage imageURL={imageURL} />
+                </View>
+                {!isExam && isChecked && (
+                  <View
+                    style={[
+                      styles.feedbackContainer,
+                      correctHistory[currentQuestion]
+                        ? styles.correctFeedback
+                        : styles.wrongFeedback,
+                    ]}
+                  >
+                    <View style={styles.feedbackContent}>
+                      <Ionicons
+                        name={
+                          correctHistory[currentQuestion]
+                            ? "checkmark-circle"
+                            : "close-circle"
+                        }
+                        size={24}
+                        color="#fff"
+                        style={styles.feedbackIcon}
+                      />
+                      <Text style={styles.feedbackText}>
+                        {correctHistory[currentQuestion]
+                          ? i18n.t("questionStatusCorrect")
+                          : i18n.t("questionStatusWrong")}
+                      </Text>
+                    </View>
+                  </View>
+                )}
+
+                <View>
+                  <View style={styles.answersContainer}>
+                    {questions[currentQuestion]?.answers.map(
+                      (option, index) => (
+                        <CheckboxField
+                          key={index}
+                          option={option}
+                          translatedOption={
+                            questions[currentQuestion]?.answers_fa[index]
+                          }
+                          checked={selectedAnswers.includes(option)}
+                          disabled={isChecked}
+                          isAnswerCorrect={isCorrect(option)}
+                          showTranslation={
+                            filterAlwaysShowTranslation || isTranslated
+                          }
+                          showCorrectAnswers={filterCorrectAnswersOnly}
+                          onPress={() => handleCheckboxChange(option)}
+                        />
+                      )
+                    )}
                   </View>
                 </View>
-              )}
-
-              <View>
-                <View style={styles.answersContainer}>
-                  {questions[currentQuestion]?.answers.map((option, index) => (
-                    <CheckboxField
-                      key={index}
-                      option={option}
-                      translatedOption={
-                        questions[currentQuestion]?.answers_fa[index]
-                      }
-                      checked={selectedAnswers.includes(option)}
-                      disabled={isChecked}
-                      isAnswerCorrect={isCorrect(option)}
-                      style={{}}
-                      showTranslation={
-                        filterAlwaysShowTranslation || isTranslated
-                      }
-                      showCorrectAnswers={filterCorrectAnswersOnly}
-                      onPress={() => handleCheckboxChange(option)}
-                    />
-                  ))}
-                </View>
+              </ScrollView>
+              <View style={styles.bottomButtonsContainer}>
                 {!isExam && (
                   <View style={styles.bottomButtonsContainer}>
                     {/* Back Button */}
@@ -722,7 +725,6 @@ const QuizScreen = () => {
               </View>
             </View>
           )}
-        </ScrollView>
         {/* Filter Section */}
         {width >= 950 && !isExam ? (
           <View style={styles.sidebar}>
@@ -768,29 +770,31 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     flexDirection: isWeb && width > 950 ? "row" : "column",
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: width > 950 ? "2%" : width > 768 ? 16 : 12, // Adjusted for small screens
-    maxWidth: isWeb ? 1200 : "100%",
-    alignSelf: "center",
-    width: "100%",
+    paddingHorizontal: 5,
+    height: "100%",
+    paddingBottom:  isWeb && width > 1200 ? 20 :  5,
   },
   mainQuestionContainer: {
     flex: 1,
     backgroundColor: "white",
     borderRadius: 15,
-    marginVertical: width > 768 ? 10 : 5, // Adjusted for small screens
-    padding: width > 768 ? 15 : 12, // Adjusted for small screens
+    padding: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    maxWidth: isWeb ? 900 : "100%",
+    minWidth: isWeb && width > 1200 ? 900 :  100,
+    maxWidth:  isWeb && width > 950 ? 900 :  900,
     alignSelf: "center",
     width: "100%",
-    gap: width > 768 ? 10 : 5,
+    height: "100%",
+    position: "relative", // Ensures the buttons stay within this container
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom : "15%",
+    paddingHorizontal: 5,
   },
   progressContainer: {
     flexDirection: "row",
@@ -874,23 +878,28 @@ const styles = StyleSheet.create({
     maxWidth: 800,
     alignSelf: "center",
     width: "100%",
-    marginBottom: width > 768 ? 5 : 3, // Adjusted for small screens
+    marginBottom: width > 768 ? 5 : 5, // Adjusted for small screens
   },
   bottomButtonsContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "white",
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: width > 768 ? "2%" : "1%", // Adjusted for small screens
-    gap: width > 768 ? 10 : 5, // Adjusted for small screens
-    alignSelf: "center",
-    width: "100%",
-    maxWidth: 800,
+    paddingHorizontal: 10,
+    paddingBottom: 10,
+    paddingTop: 5,
+    borderColor: "#ddd",
+    borderRadius:15,
   },
   commonButton: {
     padding: width > 768 ? 13 : 10, // Consistent padding
     borderWidth: 1, // Consistent border width
     borderRadius: 8, // Consistent border radius
-    minHeight: 40, // Consistent minimum height
+    minHeight: 42, // Consistent minimum height
     justifyContent: "center", // Center content vertically
     alignItems: "center", // Center content horizontall
     marginHorizontal: width > 768 ? 5 : 2, // Consistent margin between buttons
@@ -898,6 +907,7 @@ const styles = StyleSheet.create({
 
   backButton: {
     width: 50,
+    maxHeight: 42,
     backgroundColor: blueColor,
     borderColor: blueColor,
   },
@@ -1028,33 +1038,33 @@ const styles = StyleSheet.create({
   },
 
   feedbackContainer: {
-    marginVertical: 5,
+    marginVertical: "3%",
     padding: 7,
     borderRadius: 8,
-    width: '100%',
+    width: "100%",
     maxWidth: 800,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   feedbackContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 8,
   },
   correctFeedback: {
-    backgroundColor: '#4CAF50', // Nice green
+    backgroundColor: "#4CAF50", // Nice green
   },
   wrongFeedback: {
-    backgroundColor: '#F44336', // Alert red
+    backgroundColor: "#F44336", // Alert red
   },
   feedbackIcon: {
     marginRight: 8,
   },
   feedbackText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: fontSizeNormal,
-    fontWeight: '600',
-    textAlign: 'center',
+    fontWeight: "600",
+    textAlign: "center",
   },
 });
 export default QuizScreen;

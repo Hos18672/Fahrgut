@@ -1,43 +1,32 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  ActivityIndicator,
-  Dimensions,
-} from "react-native";
+import { View, StyleSheet, ActivityIndicator, Dimensions } from "react-native";
 import { Image } from "expo-image";
-import placeholderImage from "../assets/icon/image.png"; // Ensure this path is correct
 
 const ResponsiveQuizImage = ({ imageURL, maxWidth = 0 }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageLoadFailed, setImageLoadFailed] = useState(false);
 
-  // Reset states when imageURL changes
   useEffect(() => {
     setImageLoaded(false);
     setImageLoadFailed(false);
   }, [imageURL]);
 
-  // Get screen dimensions
+  if (!imageURL || imageLoadFailed) {
+    return <View style={styles.emptyContainer} />;
+  }
+
   const screenWidth = Dimensions.get("window").width;
   const imageWidth = Math.min(screenWidth * 0.86, maxWidth || 450);
-  const imageHeight = (imageWidth * 2) / 3; // Maintain 3:2 aspect ratio
+  const imageHeight = (imageWidth * 2) / 3;
 
   return (
     <View style={styles.imageContainerMain}>
-      {/* Show loading indicator while the image is loading */}
-      {imageURL && !imageLoaded && !imageLoadFailed && (
-        <ActivityIndicator
-          style={styles.loadingIndicator}
-          size="large"
-          color="#0000ff"
-        />
+      {!imageLoaded && (
+        <ActivityIndicator style={styles.loadingIndicator} size="large" color="#0000ff" />
       )}
-
-      {/* Show the image if available */}
       <View style={[styles.imageContainer, { width: imageWidth, height: imageHeight }]}>  
         <Image
-          source={imageLoadFailed || !imageURL ? placeholderImage : { uri: imageURL }}
+          source={{ uri: imageURL }}
           style={styles.questionImage}
           contentFit="contain"
           onLoad={() => setImageLoaded(true)}
@@ -67,6 +56,10 @@ const styles = StyleSheet.create({
   },
   loadingIndicator: {
     position: "absolute",
+  },
+  emptyContainer: {
+    height: 10,
+    width: "100%",
   },
 });
 

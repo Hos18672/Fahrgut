@@ -302,12 +302,12 @@ const styles = StyleSheet.create({
     backgroundColor: bgColor,
     alignItems: "center",
     borderRadius: 10,
-    padding: width > 768 ? 20 : 10, // Adjust padding based on screen size
+    padding: 10, // Adjust padding based on screen size
   },
   title: {
     fontSize: width > 768 ? 24 : 20, // Smaller font size for small screens
     fontWeight: "bold",
-    marginBottom: width > 768 ? 20 : 10, // Smaller margin for small screens
+    marginBottom: 10, // Smaller margin for small screens
     color: "#333",
   },
   infoText: {
@@ -336,10 +336,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: "#fff",
     borderRadius: 10,
-    padding: width > 768 ? 20 : 10, // Smaller padding for small screens
+    padding: 10, // Smaller padding for small screens
     paddingHorizontal: width > 768 ? "10%" : "5%", // Adjust padding based on screen size
     width: "100%",
-    marginBottom: width > 768 ? 20 : 10, // Smaller margin for small screens
+    marginBottom:  10, // Smaller margin for small screens
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     width: "100%",
-    marginBottom: width > 768 ? 20 : 10, // Smaller margin for small screens
+    marginBottom: 10, // Smaller margin for small screens
     backgroundColor: "#fff",
     borderRadius: 10,
     padding: width > 768 ? 5 : 3, // Smaller padding for small screens

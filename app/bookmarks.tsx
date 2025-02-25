@@ -1,4 +1,4 @@
-import React, {useRef , useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StatusBar,
   Text,
@@ -9,113 +9,116 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
+  LayoutAnimation,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { bgColor, blueColor, fontSizeNormal, fontSizeSmall } from "./assets/base/styles_assets";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  bgColor,
+  blueColor,
+  fontSizeNormal,
+  fontSizeSmall,
+} from "./assets/base/styles_assets";
 import CustomHeader from "./components/CustomHeader";
 import { useUser } from "@clerk/clerk-expo";
 import {
   GestureHandlerRootView,
   Swipeable,
 } from "react-native-gesture-handler";
-import { useRouter } from "expo-router"; // Use Expo Router
+import { QuizScreenParams, Question } from "./types";
+import { useRouter } from "expo-router";
 import { supabase } from "./services/supabase";
 import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
+
 initI18n();
 const { width, height } = Dimensions.get("window");
-const isWeb = Platform.OS === "web";
 
 const BookmarksScreen = () => {
-  const router = useRouter(); // Use Expo Router
-  const [bookmarkedQuestions, setBookmarkedQuestions] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // Loading state
+  const router = useRouter();
+  const [bookmarkedQuestions, setBookmarkedQuestions] = useState<Question[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { user } = useUser();
+  const [expandedQuestion, setExpandedQuestion] = useState<number | null>(null);
   const cureentUserEmail = user?.emailAddresses[0].emailAddress;
+  const [questions, setQuestions] = useState<Question[]>([]);
+
   useEffect(() => {
     fetchBookmarkedQuestions();
+
+    const initQuestions = async () => {
+      try {
+        const storedQuestions = await AsyncStorage.getItem("questions");
+        if (storedQuestions) {
+          setQuestions(JSON.parse(storedQuestions));
+        }
+      } catch (error) {
+        console.error("Error parsing questions:", error);
+        setQuestions([]);
+      }
+    };
+
+    initQuestions();
   }, []);
 
-  // Fetch bookmarked questions
   const fetchBookmarkedQuestions = async () => {
     try {
-      setIsLoading(true); // Start loading
-
-      // Step 1: Fetch all bookmarked question_nr from the `bookmarks` table
+      setIsLoading(true);
       const { data: bookmarks, error: bookmarksError } = await supabase
         .from("bookmarks")
         .select("question_nr")
         .eq("user_email", cureentUserEmail);
 
-      if (bookmarksError) {
-        console.error("Error fetching bookmarks:", bookmarksError);
-        return;
-      }
+      if (bookmarksError) throw bookmarksError;
 
-      // Extract the question_nr values from the bookmarks
       const bookmarkedQuestionNumbers = bookmarks.map((b) => b.question_nr);
-
-      // Step 2: Fetch all questions from the `question` table
       const { data: questions, error: questionsError } = await supabase
         .from("question")
         .select("*");
 
-      if (questionsError) {
-        console.error("Error fetching questions:", questionsError);
-        return;
-      }
+      if (questionsError) throw questionsError;
 
-      // Step 3: Match bookmarked question_nr with question_number in the `question` table
-      const matchedQuestions = questions.filter((question) =>
-        bookmarkedQuestionNumbers.includes(question.question_number)
+      setBookmarkedQuestions(
+        questions.filter((q) =>
+          bookmarkedQuestionNumbers.includes(q.question_number)
+        )
       );
-
-      // Step 4: Set the matched questions in the state
-      setBookmarkedQuestions(matchedQuestions);
     } catch (err) {
-      console.error("Unexpected error:", err);
+      console.error("Error:", err);
     } finally {
-      setIsLoading(false); // Stop loading
+      setIsLoading(false);
     }
   };
 
-  // Handle deletion of a bookmarked question
-  const handleDelete = async (question_number) => {
+  const handleDelete = async (question_number: number) => {
     try {
-      // Delete the bookmark from the `bookmarks` table
       const { error } = await supabase
         .from("bookmarks")
         .delete()
         .eq("question_nr", question_number);
 
-      if (error) {
-        console.error("Error deleting bookmark:", error);
-      } else {
-        // Remove the deleted question from the state
+      if (!error) {
         setBookmarkedQuestions((prev) =>
           prev.filter((q) => q.question_number !== question_number)
         );
       }
     } catch (err) {
-      console.error("Unexpected error:", err);
+      console.error("Delete error:", err);
     }
   };
 
-  // Render the swipeable delete button
-  const renderRightActions = (progress, dragX, question_number) => {
+  const renderRightActions = (
+    progress: Animated.AnimatedInterpolation<number>,
+    dragX: Animated.AnimatedInterpolation<number>,
+    question_number: number
+  ) => {
     const trans = dragX.interpolate({
       inputRange: [0, 50, 100, 101],
       outputRange: [0, 0, 0, 1],
     });
+    
     return (
-      <Animated.View
-        style={[
-          styles.deleteContainer,
-          {
-            transform: [{ translateX: trans }],
-          },
-        ]}
-      >
+      <Animated.View style={[styles.deleteContainer, { transform: [{ translateX: trans }] }]}>
         <TouchableOpacity onPress={() => handleDelete(question_number)}>
           <Ionicons name="trash" size={24} color="white" />
         </TouchableOpacity>
@@ -123,7 +126,6 @@ const BookmarksScreen = () => {
     );
   };
 
-  // Navigate to the QuestionScreen to review all bookmarked questions
   const navigateToQuestionScreen = () => {
     router.push({
       pathname: "/question",
@@ -134,7 +136,31 @@ const BookmarksScreen = () => {
     });
   };
 
-  // Render skeleton loading UI
+  const toggleExpand = (question_number: number) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setExpandedQuestion(prev => prev === question_number ? null : question_number);
+  };
+
+  const renderAnswers = (question: Question) => {
+    return question.answers.map((option, index) => {
+      const isCorrect = question.correct_answers.includes(option);
+      return (
+        <View
+          key={index}
+          style={[
+            styles.answerContainer,
+            {
+              backgroundColor: isCorrect ? "#e6ffe6" : "#ffe6e6",
+              borderColor: isCorrect ? "#00cc00" : "#ff0000",
+            },
+          ]}
+        >
+          <Text style={styles.answer}>{option}</Text>
+        </View>
+      );
+    });
+  };
+
   const renderSkeleton = () => {
     return Array.from({ length: 5 }).map((_, index) => (
       <View key={index} style={styles.skeletonItem}>
@@ -148,52 +174,64 @@ const BookmarksScreen = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
       {Platform.OS === "web" && (
-        <CustomHeader title={i18n.t('bookmarks')} showBackButton={true} />
+        <CustomHeader title={i18n.t("bookmarks")} showBackButton={true} />
       )}
       <View style={styles.container}>
         <ScrollView style={styles.list}>
-          {isLoading
-            ? // Show skeleton loading UI while data is being fetched
-              renderSkeleton()
-            : // Show actual data once loaded
-              bookmarkedQuestions.map((question) => (
-                <Swipeable
-                  key={question.question_number}
-                  renderRightActions={(progress, dragX) =>
-                    renderRightActions(
-                      progress,
-                      dragX,
-                      question.question_number
-                    )
-                  }
-                  onSwipeableWillOpen={() =>
-                    handleDelete(question.question_number)
-                  } 
-                  overshootRight={false}
-                >
-                  <View style={styles.item}>
+          {isLoading ? renderSkeleton() : bookmarkedQuestions.map((question) => (
+            <View key={question.question_number}>
+              <Swipeable
+                renderRightActions={(progress, dragX) =>
+                  renderRightActions(progress, dragX, question.question_number)
+                }
+                overshootRight={false}
+              >
+                <TouchableOpacity onPress={() => toggleExpand(question.question_number)}>
+                  <View style={[
+                    styles.item,
+                    expandedQuestion === question.question_number && styles.expandedItem
+                  ]}>
                     <Text style={styles.title}>
-                      {question.question_number}) 
-                      {question.question_text}
+                      {question.question_number}) {question.question_text}
                     </Text>
-                    <Ionicons name="bookmark" size={24} color={blueColor} />
+                    <View style={styles.iconContainer}>
+                      <Ionicons name="bookmark" size={24} color={blueColor} />
+                      <Ionicons 
+                        name={expandedQuestion === question.question_number ? "chevron-up" : "chevron-down"} 
+                        size={20} 
+                        color="#666" 
+                        style={styles.chevron}
+                      />
+                    </View>
                   </View>
-                </Swipeable>
-              ))}
+                </TouchableOpacity>
+              </Swipeable>
+              
+              {expandedQuestion === question.question_number && (
+                <View style={styles.answerMainContainer}>
+                  {renderAnswers(question)}
+                </View>
+              )}
+            </View>
+          ))}
         </ScrollView>
-        {!isLoading && bookmarkedQuestions.length > 0 && 
+
+        {!isLoading && bookmarkedQuestions.length > 0 && (
           <TouchableOpacity
             style={styles.reviewButton}
-            onPress={navigateToQuestionScreen}>
+            onPress={navigateToQuestionScreen}
+          >
             <Text style={styles.reviewButtonText}>{i18n.t("reviewAll")}</Text>
           </TouchableOpacity>
-          }
+        )}
+
+        {!isLoading && bookmarkedQuestions.length === 0 && (
+          <Text style={styles.noBookmarks}>{i18n.t("nobookmarks")}</Text>
+        )}
       </View>
-      {!isLoading && bookmarkedQuestions.length < 1 && <Text style={styles.noBookmaks}>{i18n.t("nobookmarks")}</Text>}
-      
-    </GestureHandlerRootView>
-  );
-};
+    </GestureHandlerRootView>)
+
+      }
 
 const styles = StyleSheet.create({
   container: {
@@ -202,17 +240,17 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === "web" || width < 750 ? 10 : 180,
     paddingHorizontal: width > 950 ? "20%" : 5,
   },
-  list:{
+  list: {
     marginTop: Platform.OS !== "web" ? 40 : 0,
   },
-  noBookmaks:{
+  noBookmarks: {
     width: "100%",
     height: "100%",
     alignSelf: "center",
     textAlign: "center",
     paddingVertical: "10%",
-    backgroundColor: bgColor
-  } ,
+    backgroundColor: bgColor,
+  },
   item: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -223,15 +261,49 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 12,
     gap: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
-  number: {
-    width: 30,
-    paddingRight: 10,
+  expandedItem: {
+    backgroundColor: "#f0f8ff",
+    borderWidth: 1,
+    borderColor: blueColor,
+    elevation: 4,
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  iconContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  chevron: {
+    marginLeft: "auto",
   },
   title: {
     fontSize: fontSizeSmall,
     color: "#333",
     flexShrink: 1,
+  },
+  answerMainContainer: {
+    backgroundColor: "white",
+    padding: 10,
+    marginHorizontal: 5,
+    borderRadius: 12,
+  },
+  answerContainer: {
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    marginHorizontal: 5,
+    marginBottom: 5,
+  },
+  answer: {
+    fontSize: fontSizeSmall,
+    color: "#333",
   },
   deleteContainer: {
     backgroundColor: "red",

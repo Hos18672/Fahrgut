@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#e0e0e0",
     borderRadius: 8,
-    marginBottom: width > 768 ? 8 : 6, // Adjusted for small screens
+    marginBottom: width > 768 ? 8 : 6 // Adjusted for small screens
   },
   checkbox: {
     width: width > 768 ? 24 : 20, // Smaller checkbox for small screens
