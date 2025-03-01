@@ -43,7 +43,7 @@ const ProfileScreen = () => {
   );
   const [selectedLanguage, setSelectedLanguage] = useState<string>(
     i18n.language
-  );a
+  );
 
   const screenHeight = Dimensions.get("window").height;
 
