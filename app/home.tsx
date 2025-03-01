@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "center",
     padding: 10,
+    paddingTop: 0,
     gap: 20,
   },
   mainContentSmall: { paddingHorizontal: 5, gap: 15 },

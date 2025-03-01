@@ -84,7 +84,7 @@ const HomeLearnCategories = (itemWidth) => {
             questions={getCategoryQuestions(item.category)}
             questions_progress={getProgress(item.category)}
             onPress={() => handleSubCategorySelect(item.category)}
-            itemWidth={"200px"}
+            itemWidth={"250px"}
           />
         ))}
       </ScrollView>
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   ScrollView: {
-    paddingVertical: 10,
+    paddingVertical: 5,
     marginLeft: 10,
   },
   firstItemMargin: {
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   section: {
     alignSelf: "center",
     width: "100%",
-    marginTop: 20,
+    marginTop: 10,
     marginBottom: 10,
   },
   sectionTitle: {
