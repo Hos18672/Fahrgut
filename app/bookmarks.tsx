@@ -30,18 +30,37 @@ import { useRouter } from "expo-router";
 import { supabase } from "./services/supabase";
 import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
+import ResponsiveQuizImage from "./components/ResponsiveQuizImage";
 
 initI18n();
 const { width, height } = Dimensions.get("window");
-
+const question_images_url =
+  "https://osfxlrmxaifoehvxztqv.supabase.co/storage/v1/object/public/question_images";
 const BookmarksScreen = () => {
   const router = useRouter();
-  const [bookmarkedQuestions, setBookmarkedQuestions] = useState<Question[]>([]);
+  const [bookmarkedQuestions, setBookmarkedQuestions] = useState<Question[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useUser();
   const [expandedQuestion, setExpandedQuestion] = useState<number | null>(null);
   const cureentUserEmail = user?.emailAddresses[0].emailAddress;
   const [questions, setQuestions] = useState<Question[]>([]);
+
+    const [imageURLs, setImageURLs] = useState<{ [key: string]: string }>({});
+
+
+    const loadImageURL = async (question_number: string) => {
+      if (question_number && !imageURLs[question_number]) {
+        try {
+          const url = `${question_images_url}/${question_number}.jpg`;
+          setImageURLs((prev) => ({ ...prev, [question_number]: url }));
+        } catch (error) {
+          console.error("Error fetching image URL:", error);
+        }
+      }
+    };
+  
 
   useEffect(() => {
     fetchBookmarkedQuestions();
@@ -116,9 +135,11 @@ const BookmarksScreen = () => {
       inputRange: [0, 50, 100, 101],
       outputRange: [0, 0, 0, 1],
     });
-    
+
     return (
-      <Animated.View style={[styles.deleteContainer, { transform: [{ translateX: trans }] }]}>
+      <Animated.View
+        style={[styles.deleteContainer, { transform: [{ translateX: trans }] }]}
+      >
         <TouchableOpacity onPress={() => handleDelete(question_number)}>
           <Ionicons name="trash" size={24} color="white" />
         </TouchableOpacity>
@@ -136,9 +157,14 @@ const BookmarksScreen = () => {
     });
   };
 
-  const toggleExpand = (question_number: number) => {
+  const toggleExpand =async (question_number: number) => {
+    if (!imageURLs[question_number]) {
+      await loadImageURL(question_number);
+    }
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setExpandedQuestion(prev => prev === question_number ? null : question_number);
+    setExpandedQuestion((prev) =>
+      prev === question_number ? null : question_number
+    );
   };
 
   const renderAnswers = (question: Question) => {
@@ -178,42 +204,70 @@ const BookmarksScreen = () => {
       )}
       <View style={styles.container}>
         <ScrollView style={styles.list}>
-          {isLoading ? renderSkeleton() : bookmarkedQuestions.map((question) => (
-            <View key={question.question_number}>
-              <Swipeable
-                renderRightActions={(progress, dragX) =>
-                  renderRightActions(progress, dragX, question.question_number)
-                }
-                overshootRight={false}
-              >
-                <TouchableOpacity onPress={() => toggleExpand(question.question_number)}>
-                  <View style={[
-                    styles.item,
-                    expandedQuestion === question.question_number && styles.expandedItem
-                  ]}>
-                    <Text style={styles.title}>
-                      {question.question_number}) {question.question_text}
-                    </Text>
-                    <View style={styles.iconContainer}>
-                      <Ionicons name="bookmark" size={24} color={blueColor} />
-                      <Ionicons 
-                        name={expandedQuestion === question.question_number ? "chevron-up" : "chevron-down"} 
-                        size={20} 
-                        color="#666" 
-                        style={styles.chevron}
-                      />
+          {isLoading
+            ? renderSkeleton()
+            : bookmarkedQuestions.map((question) => (
+                <View key={question.question_number}>
+                  <Swipeable
+                    renderRightActions={(progress, dragX) =>
+                      renderRightActions(
+                        progress,
+                        dragX,
+                        question.question_number
+                      )
+                    }
+                    overshootRight={false}
+                  >
+                    <TouchableOpacity
+                      onPress={() => toggleExpand(question.question_number)}
+                    >
+                      <View
+                        style={[
+                          styles.item,
+                          expandedQuestion === question.question_number &&
+                            styles.expandedItem,
+                        ]}
+                      >
+                        <Ionicons name="bookmark" size={24} color={blueColor} />
+                        <Text style={styles.title}>
+                          {question.question_number}) {question.question_text}
+                        </Text>
+                        <View style={styles.iconContainer}>
+                          <Ionicons
+                            name={
+                              expandedQuestion === question.question_number
+                                ? "chevron-up"
+                                : "chevron-down"
+                            }
+                            size={20}
+                            color="#666"
+                            style={styles.chevron}
+                          />
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  </Swipeable>
+
+                  {expandedQuestion === question.question_number && (
+                    <View
+                      style={[
+                        styles.answerMainContainer,
+                        imageURLs[question.question_number] ? { gap: 10 } : {},
+                      ]}
+                    >
+                      {imageURLs[question.question_number] && (
+                        <ResponsiveQuizImage
+                          imageURL={imageURLs[question.question_number] || ""}
+                          maxWidth={250}
+                        />
+                      )}
+                      <View style={styles.answerContainer}>
+                        {renderAnswers(question)}
+                      </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              </Swipeable>
-              
-              {expandedQuestion === question.question_number && (
-                <View style={styles.answerMainContainer}>
-                  {renderAnswers(question)}
+                  )}
                 </View>
-              )}
-            </View>
-          ))}
+              ))}
         </ScrollView>
 
         {!isLoading && bookmarkedQuestions.length > 0 && (
@@ -229,9 +283,9 @@ const BookmarksScreen = () => {
           <Text style={styles.noBookmarks}>{i18n.t("nobookmarks")}</Text>
         )}
       </View>
-    </GestureHandlerRootView>)
-
-      }
+    </GestureHandlerRootView>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -290,14 +344,15 @@ const styles = StyleSheet.create({
   },
   answerMainContainer: {
     backgroundColor: "white",
-    padding: 10,
+    width: "95%",
+    paddingTop: 10,
+    alignSelf: "center",
     marginHorizontal: 5,
     borderRadius: 12,
   },
   answerContainer: {
     padding: 10,
     borderRadius: 8,
-    borderWidth: 1,
     marginHorizontal: 5,
     marginBottom: 5,
   },

@@ -53,11 +53,12 @@ export const SubCategoryItem: React.FC<SubCategoryItemProps> = ({
   questions,
   questions_progress,
   onPress,
+  itemWidth,
 }) => {
   const progressPercentage = (questions_progress /questions.length) * 100;
  console.log('progress')
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.subCategory, pressed && styles.subCategoryPressed]}>
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.subCategory, pressed && styles.subCategoryPressed, itemWidth ? {width: itemWidth} : {}]}>
       <View style={[styles.progressBackground, { width: `${progressPercentage}%` }]} />
       <View style={styles.backgroundContainer}>
         <View style={styles.subCategoryContent}>
@@ -136,7 +137,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderRadius: 12,
     gap: 10,
+    height: 60,
     backgroundColor: "#fff",
+    marginRight: 10,
   },
   subCategoryPressed: {
     opacity: 0.7,

@@ -11,17 +11,23 @@ import { useRouter } from "expo-router"; // Use Expo Router
 import BQuestions from "../assets/Questions/B.json";
 import GWQuestions from "../assets/Questions/GW.json";
 import { groupByCategory, CustomTab, SubCategoryItem } from "../base";
-import { removeCharacters} from "../base";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getProgressQuestions, shuffleArray } from "../services/base";
+import { useUser } from "@clerk/clerk-expo";
 import i18n from "i18next";
 import { initI18n } from "../services/initI18n";
 initI18n();
 
-const HomeLearnCategories = () => {
+const HomeLearnCategories = (itemWidth) => {
   const grundwissenCategories = groupByCategory(GWQuestions);
   const basiswissenCategories = groupByCategory(BQuestions);
   const allCategories = [...grundwissenCategories, ...basiswissenCategories];
   const router = useRouter(); // Use Expo Router
-
+  const [allQuestions, setAllQuestions] = useState([]);
+  const [allProgressQuestions, setAllProgressQuestions] = useState([]);
+  const { user } = useUser();
+  // Initialize animation value without an initial animation
+  const cureentUserEmail = user?.emailAddresses[0].emailAddress;
   const handleSubCategorySelect = (subCategory) => {
     router.push({
       pathname: "/question",
@@ -30,18 +36,56 @@ const HomeLearnCategories = () => {
       },
     });
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const allProgressQuestions = await getProgressQuestions(cureentUserEmail);
+      setAllProgressQuestions(allProgressQuestions);
+    };
+    fetchData();
+  }, []);
+  useEffect(() => {
+    const initializeData = async () => {
+      try {
+        const storedData = await AsyncStorage.getItem("questions");
+        if (storedData) {
+          setAllQuestions(JSON.parse(storedData));
+          return;
+        }
+      } catch (err) {
+        console.log(err);
+      } finally {
+      }
+    };
+
+    initializeData();
+  }, []);
+
+  const getCategoryQuestions = (category: string) => {
+    return allQuestions?.filter((item) => item.category === category);
+  };
+  const getProgress = (category: string) => {
+    return allProgressQuestions?.filter(
+      (item) => item.category === category && item.is_answer_correct == true
+    ).length;
+  };
   return (
     <SafeAreaView style={styles.section}>
       <Text style={styles.sectionTitle}> {i18n.t("categories")}</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.ScrollView}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.ScrollView}
+      >
         {allCategories.map((item, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[styles.categoryCard,  index === 0 && styles.firstItemMargin]}
+          <SubCategoryItem
+            key={item.category}
+            item={item}
+            questions={getCategoryQuestions(item.category)}
+            questions_progress={getProgress(item.category)}
             onPress={() => handleSubCategorySelect(item.category)}
-          >
-            <Text style={styles.categoryText}>{i18n.t(removeCharacters(item.category))}</Text>
-          </TouchableOpacity>
+            itemWidth={"200px"}
+          />
         ))}
       </ScrollView>
     </SafeAreaView>
@@ -53,10 +97,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-
   },
   ScrollView: {
     paddingVertical: 10,
+    marginLeft: 10,
   },
   firstItemMargin: {
     marginLeft: 15, // Add a left margin only for the first item

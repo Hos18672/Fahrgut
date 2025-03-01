@@ -23,6 +23,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useUser } from "@clerk/clerk-expo";
 const { width, height } = Dimensions.get("window");
 import { initI18n } from "./services/initI18n";
+import SearchComponent from "./search";
 initI18n();
 
 const HomeScreen = () => {
@@ -79,7 +80,7 @@ const HomeScreen = () => {
             </View>
           </View>
         )}
-
+        <SearchComponent/>
         {Platform.OS !== "web" || (width < 768 && <HomeLearnCategories />)}
         {/* Main Content Section */}
         <View

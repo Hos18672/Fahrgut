@@ -50,6 +50,7 @@ export  interface SubCategoryItemProps {
   questions : Question[],
   questions_progress : number,
   onPress: () => void;
+  itemWidth: string;
 }
 
 
