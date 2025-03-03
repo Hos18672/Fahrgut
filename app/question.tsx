@@ -528,7 +528,7 @@ const QuizScreen = () => {
                       currentQuestion + 1
                     }/${questions.length}`}</Text>
                     {isExam && (
-                      <View style={{ width: 35 }}>
+                      <View style={{ width: 40 }}>
                         <Text
                           style={{
                             fontSize: fontSizeSmall,
