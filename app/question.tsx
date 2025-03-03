@@ -528,7 +528,7 @@ const QuizScreen = () => {
                       currentQuestion + 1
                     }/${questions.length}`}</Text>
                     {isExam && (
-                      <View style={{ width: 50 }}>
+                      <View style={{ width: 35 }}>
                         <Text
                           style={{
                             fontSize: fontSizeSmall,
@@ -802,6 +802,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     marginBottom: width > 768 ? 5 : 0, // Adjusted for small screens
     maxWidth: 800,
+    height: 40,
     alignSelf: "center",
     width: "100%",
     gap: width > 768 ? 12 : 8, // Adjusted for small screens

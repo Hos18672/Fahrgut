@@ -89,10 +89,11 @@ const SearchComponent = () => {
 const styles = StyleSheet.create({
   container: {
     position: "relative",
-    width: "95%",
+    width: "98%",
     alignSelf: "center",
     zIndex: 10,
     marginTop: 15,
+    marginBottom: 5,
   },
   searchContainer: {
     flexDirection: "row",
