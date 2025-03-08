@@ -29,10 +29,10 @@ const { width } = Dimensions.get("window");
 const LearnScreen = () => {
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState(0);
-  const [allQuestions, setAllQuestions] = useState([]);
-  const [allProgressQuestions, setAllProgressQuestions] = useState([]);
+  const [allQuestions, setAllQuestions] = useState<any[]>([]);
+  const [allProgressQuestions, setAllProgressQuestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string>('');
   const router = useRouter();
   const { user } = useUser();
   // Initialize animation value without an initial animation
@@ -44,7 +44,7 @@ const LearnScreen = () => {
     const initializeData = async () => {
       try {
         setLoading(true);
-        setError(null);
+        setError('');
   
         const storedTab = await AsyncStorage.getItem('currentTab');
         const initialTab = storedTab ? parseInt(storedTab, 10) : 0;
@@ -58,7 +58,7 @@ const LearnScreen = () => {
           return;
         }
   
-        let all_Questions = [];
+        let all_Questions : any[] = [];
         let offset = 0;
         const limit = 10000;
   
@@ -88,7 +88,7 @@ const LearnScreen = () => {
   }, []);
 
   // Handle tab changes with animation
-  const handleTabPress = (tabIndex) => {
+  const handleTabPress = (tabIndex: number) => {
     setActiveTab(tabIndex);
     Animated.timing(tabAnim, {
       toValue: tabIndex,
@@ -202,6 +202,7 @@ const LearnScreen = () => {
           <SubCategoryItem
             key={item.category}
             item={item}
+            itemWidth=""
             questions={getCategoryQuestions(item.category)}
             questions_progress={getProgress(item.category)}
             onPress={() => handleSubCategorySelect(item.category)}
@@ -215,7 +216,7 @@ const LearnScreen = () => {
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
-      {Platform.OS === "web" && <CustomHeader title={i18n.t('learn')} showBackButton={true} />}
+      {Platform.OS === "web" && <CustomHeader title={i18n.t('learn')} showBackButton={true} customRoute={''}/>}
       <View style={[styles.tabsContainer]}>
         <Animated.View 
           style={[

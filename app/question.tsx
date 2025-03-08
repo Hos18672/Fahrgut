@@ -563,8 +563,7 @@ const QuizScreen = () => {
               <ScrollView
                 contentContainerStyle={[
                   styles.scrollContent,
-                ]}
-              >
+                ]}>
                 <View style={styles.questionContainer}>
                   <Text
                     style={[
@@ -617,6 +616,7 @@ const QuizScreen = () => {
                     {questions[currentQuestion]?.answers.map(
                       (option, index) => (
                         <CheckboxField
+                          style={{}}
                           key={index}
                           option={option}
                           translatedOption={

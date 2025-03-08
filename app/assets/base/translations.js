@@ -91,6 +91,7 @@ export const resources = {
       enterPassword:  "Passwort eingeben",
       enterEmail:   "Enter email",
       personalInfo: "Personal Info",
+      exam_selection_alert: "Please select a category."
 
     },
   },
@@ -188,7 +189,7 @@ export const resources = {
       enterPassword:  "Passwort eingeben",
       enterEmail:  "E-Mail eingeben",
       personalInfo: "Persönliche Informationen",
-
+  	exam_selection_alert: "Bitte eine Kategorie auswählen."
     },
   },
   fa: {
@@ -280,7 +281,8 @@ export const resources = {
       dontHaveAnAccount: "حساب کاربری ندارید؟",
       enterPassword:  "رمز عبور را وارد کنید",
       enterEmail: "ایمیل را وارد کنید",
-      personalInfo: "اطلاعات شخصی"
+      personalInfo: "اطلاعات شخصی",
+      	exam_selection_alert: "لطفاً یک دسته را انتخاب کنید."
       
     },
   },

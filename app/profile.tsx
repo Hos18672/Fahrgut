@@ -108,7 +108,7 @@ const ProfileScreen = () => {
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
       {Platform.OS === "web" && (
-        <CustomHeader title={i18n.t("profile")} showBackButton={true} />
+        <CustomHeader title={i18n.t("profile")} showBackButton={true} customRoute={''} />
       )}
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}

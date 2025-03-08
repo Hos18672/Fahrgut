@@ -1,77 +1,59 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   StatusBar,
   Text,
   View,
   Platform,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
-  Animated,
-  Dimensions,
-  Alert,  // Added for alert
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+import { useUser } from "@clerk/clerk-expo";
+import CustomHeader from "./components/CustomHeader";
+import ExamCheckBoxField from "./components/ExamCheckBoxField";
+import i18n from "i18next";
+import { initI18n } from "./services/initI18n";
 import {
   bgColor,
   blueColor,
-  fontSizeNormal,
-  fontSizeSmall,
 } from "./assets/base/styles_assets";
-import CustomHeader from "./components/CustomHeader";
-import { useUser } from "@clerk/clerk-expo";
-import ExamCheckBoxField from "./components/ExamCheckBoxField";
-import { useRouter } from "expo-router"; // Use Expo Router
-import i18n from "i18next";
-import { initI18n } from "./services/initI18n";
-import { SafeAreaView } from "react-native-safe-area-context";
+
 initI18n();
-const { width, height } = Dimensions.get("window");
-const isWeb = Platform.OS === "web";
 
 const ExamScreen = () => {
   const router = useRouter();
-  const [GCheked, setGCheked] = useState(false);
-  const [BCheked, setBCheked] = useState(false);
+  const [GChecked, setGChecked] = useState(false);
+  const [BChecked, setBChecked] = useState(false);
+  const [alert, setAlert] = useState(false);
 
   const handleButton = () => {
-    // Check if at least one checkbox is selected
-    if (GCheked || BCheked) {
-      router.push({ pathname: "/question", params: { isExam: true , GWIsSelected:GCheked, BIsSelected: BCheked } });
+    if (GChecked || BChecked) {
+      router.push({ pathname: "/question", query: { isExam: true, GWIsSelected: GChecked, BIsSelected: BChecked } });
     } else {
-      // Show warning if neither checkbox is selected
-      Alert.alert(
-        i18n.t("warning"),
-        i18n.t("select_one_option_warning"),
-        [{ text: i18n.t("ok"), style: "default" }]
-      );
+      setAlert(true);
     }
   };
 
   return (
-    <SafeAreaView style={{ backgroundColor: bgColor, height: "100%" }}>
+    <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
-      <CustomHeader title={i18n.t("exam")} customRoute={'home'} showBackButton={true} />
+      <CustomHeader title={i18n.t("exam")} customRoute="home" showBackButton />
       <SafeAreaView style={styles.mainContainer}>
-        <Text>{i18n.t("exam")}</Text>
         <View>
           <ExamCheckBoxField
-            title={"Grundwissen"}
-            checked={GCheked}
-            onPress={() => setGCheked(!GCheked)}
-            style={{}}
+            title="Grundwissen"
+            checked={GChecked}
+            onPress={() => setGChecked((prev) => !prev)}
           />
           <ExamCheckBoxField
-            title={"Basisswissen"}
-            checked={BCheked}
-            onPress={() => setBCheked(!BCheked)}
-            style={{}}
+            title="Basisswissen"
+            checked={BChecked}
+            onPress={() => setBChecked((prev) => !prev)}
           />
         </View>
-        <TouchableOpacity
-          style={styles.submitButtonText}
-          onPress={handleButton}
-        >
+        {alert && <Text style={styles.alertText}>{i18n.t("exam_selection_alert")}</Text>}
+        <TouchableOpacity style={styles.submitButton} onPress={handleButton}>
           <Text style={styles.textStyle}>{i18n.t("exam")}</Text>
         </TouchableOpacity>
       </SafeAreaView>
@@ -80,24 +62,31 @@ const ExamScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: bgColor,
+    flex: 1,
+  },
   mainContainer: {
     flex: 1,
-    backgroundColor: bgColor,
-    gap: 10,
     padding: 10,
-    height: "100%",
+    backgroundColor: bgColor,
   },
-  submitButtonText: {
+  alertText: {
+    color: "red",
+    marginTop: 10,
+    textAlign: "center",
+  },
+  submitButton: {
     backgroundColor: blueColor,
     padding: 15,
     borderRadius: 12,
     alignItems: "center",
-    marginHorizontal: 10,
-    marginBottom: 20,
+    marginTop: 20,
   },
   textStyle: {
     color: "white",
-  }
+    fontWeight: "bold",
+  },
 });
 
 export default ExamScreen;

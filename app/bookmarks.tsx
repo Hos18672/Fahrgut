@@ -109,7 +109,7 @@ const BookmarksScreen = () => {
     }
   };
 
-  const handleDelete = async (question_number: number) => {
+  const handleDelete = async (question_number: string) => {
     try {
       const { error } = await supabase
         .from("bookmarks")
@@ -200,7 +200,7 @@ const BookmarksScreen = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
       {Platform.OS === "web" && (
-        <CustomHeader title={i18n.t("bookmarks")} showBackButton={true} />
+        <CustomHeader title={i18n.t("bookmarks")} showBackButton={true} customRoute={''} />
       )}
       <View style={styles.container}>
         <ScrollView style={styles.list}>
@@ -228,10 +228,13 @@ const BookmarksScreen = () => {
                             styles.expandedItem,
                         ]}
                       >
-                        <Ionicons name="bookmark" size={24} color={blueColor} />
-                        <Text style={styles.title}>
-                          {question.question_number}) {question.question_text}
-                        </Text>
+                        <View style={styles.question_container}>
+                          <Ionicons name="bookmark" size={24} color={blueColor} />
+                          <Text style={styles.title}>
+                            {question.question_number}) {question.question_text}
+                          </Text>
+                        </View>
+
                         <View style={styles.iconContainer}>
                           <Ionicons
                             name={
@@ -321,6 +324,14 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 2,
   },
+  
+  question_container:{
+    display: "flex",
+    flexDirection: "row",
+    gap: 10,
+    width: "90%"
+  },
+  
   expandedItem: {
     backgroundColor: "#f0f8ff",
     borderWidth: 1,
@@ -341,6 +352,7 @@ const styles = StyleSheet.create({
     fontSize: fontSizeSmall,
     color: "#333",
     flexShrink: 1,
+    height: "auto",
   },
   answerMainContainer: {
     backgroundColor: "white",
