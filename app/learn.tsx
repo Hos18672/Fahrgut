@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  useRef,
+} from "react";
 import {
   StatusBar,
   View,
@@ -10,21 +16,29 @@ import {
   Text,
   Dimensions,
 } from "react-native";
+import {
+  PanResponder,
+  GestureResponderEvent,
+  PanResponderGestureState,
+} from "react-native";
+
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CustomHeader from "./components/CustomHeader";
 import { groupByCategory, CustomTab, SubCategoryItem } from "./base";
-import { bgColor , fontSizeNormal, fontSizeSmall} from "./assets/base/styles_assets";
+import {
+  bgColor,
+  fontSizeNormal,
+  fontSizeSmall,
+} from "./assets/base/styles_assets";
 import { supabase } from "./services/supabase"; // Import Supabase client
 import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
 initI18n();
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getProgressQuestions, shuffleArray } from "./services/base";
 import { useUser } from "@clerk/clerk-expo";
 const { width } = Dimensions.get("window");
-
-
 
 const LearnScreen = () => {
   const insets = useSafeAreaInsets();
@@ -32,7 +46,7 @@ const LearnScreen = () => {
   const [allQuestions, setAllQuestions] = useState<any[]>([]);
   const [allProgressQuestions, setAllProgressQuestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
   const router = useRouter();
   const { user } = useUser();
   // Initialize animation value without an initial animation
@@ -44,38 +58,38 @@ const LearnScreen = () => {
     const initializeData = async () => {
       try {
         setLoading(true);
-        setError('');
-  
-        const storedTab = await AsyncStorage.getItem('currentTab');
+        setError("");
+
+        const storedTab = await AsyncStorage.getItem("currentTab");
         const initialTab = storedTab ? parseInt(storedTab, 10) : 0;
         setActiveTab(initialTab);
         // Set initial position without animation
         tabAnim.setValue(initialTab);
-  
-        const storedData = await AsyncStorage.getItem('questions');
+
+        const storedData = await AsyncStorage.getItem("questions");
         if (storedData) {
           setAllQuestions(JSON.parse(storedData));
           return;
         }
-  
-        let all_Questions : any[] = [];
+
+        let all_Questions: any[] = [];
         let offset = 0;
         const limit = 10000;
-  
+
         while (true) {
           const { data, error } = await supabase
             .from("question")
             .select("*")
             .range(offset, offset + limit - 1);
-  
+
           if (error) throw error;
           if (!data.length) break;
-  
+
           all_Questions = all_Questions.concat(data);
           offset += limit;
         }
-  
-        await AsyncStorage.setItem('questions', JSON.stringify(all_Questions));
+
+        await AsyncStorage.setItem("questions", JSON.stringify(all_Questions));
         setAllQuestions(all_Questions);
       } catch (err) {
         setError(err.message);
@@ -83,7 +97,7 @@ const LearnScreen = () => {
         setLoading(false);
       }
     };
-  
+
     initializeData();
   }, []);
 
@@ -95,9 +109,8 @@ const LearnScreen = () => {
       duration: 200,
       useNativeDriver: false,
     }).start();
-    AsyncStorage.setItem('currentTab', tabIndex.toString());
+    AsyncStorage.setItem("currentTab", tabIndex.toString());
   };
-
 
   useEffect(() => {
     Animated.timing(tabAnim, {
@@ -107,15 +120,14 @@ const LearnScreen = () => {
     }).start();
   }, [activeTab]);
 
-
-  useEffect(()=>{
-    AsyncStorage.setItem('currentTab', activeTab.toString());
-  },[activeTab])
+  useEffect(() => {
+    AsyncStorage.setItem("currentTab", activeTab.toString());
+  }, [activeTab]);
 
   useEffect(() => {
     const fetchData = async () => {
       const allProgressQuestions = await getProgressQuestions(cureentUserEmail);
-      setAllProgressQuestions(allProgressQuestions)
+      setAllProgressQuestions(allProgressQuestions);
     };
     fetchData();
   }, []);
@@ -133,13 +145,34 @@ const LearnScreen = () => {
   // Filter questions based on the active tab
   const filteredQuestions = useMemo(() => {
     return allQuestions
-        .filter((question) => {
-            const prefix = question.category?.startsWith("GW") ? "GW" : "B";
-            return activeTab === 0 ? prefix === "GW" : prefix === "B";
-        })
-        .sort((a, b) => a.category.localeCompare(b.category)); // Sorting by category
-}, [allQuestions, activeTab]);
+      .filter((question) => {
+        const prefix = question.category?.startsWith("GW") ? "GW" : "B";
+        return activeTab === 0 ? prefix === "GW" : prefix === "B";
+      })
+      .sort((a, b) => a.category.localeCompare(b.category)); // Sorting by category
+  }, [allQuestions, activeTab]);
 
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onMoveShouldSetPanResponder: (_, gestureState) => {
+          return (
+            Math.abs(gestureState.dx) > 20 && Math.abs(gestureState.dy) < 10
+          );
+        },
+        onPanResponderRelease: (
+          _: GestureResponderEvent,
+          gestureState: PanResponderGestureState
+        ) => {
+          if (gestureState.dx > 50 && activeTab === 1) {
+            handleTabPress(0); // Swipe right to go to first tab
+          } else if (gestureState.dx < -50 && activeTab === 0) {
+            handleTabPress(1); // Swipe left to go to second tab
+          }
+        },
+      }),
+    [activeTab]
+  );
 
   // Group questions by category
   const groupedQuestions = useMemo(() => {
@@ -165,21 +198,23 @@ const LearnScreen = () => {
         {/* Skeleton for content */}
         <View style={styles.skeletonContent}>
           {[1, 2, 3, 4, 5].map((_, index) => (
-            <View key={index} style={styles.skeletonItem} >
-                <View style={styles.skeletonText} />
-              </View>
+            <View key={index} style={styles.skeletonItem}>
+              <View style={styles.skeletonText} />
+            </View>
           ))}
         </View>
       </View>
     );
   };
 
-  const getCategoryQuestions= (category: string) => {
-    return allQuestions?.filter(item => item.category === category)
-  }
-  const getProgress= (category: string) => {
-    return allProgressQuestions?.filter(item => item.category === category && item.is_answer_correct == true).length
-  }
+  const getCategoryQuestions = (category: string) => {
+    return allQuestions?.filter((item) => item.category === category);
+  };
+  const getProgress = (category: string) => {
+    return allProgressQuestions?.filter(
+      (item) => item.category === category && item.is_answer_correct == true
+    ).length;
+  };
   const renderContent = () => {
     if (loading) {
       return renderSkeleton(); // Show skeleton while loading
@@ -195,6 +230,7 @@ const LearnScreen = () => {
 
     return (
       <ScrollView
+        {...panResponder.panHandlers}
         style={styles.tabContent}
         contentContainerStyle={styles.contentContainer}
       >
@@ -212,24 +248,29 @@ const LearnScreen = () => {
     );
   };
 
-
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
-      {Platform.OS === "web" && <CustomHeader title={i18n.t('learn')} showBackButton={true} customRoute={''}/>}
+      {Platform.OS === "web" && (
+        <CustomHeader
+          title={i18n.t("learn")}
+          showBackButton={true}
+          customRoute={""}
+        />
+      )}
       <View style={[styles.tabsContainer]}>
-        <Animated.View 
+        <Animated.View
           style={[
-            styles.activeTabIndicator, 
-            { 
+            styles.activeTabIndicator,
+            {
               left: tabAnim.interpolate({
                 inputRange: [0, 1],
-                outputRange: ['.5%', '49.5%']
-              })
-            }
-          ]} 
+                outputRange: [".5%", "49.5%"],
+              }),
+            },
+          ]}
         />
-        
+
         <CustomTab
           style={{ flex: 1 }}
           title={`${i18n.t("Grundwissen")} (${gwCount})`}
@@ -275,7 +316,7 @@ const styles = StyleSheet.create({
     bottom: 2,
   },
   tabContent: {
-    paddingHorizontal: width > 768 ? "18%" :5, // Adjust padding based on screen size
+    paddingHorizontal: width > 768 ? "18%" : 5, // Adjust padding based on screen size
     flex: 1,
     backgroundColor: bgColor,
     paddingBottom: 50,
@@ -283,7 +324,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingTop: 5,
-    padding: width > 768 ? 15 : 2, 
+    padding: width > 768 ? 15 : 2,
     paddingBottom: 100,
   },
   loadingContainer: {
@@ -304,7 +345,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: width > 768 ? "18%" : 10, // Adjust padding based on screen size
     flex: 1,
     padding: 10,
-    paddingTop: 15
+    paddingTop: 15,
   },
   skeletonContent: {
     flex: 1,
@@ -326,7 +367,6 @@ const styles = StyleSheet.create({
     height: 20,
     backgroundColor: "#c7c7c7",
     borderRadius: 4,
-  
   },
 });
 

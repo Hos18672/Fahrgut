@@ -571,7 +571,9 @@ const QuizScreen = () => {
                       { textAlign: isTranslated ? "right" : "left" },
                     ]}
                   >
-                    <Text style={styles.questionNumber}>
+                    <Text style={[
+                      styles.questionNumber,
+                       { marginLeft: isTranslated ? "5px" : "0px"}]}>
                       {questions[currentQuestion]?.question_number})
                     </Text>
                     {filterAlwaysShowTranslation || isTranslated
@@ -772,6 +774,8 @@ const styles = StyleSheet.create({
     flexDirection: isWeb && width > 950 ? "row" : "column",
     paddingHorizontal: 5,
     height: "100%",
+    width:  isWeb && width > 950 ? "auto" : "100%",
+    alignSelf: "center",
     paddingBottom:  isWeb && width > 1200 ? 20 :  5,
   },
   mainQuestionContainer: {
@@ -784,13 +788,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    minWidth: isWeb && width > 1200 ? 900 :  100,
-    maxWidth:  isWeb && width > 950 ? 900 :  900,
+    minWidth: isWeb && width > 1200 ? 900 :  "100%",
+    maxWidth:  isWeb && width > 950 ? 900 :  "100%",
     alignSelf: "center",
-    width: "100%",
     height: "100%",
-    position: "relative", // Ensures the buttons stay within this container
+    position: "relative",
   },
+
   scrollContent: {
     flexGrow: 1,
     paddingBottom : "15%",
@@ -897,13 +901,13 @@ const styles = StyleSheet.create({
     borderRadius:15,
   },
   commonButton: {
-    padding: width > 768 ? 13 : 10, // Consistent padding
-    borderWidth: 1, // Consistent border width
-    borderRadius: 8, // Consistent border radius
-    minHeight: 42, // Consistent minimum height
-    justifyContent: "center", // Center content vertically
-    alignItems: "center", // Center content horizontall
-    marginHorizontal: width > 768 ? 5 : 2, // Consistent margin between buttons
+    padding: width > 768 ? 13 : 10,
+    borderWidth: 1, 
+    borderRadius: 8,
+    minHeight: 42, 
+    justifyContent: "center", 
+    alignItems: "center", 
+    marginHorizontal: width > 768 ? 5 : 2, 
   },
 
   backButton: {
@@ -923,14 +927,14 @@ const styles = StyleSheet.create({
     backgroundColor: blueColor,
     borderColor: blueColor,
     borderWidth: 2,
-    minHeight: 42,
+    maxHeight: 42,
   },
   submitButtonUnchecked: {
     flex: 1, // Allow buttons to share equal width
     backgroundColor: "#ffffff",
     borderColor: blueColor,
     borderWidth: 2,
-    minHeight: 42,
+    maxHeight: 42,
   },
   submitButtonText: {
     color: blueColor,
@@ -944,6 +948,7 @@ const styles = StyleSheet.create({
   },
   translateButton: {
     width: 50,
+      maxHeight: 42,
     backgroundColor: blueColor,
     borderColor: blueColor,
   },

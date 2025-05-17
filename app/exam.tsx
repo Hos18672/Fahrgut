@@ -29,7 +29,7 @@ const ExamScreen = () => {
 
   const handleButton = () => {
     if (GChecked || BChecked) {
-      router.push({ pathname: "/question", query: { isExam: true, GWIsSelected: GChecked, BIsSelected: BChecked } });
+      router.push({ pathname: "/question", params: { isExam: true, GWIsSelected: GChecked, BIsSelected: BChecked } });
     } else {
       setAlert(true);
     }
