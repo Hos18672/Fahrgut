@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
   StatusBar,
   Image,
@@ -13,7 +13,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router"; // Use Expo Router
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ResponsiveQuizImage from "./components/ResponsiveQuizImage";
 import ExamResultScreen from "./examrsult";
@@ -30,277 +30,337 @@ import {
 import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
 import { useUser } from "@clerk/clerk-expo";
-import { GetRandomQuestions, formatTime, AllQuestions } from "./services/base";
+import { GetRandomQuestions, formatTime } from "./services/base";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { removeCharacters } from "./base";
 import CustomHeader from "./components/CustomHeader";
 import { supabase } from "./services/supabase";
-import { Image as ExpoImage } from "expo-image"; // Use expo-image for better performance
+import { Image as ExpoImage } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 
+// Constants
 initI18n();
 const { width, height } = Dimensions.get("window");
 const isWeb = Platform.OS === "web";
+const QUESTION_IMAGES_URL = "https://osfxlrmxaifoehvxztqv.supabase.co/storage/v1/object/public/question_images";
+const EXAM_TIMER_SECONDS = 1800;
+
+/**
+ * Utility function to shuffle an array using Fisher-Yates algorithm
+ */
+const shuffleArray = (array) => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
+/**
+ * Utility function to create answer mapping for shuffled options
+ */
+const createAnswerMapping = (originalAnswers, originalAnswersFa, shuffledIndices) => {
+  const answerMapping = {};
+  const shuffledAnswers = [];
+  const shuffledAnswersFa = [];
+  
+  shuffledIndices.forEach((originalIndex, newIndex) => {
+    const originalAnswer = originalAnswers[originalIndex];
+    answerMapping[originalAnswer] = newIndex;
+    shuffledAnswers[newIndex] = originalAnswer;
+    shuffledAnswersFa[newIndex] = originalAnswersFa[originalIndex];
+  });
+  
+  return { answerMapping, shuffledAnswers, shuffledAnswersFa };
+};
+
+/**
+ * Process questions for randomization
+ */
+const processQuestions = (questions, shouldRandomizeQuestions = false, shouldRandomizeAnswers = false) => {
+  let processedQuestions = [...questions];
+  
+  // Randomize question order if needed
+  if (shouldRandomizeQuestions) {
+    processedQuestions = shuffleArray(processedQuestions);
+  }
+  
+  // Randomize answer options if needed
+  if (shouldRandomizeAnswers) {
+    processedQuestions = processedQuestions.map(question => {
+      const answerIndices = question.answers.map((_, index) => index);
+      const shuffledIndices = shuffleArray(answerIndices);
+      
+      const { answerMapping, shuffledAnswers, shuffledAnswersFa } = createAnswerMapping(
+        question.answers,
+        question.answers_fa,
+        shuffledIndices
+      );
+      
+      return {
+        ...question,
+        answers: shuffledAnswers,
+        answers_fa: shuffledAnswersFa,
+        originalAnswerMapping: answerMapping,
+      };
+    });
+  }
+  
+  return processedQuestions;
+};
+
+/**
+ * Debounce utility to prevent rapid calls
+ */
+const debounce = (func, wait) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+};
 
 const QuizScreen = () => {
   const { user } = useUser();
-  const cureentUserEmail = user?.emailAddresses[0].emailAddress;
-  const params = useLocalSearchParams<QuizScreenParams>();
+  const currentUserEmail = user?.emailAddresses[0].emailAddress;
+  const params = useLocalSearchParams();
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
+  
+  // Extract and validate params
   const {
-    isExam,
+    isExam = false,
     category,
     BookmarkedQuestions,
-    GWIsSelected,
-    BIsSelected,
-    isBookmark,
+    GWIsSelected = false,
+    BIsSelected = false,
+    isBookmark = false,
   } = params;
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
-  const [isChecked, setIsChecked] = useState(false);
-  const [imageURL, setImageURL] = useState<string | null>(null);
-  const [nextImageURL, setNextImageURL] = useState<string | null>(null);
-  const [isTranslated, setIsTranslated] = useState(false);
-  const [showFilterModal, setShowFilterModal] = useState(false);
-  const [filterCorrectAnswersOnly, setFilterCorrectAnswersOnly] =
-    useState(false);
-  const [correctHistory, setCorrectHistory] = useState<{
-    [key: number]: boolean;
-  }>({});
-  const [filterAlwaysShowTranslation, setFilterAlwaysShowTranslation] =
-    useState(false);
-  const [examAnsweredQuestions, setExamAnsweredQuestions] = useState<any[]>([]);
-  const [timer, setTimer] = useState(1800);
-  const [quizEnded, setQuizEnded] = useState(false);
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [questionsLength, setQuestionsLength] = useState(0);
-  const [examAnsweredNums, setExamAnsweredNums] = useState(0);
-  const [bookmarked, setBookmarked] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [textAlign, setTextAlign] = useState("left");
-  const [answeredCorrectly, setAnsweredCorrectly] = useState(false);
-  const [answerHistory, setAnswerHistory] = useState<{
-    [key: number]: string[];
-  }>({});
-  const [answeredQuestions, setAnsweredQuestions] = useState<Set<number>>(
-    new Set()
-  );
 
-  const question_images_url =
-    "https://osfxlrmxaifoehvxztqv.supabase.co/storage/v1/object/public/question_images";
-  const insets = useSafeAreaInsets();
-  const router = useRouter();
+  // State management
+  const [state, setState] = useState({
+    currentQuestion: 0,
+    selectedAnswers: [],
+    isChecked: false,
+    imageURL: null, // Initialize with placeholder
+    nextImageURL: null,
+    isTranslated: false,
+    showFilterModal: false,
+    filterCorrectAnswersOnly: false,
+    filterAlwaysShowTranslation: false,
+    timer: EXAM_TIMER_SECONDS,
+    quizEnded: false,
+    questions: [],
+    questionsLength: 0,
+    examAnsweredNums: 0,
+    bookmarked: false,
+    loading: true,
+    answeredCorrectly: false,
+  });
 
-  useEffect(() => {
-    // Initialize first question as visited
-    setAnsweredQuestions(new Set());
+  // Separate state for complex objects to avoid deep updates
+  const [correctHistory, setCorrectHistory] = useState({});
+  const [answerHistory, setAnswerHistory] = useState({});
+  const [answeredQuestions, setAnsweredQuestions] = useState(new Set());
+  const [examAnsweredQuestions, setExamAnsweredQuestions] = useState([]);
+
+  // Memoized values
+  const textAlign = useMemo(() => {
+    return state.isTranslated ? "right" : "left";
+  }, [state.isTranslated]);
+
+  const progress = useMemo(() => {
+    if (state.questions.length === 0) return 0;
+    return ((state.currentQuestion + 1) / state.questions.length) * 100;
+  }, [state.currentQuestion, state.questions.length]);
+
+  const currentQuestionData = useMemo(() => {
+    return state.questions[state.currentQuestion] || null;
+  }, [state.questions, state.currentQuestion]);
+
+  // Update state helper
+  const updateState = useCallback((updates) => {
+    setState(prevState => ({ ...prevState, ...updates }));
   }, []);
-  // Preload images for the current and next question
-  const preloadImages = useCallback(
-    async (currentNum: string, nextNum: string) => {
-      if (currentNum) {
-        const currentURL = `${question_images_url}/${currentNum}.jpg`;
-        await ExpoImage.prefetch(currentURL); // Preload the current image
-        setImageURL(currentURL);
-      }
-      if (nextNum) {
-        const nextURL = `${question_images_url}/${nextNum}.jpg`;
-        await ExpoImage.prefetch(nextURL); // Preload the next image
-        setNextImageURL(nextURL);
-      }
-    },
-    []
-  );
 
-  // Fetch questions by category from Supabase
-  // Fetch questions from AsyncStorage
-  const fetchQuestionsByCategory = async (category: string) => {
+  /**
+   * Fetch questions by category from AsyncStorage
+   */
+  const fetchQuestionsByCategory = useCallback(async (category) => {
     try {
       const storedData = await AsyncStorage.getItem("questions");
       if (storedData) {
-        const questions = JSON.parse(storedData); // Parse stored JSON string into an array
-        return questions.filter((question) => question.category === category); // Filter by category
+        const questions = JSON.parse(storedData);
+        return questions.filter((question) => question.category === category);
       }
-      return []; // Return empty array if no data is found
+      return [];
     } catch (err) {
       console.error("Error fetching questions by category:", err.message);
-      return []; // Return empty array if there's an error
+      return [];
     }
-  };
+  }, []);
 
-  useEffect(() => {
-    const initQuestions = async () => {
+  /**
+   * Initialize questions based on quiz type
+   */
+  const initializeQuestions = useCallback(async () => {
+    try {
       let questionSet = [];
 
-      try {
-        // Get the questions from AsyncStorage
+      if (isExam) {
+        // Exam mode: get random questions based on selection
+        const gw = GWIsSelected === true ? "GW" : null;
+        const b = BIsSelected === true ? "B" : null;
+        questionSet = await GetRandomQuestions([gw, b].filter(Boolean));
+        updateState({ questionsLength: questionSet.length });
+      } else if (category) {
+        // Category mode: get all questions for category and randomize
+        questionSet = await fetchQuestionsByCategory(category);
+        // Process questions for category mode (randomize both questions and answers)
+        questionSet = processQuestions(questionSet, true, true);
+      } else if (BookmarkedQuestions) {
+        // Bookmark mode: parse provided bookmarked questions
+        try {
+          questionSet = JSON.parse(BookmarkedQuestions);
+          // Randomize only answers for bookmarked questions
+          questionSet = processQuestions(questionSet, false, true);
+        } catch (error) {
+          console.error("Error parsing BookmarkedQuestions:", error.message);
+          questionSet = [];
+        }
+      } else {
+        // Default mode: get questions from AsyncStorage
         const storedQuestions = await AsyncStorage.getItem("questions");
         if (storedQuestions) {
           questionSet = JSON.parse(storedQuestions);
-        }
-      } catch (error) {
-        console.error(
-          "Error parsing questions from AsyncStorage:",
-          error.message
-        );
-        questionSet = []; // In case of parsing error, fallback to empty array
-      }
-
-      // Modify questionSet based on conditions
-      if (isExam) {
-        const gw = GWIsSelected === true && "GW";
-        const b = BIsSelected === true && "B";
-        questionSet = await GetRandomQuestions([gw, b]);
-        setQuestionsLength(questionSet.length);
-      } else if (category) {
-        // Fetch questions from Supabase based on the category
-        questionSet = await fetchQuestionsByCategory(category);
-      } else if (BookmarkedQuestions) {
-        // Parse the BookmarkedQuestions if provided
-        try {
-          questionSet = JSON.parse(BookmarkedQuestions);
-        } catch (error) {
-          console.error("Error parsing BookmarkedQuestions:", error.message);
-          questionSet = []; // Fallback to empty array if parsing fails
+          // Randomize answers for default mode
+          questionSet = processQuestions(questionSet, false, true);
         }
       }
 
-      setQuestions(questionSet);
-      setLoading(false);
-    };
-
-    initQuestions();
-  }, [isExam, category, BookmarkedQuestions]);
-
-  // Timer functionality
-  useEffect(() => {
-    if (
-      timer <= 0 ||
-      (examAnsweredNums > 0 && examAnsweredNums === questionsLength)
-    ) {
-      setQuizEnded(true);
-      return; // Stop timer
+      updateState({ 
+        questions: questionSet,
+        loading: false 
+      });
+    } catch (error) {
+      console.error("Error initializing questions:", error.message);
+      updateState({ 
+        questions: [],
+        loading: false 
+      });
     }
+  }, [isExam, category, BookmarkedQuestions, GWIsSelected, BIsSelected, fetchQuestionsByCategory, updateState]);
 
-    if (isExam) {
-      const interval = setInterval(() => {
-        setTimer((prevTimer) => prevTimer - 1);
-      }, 1000);
-
-      return () => clearInterval(interval);
-    }
-
-    // Determine text alignment based on the language
-    setTextAlign(isTranslated === "fa" ? "right" : "left");
-  }, [timer, examAnsweredNums, textAlign]);
-
-  useEffect(() => {
-    if (questions.length > 0) {
-      getBookmarked();
-      const currentNum = questions[currentQuestion]?.question_number;
-      const nextNum = questions[currentQuestion + 1]?.question_number;
-      preloadImages(currentNum, nextNum);
-    }
-  }, [questions, currentQuestion, preloadImages]);
-  // Preload the image for the first question on mount
-  useEffect(() => {
-    const firstQuestionNumber = questions[0]?.question_number;
-    const nextQuestionNumber = questions[1]?.question_number;
-
-    preloadImages(firstQuestionNumber, nextQuestionNumber);
-  }, []);
-  const handleCheck = () => {
-    console.log("check button");
-    // In handleCheck function, update the correctness check:
-    const currentQuestionData = questions[currentQuestion];
-    // Convert correct answers to strings for proper comparison
-    const correctAnswers = currentQuestionData.correct_answers.map(String);
-
-    const isAllCorrect =
-      selectedAnswers.length === correctAnswers.length &&
-      selectedAnswers.every((answer) => correctAnswers.includes(answer));
-
-    // Update correct history
-    setCorrectHistory((prev) => ({
-      ...prev,
-      [currentQuestion]: isAllCorrect,
-    }));
-    if (isChecked) {
-      const nextQuestion = currentQuestion + 1;
-      // Store current answers in history
-      setAnswerHistory((prev) => ({
-        ...prev,
-        [currentQuestion]: selectedAnswers,
-      }));
-
-      // Mark current question as answered
-      setAnsweredQuestions((prev) => new Set([...prev, currentQuestion]));
-
-      if (nextQuestion >= questions.length) {
-        if (category) {
-          router.push("/learn");
-        } else if (BookmarkedQuestions) {
-          isChecked && router.push("/bookmarks");
-        } else {
-          router.push("/home");
-        }
-      } else {
-        setCurrentQuestion(nextQuestion);
-        // Only restore answers if the question was previously answered
-        if (answeredQuestions.has(nextQuestion)) {
-          setSelectedAnswers(answerHistory[nextQuestion] || []);
-          setIsChecked(true);
-        } else {
-          setSelectedAnswers([]);
-          setIsChecked(filterCorrectAnswersOnly);
-        }
-      }
-      setImageURL(nextImageURL);
-      if (category) {
-        updateProgressTable();
-      }
-    } else {
-      setIsChecked(true);
-    }
-  };
-
-  const updateProgressTable = async () => {
+  /**
+   * Preload images for current and next question with validation
+   */
+  const preloadImages = useCallback(async (currentNum, nextNum) => {
     try {
-      const currentQuestionData = questions[currentQuestion];
-      const questionId = parseInt(currentQuestionData?.question_number);
-      const correctAnswers = currentQuestionData.correct_answers;
+      // Default placeholder image
+      const placeholderImage = "" // Ensure placeholder exists
+      let newImageURL = placeholderImage;
+      let newNextImageURL = null;
 
-      // Check if all selected answers are completely correct
+      // Helper function to check if image exists
+      const checkImageExists = async (url) => {
+        try {
+          const response = await fetch(url, { method: "HEAD" });
+          return response.ok;
+        } catch {
+          return false;
+        }
+      };
+
+      // Preload current question image
+      if (currentNum) {
+        const currentURL = `${QUESTION_IMAGES_URL}/${currentNum}.jpg`;
+        const imageExists = await checkImageExists(currentURL);
+        if (imageExists) {
+          await ExpoImage.prefetch(currentURL);
+          newImageURL = currentURL;
+        }
+      }
+
+      // Preload next question image
+      if (nextNum) {
+        const nextURL = `${QUESTION_IMAGES_URL}/${nextNum}.jpg`;
+        const nextImageExists = await checkImageExists(nextURL);
+        if (nextImageExists) {
+          await ExpoImage.prefetch(nextURL);
+          newNextImageURL = nextURL;
+        }
+      }
+
+      // Update state only if component is still mounted
+      updateState({ imageURL: newImageURL, nextImageURL: newNextImageURL });
+    } catch (error) {
+      console.error("Error preloading images:", error);
+      // Fallback to placeholder for current image
+      updateState({ imageURL: null, nextImageURL: null });
+    }
+  }, [updateState]);
+
+  /**
+   * Get bookmark status for current question
+   */
+  const getBookmarked = useCallback(async () => {
+    if (!currentQuestionData || !currentUserEmail) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from("bookmarks")
+        .select("*")
+        .eq("user_email", currentUserEmail)
+        .eq("question_nr", currentQuestionData.question_number)
+        .single();
+      
+      updateState({ bookmarked: !!data });
+      
+      if (error && !error.details?.includes("0 rows")) {
+        console.error("Error fetching bookmark:", error);
+      }
+    } catch (err) {
+      console.error("Error in getBookmarked:", err.message);
+    }
+  }, [currentQuestionData, currentUserEmail, updateState]);
+
+  /**
+   * Update progress in database for category mode
+   */
+  const updateProgressTable = useCallback(async () => {
+    if (!currentQuestionData || !currentUserEmail || !category) return;
+
+    try {
+      const questionId = parseInt(currentQuestionData.question_number);
+      const correctAnswers = currentQuestionData.correct_answers.map(String);
+      
       const isAllCorrect =
-        selectedAnswers.length === correctAnswers.length &&
-        selectedAnswers.every((answer) => correctAnswers.includes(answer));
+        state.selectedAnswers.length === correctAnswers.length &&
+        state.selectedAnswers.every((answer) => correctAnswers.includes(answer));
 
-      // Check if progress record exists for this user/question
+      // Check existing progress
       const { data: existingProgress, error: fetchError } = await supabase
         .from("progress")
-        .select("is_answer_correct")
+        .select("attempt_count")
         .eq("question_id", questionId)
-        .eq("user_email", cureentUserEmail)
+        .eq("user_email", currentUserEmail)
         .single();
 
-      if (fetchError && !fetchError.details.includes("0 rows")) {
+      if (fetchError && !fetchError.details?.includes("0 rows")) {
         console.error("Error fetching progress:", fetchError);
         return;
       }
 
-      // Only update if:
-      // - No existing record (first attempt)
-      // - Existing record has is_answer_correct = false (previous wrong answer)
-
+      // Update progress
       const { error } = await supabase.from("progress").upsert(
         {
           question_id: questionId,
-          user_email: cureentUserEmail,
+          user_email: currentUserEmail,
           is_answer_correct: isAllCorrect,
           category: currentQuestionData.category,
           last_attempted: new Date().toISOString(),
-          attempt_count: existingProgress
-            ? (existingProgress.attempt_count || 0) + 1
-            : 1,
+          attempt_count: existingProgress ? (existingProgress.attempt_count || 0) + 1 : 1,
         },
         {
           onConflict: "question_id,user_email",
@@ -314,157 +374,438 @@ const QuizScreen = () => {
     } catch (err) {
       console.error("Error in updateProgressTable:", err.message);
     }
-  };
+  }, [currentQuestionData, currentUserEmail, category, state.selectedAnswers]);
 
-  const handlePreviousQuestion = () => {
-    if (currentQuestion > 0) {
-      const previousQuestion = currentQuestion - 1;
+  /**
+   * Handle bookmark toggle
+   */
+  const handleBookmarkToggle = useCallback(async () => {
+    if (!currentQuestionData || !currentUserEmail) return;
 
-      // If current question was checked, store its answers
-      if (isChecked) {
-        setAnswerHistory((prev) => ({
-          ...prev,
-          [currentQuestion]: selectedAnswers,
-        }));
-        setAnsweredQuestions((prev) => new Set([...prev, currentQuestion]));
+    try {
+      const questionNumber = currentQuestionData.question_number;
+      
+      const { data: existingBookmarks, error: fetchError } = await supabase
+        .from("bookmarks")
+        .select("*")
+        .eq("question_nr", questionNumber)
+        .eq("user_email", currentUserEmail);
+
+      if (fetchError) {
+        console.error("Error fetching bookmark:", fetchError);
+        return;
       }
 
-      // Restore previous question's answers
-      setSelectedAnswers(answerHistory[previousQuestion] || []);
-      setCurrentQuestion(previousQuestion);
-      // Only show as checked if it was previously answered
-      setIsChecked(answeredQuestions.has(previousQuestion));
+      if (existingBookmarks && existingBookmarks.length > 0) {
+        // Remove bookmark
+        const { error: deleteError } = await supabase
+          .from("bookmarks")
+          .delete()
+          .eq("question_nr", parseInt(questionNumber))
+          .eq("user_email", currentUserEmail);
 
-      // Preload images for the previous question
-      const previousNum = questions[previousQuestion]?.question_number;
-      const currentNum = questions[currentQuestion]?.question_number;
-      preloadImages(previousNum, currentNum);
-    }
-  };
-
-  const handleNextQuestion = () => {
-    getBookmarked();
-    if (isExam) {
-      const currentQuestionData = {
-        question: questions[currentQuestion],
-        userAnswers: selectedAnswers,
-      };
-
-      // Store current answers in history
-      setAnswerHistory((prev) => ({
-        ...prev,
-        [currentQuestion]: selectedAnswers,
-      }));
-      setAnsweredQuestions((prev) => new Set([...prev, currentQuestion]));
-
-      setExamAnsweredQuestions([...examAnsweredQuestions, currentQuestionData]);
-
-      if (currentQuestion + 1 < questions.length) {
-        const nextQuestion = currentQuestion + 1;
-        setCurrentQuestion(nextQuestion);
-
-        // Only restore answers if question was previously answered
-        if (answeredQuestions.has(nextQuestion)) {
-          setSelectedAnswers(answerHistory[nextQuestion] || []);
-          setIsChecked(true);
-        } else {
-          setSelectedAnswers([]);
-          setIsChecked(false);
+        if (deleteError) {
+          console.error("Error deleting bookmark:", deleteError);
+          return;
         }
 
-        setImageURL(nextImageURL);
-        setTimer((prevTimer) => prevTimer - 1);
+        updateState({ bookmarked: false });
       } else {
-        setQuizEnded(true);
+        // Add bookmark
+        const { error: insertError } = await supabase.from("bookmarks").insert([
+          {
+            user_email: currentUserEmail,
+            question_nr: parseInt(questionNumber),
+          },
+        ]);
+
+        if (insertError) {
+          console.error("Error adding bookmark:", insertError);
+          return;
+        }
+
+        updateState({ bookmarked: true });
       }
-      setExamAnsweredNums(examAnsweredNums + 1);
+    } catch (err) {
+      console.error("Error in handleBookmarkToggle:", err.message);
     }
-  };
+  }, [currentQuestionData, currentUserEmail, updateState]);
 
-  const handleCheckboxChange = (option: string) => {
-    // Allow changes only if not checked
-    if (isChecked) return;
-
-    const updatedAnswers = selectedAnswers.includes(option)
-      ? selectedAnswers.filter((answer) => answer !== option)
-      : [...selectedAnswers, option];
-    setSelectedAnswers(updatedAnswers);
-  };
-
-  const toggleTranslation = () => {
-    setIsTranslated(!isTranslated);
-  };
-
-  const toggleFilterModal = () => {
-    setShowFilterModal(!showFilterModal);
-  };
-
-  const isCorrect = (answer: string) => {
-    const correctAnswers = questions[currentQuestion].correct_answers;
+  /**
+   * Check if an answer option is correct
+   */
+  const isCorrect = useCallback((answer) => {
+    if (!currentQuestionData) return false;
+    const correctAnswers = currentQuestionData.correct_answers || [];
     return correctAnswers.includes(answer);
-  };
+  }, [currentQuestionData]);
 
-  const getBookmarked = async () => {
-    const { data: user, error: userError } = await supabase
-      .from("bookmarks")
-      .select("*")
-      .eq("user_email", cureentUserEmail)
-      .eq("question_nr", questions[currentQuestion]?.question_number)
-      .single();
-    setBookmarked(user ? true : false);
-    if (userError) {
-      throw userError;
+  /**
+   * Handle checkbox change for answer selection
+   */
+  const handleCheckboxChange = useCallback((option) => {
+    if (state.isChecked) return;
+
+    updateState({
+      selectedAnswers: state.selectedAnswers.includes(option)
+        ? state.selectedAnswers.filter((answer) => answer !== option)
+        : [...state.selectedAnswers, option]
+    });
+  }, [state.isChecked, state.selectedAnswers, updateState]);
+
+  /**
+   * Handle check/next button press
+   */
+  const handleCheck = useCallback(() => {
+    if (!currentQuestionData) return;
+
+    const correctAnswers = currentQuestionData.correct_answers.map(String);
+    const isAllCorrect =
+      state.selectedAnswers.length === correctAnswers.length &&
+      state.selectedAnswers.every((answer) => correctAnswers.includes(answer));
+
+    // Update correct history
+    setCorrectHistory(prev => ({
+      ...prev,
+      [state.currentQuestion]: isAllCorrect,
+    }));
+
+    if (state.isChecked) {
+      // Move to next question
+      const nextQuestion = state.currentQuestion + 1;
+      
+      // Store current answers in history
+      setAnswerHistory(prev => ({
+        ...prev,
+        [state.currentQuestion]: state.selectedAnswers,
+      }));
+
+      // Mark current question as answered
+      setAnsweredQuestions(prev => new Set([...prev, state.currentQuestion]));
+
+      if (nextQuestion >= state.questions.length) {
+        // Quiz finished - navigate based on mode
+        if (category) {
+          router.push("/learn");
+        } else if (BookmarkedQuestions) {
+          router.push("/bookmarks");
+        } else {
+          router.push("/home");
+        }
+      } else {
+        // Go to next question
+        updateState({
+          currentQuestion: nextQuestion,
+          selectedAnswers: answeredQuestions.has(nextQuestion) 
+            ? answerHistory[nextQuestion] || []
+            : [],
+          isChecked: answeredQuestions.has(nextQuestion) || state.filterCorrectAnswersOnly,
+          imageURL: state.nextImageURL || null,
+        });
+      }
+      
+      if (category) {
+        updateProgressTable();
+      }
+    } else {
+      // Show answers
+      updateState({ isChecked: true });
     }
-  };
+  }, [
+    currentQuestionData, 
+    state.selectedAnswers, 
+    state.currentQuestion, 
+    state.isChecked, 
+    state.questions.length,
+    state.nextImageURL,
+    state.filterCorrectAnswersOnly,
+    answeredQuestions,
+    answerHistory,
+    category,
+    BookmarkedQuestions,
+    router,
+    updateState,
+    updateProgressTable
+  ]);
 
-  const progress = ((currentQuestion + 1) / questions.length) * 100;
-  const bookMarkHandler = async () => {
-    const questionNumber = questions[currentQuestion]?.question_number;
-    const { data: existingBookmarks, error: fetchError } = await supabase
-      .from("bookmarks")
-      .select("*")
-      .eq("question_nr", questionNumber)
-      .eq("user_email", cureentUserEmail); // Add user_email to the query
+  /**
+   * Handle previous question navigation
+   */
+  const handlePreviousQuestion = useCallback(() => {
+    if (state.currentQuestion > 0) {
+      const previousQuestion = state.currentQuestion - 1;
 
-    if (fetchError) {
-      console.error("Error fetching bookmark:", fetchError);
+      // Store current answers if checked
+      if (state.isChecked) {
+        setAnswerHistory(prev => ({
+          ...prev,
+          [state.currentQuestion]: state.selectedAnswers,
+        }));
+        setAnsweredQuestions(prev => new Set([...prev, state.currentQuestion]));
+      }
+
+      // Restore previous question's state
+      updateState({
+        currentQuestion: previousQuestion,
+        selectedAnswers: answerHistory[previousQuestion] || [],
+        isChecked: answeredQuestions.has(previousQuestion),
+      });
+
+      // Preload images for previous question
+      const previousNum = state.questions[previousQuestion]?.question_number;
+      const currentNum = state.questions[state.currentQuestion]?.question_number;
+      preloadImages(previousNum, currentNum);
+    }
+  }, [
+    state.currentQuestion, 
+    state.isChecked, 
+    state.selectedAnswers,
+    state.questions,
+    answerHistory,
+    answeredQuestions,
+    updateState,
+    preloadImages
+  ]);
+
+  /**
+   * Handle next question in exam mode
+   */
+  const handleNextQuestion = useCallback(() => {
+    if (isExam) {
+      const currentQuestionData = {
+        question: state.questions[state.currentQuestion],
+        userAnswers: state.selectedAnswers,
+      };
+
+      // Store current answers
+      setAnswerHistory(prev => ({
+        ...prev,
+        [state.currentQuestion]: state.selectedAnswers,
+      }));
+      setAnsweredQuestions(prev => new Set([...prev, state.currentQuestion]));
+      setExamAnsweredQuestions(prev => [...prev, currentQuestionData]);
+
+      if (state.currentQuestion + 1 < state.questions.length) {
+        const nextQuestion = state.currentQuestion + 1;
+        updateState({
+          currentQuestion: nextQuestion,
+          selectedAnswers: answeredQuestions.has(nextQuestion) 
+            ? answerHistory[nextQuestion] || []
+            : [],
+          isChecked: answeredQuestions.has(nextQuestion),
+          imageURL: state.nextImageURL || null,
+          timer: state.timer - 1,
+          examAnsweredNums: state.examAnsweredNums + 1,
+        });
+      } else {
+        updateState({ quizEnded: true });
+      }
+    }
+  }, [
+    isExam,
+    state.currentQuestion,
+    state.questions,
+    state.selectedAnswers,
+    state.nextImageURL,
+    state.timer,
+    state.examAnsweredNums,
+    answeredQuestions,
+    answerHistory,
+    updateState
+  ]);
+
+  // Effects
+  useEffect(() => {
+    setAnsweredQuestions(new Set());
+  }, []);
+
+  useEffect(() => {
+    initializeQuestions();
+  }, [initializeQuestions]);
+
+  // Timer effect
+  useEffect(() => {
+    if (
+      state.timer <= 0 ||
+      (state.examAnsweredNums > 0 && state.examAnsweredNums === state.questionsLength)
+    ) {
+      updateState({ quizEnded: true });
       return;
     }
 
-    if (existingBookmarks && existingBookmarks.length > 0) {
-      // If the question is already bookmarked, remove it
-      const { error: deleteError } = await supabase
-        .from("bookmarks")
-        .delete()
-        .eq("question_nr", parseInt(questionNumber))
-        .eq("user_email", cureentUserEmail); // Add user_email to the delete query
+    if (isExam) {
+      const interval = setInterval(() => {
+        updateState({ timer: state.timer - 1 });
+      }, 1000);
 
-      if (deleteError) {
-        console.error("Error deleting bookmark:", deleteError);
-        return;
-      }
+      return () => clearInterval(interval);
+    }
+  }, [state.timer, state.examAnsweredNums, state.questionsLength, isExam, updateState]);
 
-      // Update the state to reflect that the question is no longer bookmarked
-      setBookmarked(false);
+  // Image preloading effect with debounce
+  useEffect(() => {
+    if (state.questions.length > 0) {
+      getBookmarked();
+      const currentNum = currentQuestionData?.question_number;
+      const nextNum = state.questions[state.currentQuestion + 1]?.question_number;
+      const debouncedPreload = debounce(() => preloadImages(currentNum, nextNum), 100);
+      debouncedPreload();
+    }
+  }, [state.questions, state.currentQuestion, currentQuestionData, getBookmarked, preloadImages]);
+
+  // Event handlers
+  const toggleTranslation = useCallback(() => {
+    updateState({ isTranslated: !state.isTranslated });
+  }, [state.isTranslated, updateState]);
+
+  const toggleFilterModal = useCallback(() => {
+    updateState({ showFilterModal: !state.showFilterModal });
+  }, [state.showFilterModal, updateState]);
+
+  const setFilterCorrectAnswersOnly = useCallback((value) => {
+    updateState({ filterCorrectAnswersOnly: value });
+  }, [updateState]);
+
+  const setFilterAlwaysShowTranslation = useCallback((value) => {
+    updateState({ filterAlwaysShowTranslation: value });
+  }, [updateState]);
+
+  // Render methods
+  const renderSkeletonLoader = () => (
+    <View style={styles.skeletonContainer}>
+      <View style={styles.skeletonCategory} />
+      <View style={styles.skeletonProgressBar} />
+      <View style={styles.skeletonQuestionText} />
+      <View style={styles.skeletonImage} />
+      {[1, 2, 3, 4].map((_, index) => (
+        <View key={index} style={styles.skeletonAnswerOption} />
+      ))}
+      <View style={styles.skeletonBottomButtons} />
+    </View>
+  );
+
+  const renderFeedback = () => {
+    if (isExam || !state.isChecked) return null;
+    
+    const isCorrectAnswer = correctHistory[state.currentQuestion];
+    
+    return (
+      <View
+        style={[
+          styles.feedbackContainer,
+          isCorrectAnswer ? styles.correctFeedback : styles.wrongFeedback,
+        ]}
+      >
+        <View style={styles.feedbackContent}>
+          <Ionicons
+            name={isCorrectAnswer ? "checkmark-circle" : "close-circle"}
+            size={24}
+            color="#fff"
+            style={styles.feedbackIcon}
+          />
+          <Text style={styles.feedbackText}>
+            {isCorrectAnswer
+              ? i18n.t("questionStatusCorrect")
+              : i18n.t("questionStatusWrong")}
+          </Text>
+        </View>
+      </View>
+    );
+  };
+
+  const renderBottomButtons = () => {
+    if (!isExam) {
+      return (
+        <View style={styles.bottomButtonsContainer}>
+          {/* Back Button */}
+          <TouchableOpacity
+            style={[
+              styles.commonButton,
+              styles.backButton,
+              state.currentQuestion === 0 && styles.disabledButton,
+            ]}
+            onPress={handlePreviousQuestion}
+            disabled={state.currentQuestion === 0}
+          >
+            <Ionicons name="chevron-back-outline" size={20} color="#ffffff" />
+          </TouchableOpacity>
+
+          {/* Check/Next Button */}
+          <TouchableOpacity
+            style={[
+              styles.commonButton,
+              state.isChecked ? styles.submitButton : styles.submitButtonUnchecked,
+            ]}
+            onPress={handleCheck}
+          >
+            <Text
+              style={
+                !state.isChecked
+                  ? styles.submitButtonText
+                  : styles.submitButtonTextUnchecked
+              }
+            >
+              {state.currentQuestion + 1 === state.questions.length && state.isChecked
+                ? i18n.t("finish")
+                : state.isChecked || state.filterCorrectAnswersOnly
+                ? i18n.t("next")
+                : i18n.t("check")}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Translation Button */}
+          {!state.filterAlwaysShowTranslation && (
+            <TouchableOpacity
+              style={[styles.commonButton, styles.translateButton]}
+              onPress={toggleTranslation}
+            >
+              <View style={styles.languageIcon}>
+                <Text style={styles.languageText}>
+                  {state.isTranslated ? "DE" : "FA"}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        </View>
+      );
     } else {
-      // If the question is not bookmarked, add it
-      const { error: insertError } = await supabase.from("bookmarks").insert([
-        {
-          user_email: cureentUserEmail,
-          question_nr: parseInt(questionNumber),
-        },
-      ]);
-
-      if (insertError) {
-        console.error("Error adding bookmark:", insertError);
-        return;
-      }
-
-      // Update the state to reflect that the question is now bookmarked
-      setBookmarked(true);
+      return (
+        <View style={styles.bottomButtonsContainer}>
+          <TouchableOpacity
+            style={[styles.commonButton, styles.submitButton]}
+            onPress={handleNextQuestion}
+          >
+            <Text style={styles.submitButtonTextUnchecked}>
+              {state.currentQuestion + 1 === state.questions.length
+                ? i18n.t("finish")
+                : i18n.t("next")}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
     }
   };
 
+  const renderFiltersModal = () => (
+    <Modal visible={state.showFilterModal} animationType="slide" transparent={true}>
+      <TouchableWithoutFeedback onPress={toggleFilterModal}>
+        <View style={styles.modalContainer}>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.modalContent}>
+              {renderFilters({
+                filterCorrectAnswersOnly: state.filterCorrectAnswersOnly,
+                setFilterCorrectAnswersOnly,
+                filterAlwaysShowTranslation: state.filterAlwaysShowTranslation,
+                setFilterAlwaysShowTranslation,
+              })}
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
+  );
+
+  // Main render
   return (
     <SafeAreaView style={[styles.safeArea, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor={bgColor} />
@@ -489,275 +830,109 @@ const QuizScreen = () => {
         }
         showBackButton={true}
         iconRight={
-          !quizEnded ? (bookmarked ? "bookmark" : "bookmark-outline") : ""
+          !state.quizEnded ? (state.bookmarked ? "bookmark" : "bookmark-outline") : ""
         }
-        iconRightHandler={bookMarkHandler}
+        iconRightHandler={handleBookmarkToggle}
       />
-      <View style={[styles.mainContainer,{alignSelf: !quizEnded ? "center" : 'auto',}]}>
-          {/* Show loading skeleton if questions are not yet fetched */}
-          {loading ? (
-            <View style={styles.skeletonContainer}>
-              {/* Skeleton for category */}
-              <View style={styles.skeletonCategory} />
-
-              {/* Skeleton for progress bar */}
-              <View style={styles.skeletonProgressBar} />
-
-              {/* Skeleton for question text */}
-              <View style={styles.skeletonQuestionText} />
-
-              {/* Skeleton for image */}
-              <View style={styles.skeletonImage} />
-
-              {/* Skeleton for answer options */}
-              {[1, 2, 3, 4].map((_, index) => (
-                <View key={index} style={styles.skeletonAnswerOption} />
-              ))}
-
-              {/* Skeleton for bottom buttons */}
-              <View style={styles.skeletonBottomButtons} />
-            </View>
-          ) : quizEnded ? (
-            <ExamResultScreen examAnsweredQuestions={examAnsweredQuestions} />
-          ) : (
-            <View style={styles.mainQuestionContainer}>
-              <View style={styles.progressContainer}>
-                <View style={styles.progressSection}>
-                  <View style={styles.questionCountContainer}>
-                    <Text style={styles.questionCount}>{`${
-                      currentQuestion + 1
-                    }/${questions.length}`}</Text>
-                    {isExam && (
-                      <View style={{ width: 40 }}>
-                        <Text
-                          style={{
-                            fontSize: fontSizeSmall,
-                            fontWeight: "bold",
-                          }}
-                        >
-                          {formatTime(timer)}
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-                  <View style={styles.progressBar}>
-                    <View
-                      style={[styles.progressFill, { width: `${progress}%` }]}
-                    />
-                  </View>
-                </View>
-
-                {width <= 950 && !isExam && (
-                  <TouchableOpacity
-                    style={styles.hamburgerButton}
-                    onPress={toggleFilterModal}
-                  >
-                    <Image
-                      source={require("./assets/icon/hamburger.png")}
-                      style={styles.hamburgerIcon}
-                      resizeMode="contain"
-                    />
-                  </TouchableOpacity>
-                )}
-              </View>
-              <ScrollView
-                contentContainerStyle={[
-                  styles.scrollContent,
-                ]}>
-                <View style={styles.questionContainer}>
-                  <Text
-                    style={[
-                      styles.questionText,
-                      { textAlign: isTranslated ? "right" : "left" },
-                    ]}
-                  >
-                    <Text style={[
-                      styles.questionNumber,
-                       { marginLeft: isTranslated ? "5px" : "0px"}]}>
-                      {questions[currentQuestion]?.question_number})
-                    </Text>
-                    {filterAlwaysShowTranslation || isTranslated
-                      ? questions[currentQuestion]?.question_text_fa
-                      : questions[currentQuestion]?.question_text}
+      
+      <View style={[styles.mainContainer, { alignSelf: !state.quizEnded ? "center" : "auto" }]}>
+        {state.loading ? (
+          renderSkeletonLoader()
+        ) : state.quizEnded ? (
+          <ExamResultScreen examAnsweredQuestions={examAnsweredQuestions} />
+        ) : (
+          <View style={styles.mainQuestionContainer}>
+            {/* Progress Section */}
+            <View style={styles.progressContainer}>
+              <View style={styles.progressSection}>
+                <View style={styles.questionCountContainer}>
+                  <Text style={styles.questionCount}>
+                    {`${state.currentQuestion + 1}/${state.questions.length}`}
                   </Text>
-                </View>
-                <View style={styles.questionImage}>
-                  <ResponsiveQuizImage imageURL={imageURL} />
-                </View>
-                {!isExam && isChecked && (
-                  <View
-                    style={[
-                      styles.feedbackContainer,
-                      correctHistory[currentQuestion]
-                        ? styles.correctFeedback
-                        : styles.wrongFeedback,
-                    ]}
-                  >
-                    <View style={styles.feedbackContent}>
-                      <Ionicons
-                        name={
-                          correctHistory[currentQuestion]
-                            ? "checkmark-circle"
-                            : "close-circle"
-                        }
-                        size={24}
-                        color="#fff"
-                        style={styles.feedbackIcon}
-                      />
-                      <Text style={styles.feedbackText}>
-                        {correctHistory[currentQuestion]
-                          ? i18n.t("questionStatusCorrect")
-                          : i18n.t("questionStatusWrong")}
+                  {isExam && (
+                    <View style={{ width: 40 }}>
+                      <Text style={{ fontSize: fontSizeSmall, fontWeight: "bold" }}>
+                        {formatTime(state.timer)}
                       </Text>
                     </View>
-                  </View>
-                )}
-
-                <View>
-                  <View style={styles.answersContainer}>
-                    {questions[currentQuestion]?.answers.map(
-                      (option, index) => (
-                        <CheckboxField
-                          style={{}}
-                          key={index}
-                          option={option}
-                          translatedOption={
-                            questions[currentQuestion]?.answers_fa[index]
-                          }
-                          checked={selectedAnswers.includes(option)}
-                          disabled={isChecked}
-                          isAnswerCorrect={isCorrect(option)}
-                          showTranslation={
-                            filterAlwaysShowTranslation || isTranslated
-                          }
-                          showCorrectAnswers={filterCorrectAnswersOnly}
-                          onPress={() => handleCheckboxChange(option)}
-                        />
-                      )
-                    )}
-                  </View>
+                  )}
                 </View>
-              </ScrollView>
-              <View style={styles.bottomButtonsContainer}>
-                {!isExam && (
-                  <View style={styles.bottomButtonsContainer}>
-                    {/* Back Button */}
-                    <TouchableOpacity
-                      style={[
-                        styles.commonButton,
-                        styles.backButton,
-                        currentQuestion === 0 && styles.disabledButton, // Apply disabled style if it's the first question
-                      ]}
-                      onPress={handlePreviousQuestion}
-                      disabled={currentQuestion === 0}
-                    >
-                      <Ionicons
-                        name={"chevron-back-outline"}
-                        size={20}
-                        color={"#ffffff"}
-                      />
-                    </TouchableOpacity>
-                    {/* Check/Next Button */}
-                    <TouchableOpacity
-                      style={[
-                        styles.commonButton,
-                        isChecked
-                          ? styles.submitButton
-                          : styles.submitButtonUnchecked,
-                      ]}
-                      onPress={handleCheck}
-                    >
-                      <Text
-                        style={
-                          !isChecked
-                            ? styles.submitButtonText
-                            : styles.submitButtonTextUnchecked
-                        }
-                      >
-                        {currentQuestion + 1 === questions.length && isChecked
-                          ? i18n.t("finish")
-                          : isChecked || filterCorrectAnswersOnly
-                          ? i18n.t("next")
-                          : i18n.t("check")}
-                      </Text>
-                    </TouchableOpacity>
-
-                    {/* Translation Button */}
-                    {!filterAlwaysShowTranslation && !isExam && (
-                      <TouchableOpacity
-                        style={[styles.commonButton, styles.translateButton]}
-                        onPress={toggleTranslation}
-                      >
-                        <View style={styles.languageIcon}>
-                          <Text style={styles.languageText}>
-                            {isTranslated ? "DE" : "FA"}
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                )}
-                {!quizEnded && isExam && (
-                  <View style={styles.bottomButtonsContainer}>
-                    <TouchableOpacity
-                      style={[
-                        styles.commonButton,
-                        isChecked || isExam
-                          ? styles.submitButton
-                          : styles.submitButtonUnchecked,
-                      ]}
-                      onPress={handleNextQuestion}
-                    >
-                      <Text
-                        style={
-                          !isChecked && !isExam
-                            ? styles.submitButtonText
-                            : styles.submitButtonTextUnchecked
-                        }
-                      >
-                        {currentQuestion + 1 === questions.length
-                          ? i18n.t("finish")
-                          : isChecked || isExam
-                          ? i18n.t("next")
-                          : i18n.t("check")}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
+                <View style={styles.progressBar}>
+                  <View style={[styles.progressFill, { width: `${progress}%` }]} />
+                </View>
               </View>
+
+              {width <= 950 && !isExam && (
+                <TouchableOpacity
+                  style={styles.hamburgerButton}
+                  onPress={toggleFilterModal}
+                >
+                  <Image
+                    source={require("./assets/icon/hamburger.png")}
+                    style={styles.hamburgerIcon}
+                    resizeMode="contain"
+                  />
+                </TouchableOpacity>
+              )}
             </View>
-          )}
-        {/* Filter Section */}
+
+            {/* Main Content */}
+            <ScrollView contentContainerStyle={styles.scrollContent}>
+              {/* Question Text */}
+              <View style={styles.questionContainer}>
+                <Text style={[styles.questionText, { textAlign }]}>
+                  <Text style={[styles.questionNumber, { marginLeft: state.isTranslated ? "5px" : "0px" }]}>
+                    {currentQuestionData?.question_number})
+                  </Text>
+                  {state.filterAlwaysShowTranslation || state.isTranslated
+                    ? currentQuestionData?.question_text_fa
+                    : currentQuestionData?.question_text}
+                </Text>
+              </View>
+
+              {/* Question Image */}
+              <View style={styles.questionImage}>
+                <ResponsiveQuizImage imageURL={state.imageURL} />
+              </View>
+
+              {/* Feedback */}
+              {renderFeedback()}
+
+              {/* Answer Options */}
+              <View style={styles.answersContainer}>
+                {currentQuestionData?.answers.map((option, index) => (
+                  <CheckboxField
+                    key={index}
+                    option={option}
+                    translatedOption={currentQuestionData?.answers_fa[index]}
+                    checked={state.selectedAnswers.includes(option)}
+                    disabled={state.isChecked}
+                    isAnswerCorrect={isCorrect(option)}
+                    showTranslation={state.filterAlwaysShowTranslation || state.isTranslated}
+                    showCorrectAnswers={state.filterCorrectAnswersOnly}
+                    onPress={() => handleCheckboxChange(option)}
+                  />
+                ))}
+              </View>
+            </ScrollView>
+
+            {/* Bottom Buttons */}
+            {!state.quizEnded && renderBottomButtons()}
+          </View>
+        )}
+
+        {/* Filter Section/Modal */}
         {width >= 950 && !isExam ? (
           <View style={styles.sidebar}>
             {renderFilters({
-              filterCorrectAnswersOnly,
+              filterCorrectAnswersOnly: state.filterCorrectAnswersOnly,
               setFilterCorrectAnswersOnly,
-              filterAlwaysShowTranslation,
+              filterAlwaysShowTranslation: state.filterAlwaysShowTranslation,
               setFilterAlwaysShowTranslation,
             })}
           </View>
         ) : (
-          <Modal
-            visible={showFilterModal}
-            animationType="slide"
-            transparent={true}
-          >
-            <TouchableWithoutFeedback onPress={toggleFilterModal}>
-              <View style={styles.modalContainer}>
-                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                  <View style={styles.modalContent}>
-                    {renderFilters({
-                      filterCorrectAnswersOnly,
-                      setFilterCorrectAnswersOnly,
-                      filterAlwaysShowTranslation,
-                      setFilterAlwaysShowTranslation,
-                    })}
-                  </View>
-                </TouchableWithoutFeedback>
-              </View>
-            </TouchableWithoutFeedback>
-          </Modal>
+          renderFiltersModal()
         )}
       </View>
     </SafeAreaView>
@@ -774,9 +949,9 @@ const styles = StyleSheet.create({
     flexDirection: isWeb && width > 950 ? "row" : "column",
     paddingHorizontal: 5,
     height: "100%",
-    width:  isWeb && width > 950 ? "auto" : "100%",
+    width: isWeb && width > 950 ? "auto" : "100%",
     alignSelf: "center",
-    paddingBottom:  isWeb && width > 1200 ? 20 :  5,
+    paddingBottom: isWeb && width > 1200 ? 20 : 5,
   },
   mainQuestionContainer: {
     flex: 1,
@@ -788,32 +963,31 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    minWidth: isWeb && width > 1200 ? 900 :  "100%",
-    maxWidth:  isWeb && width > 950 ? 900 :  "100%",
+    minWidth: isWeb && width > 1200 ? 900 : "100%",
+    maxWidth: isWeb && width > 950 ? 900 : "100%",
     alignSelf: "center",
     height: "100%",
     position: "relative",
   },
-
   scrollContent: {
     flexGrow: 1,
-    paddingBottom : "15%",
+    paddingBottom: "15%",
     paddingHorizontal: 5,
   },
   progressContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: width > 768 ? 5 : 0, // Adjusted for small screens
+    marginBottom: width > 768 ? 5 : 0,
     maxWidth: 800,
     height: 40,
     alignSelf: "center",
     width: "100%",
-    gap: width > 768 ? 12 : 8, // Adjusted for small screens
+    gap: width > 768 ? 12 : 8,
   },
   progressSection: {
     flex: 1,
-    marginRight: width > 768 ? 8 : 4, // Adjusted for small screens
+    marginRight: width > 768 ? 8 : 4,
   },
   questionCountContainer: {
     flexDirection: "row",
@@ -821,9 +995,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   hamburgerButton: {
-    padding: width > 768 ? 8 : 6, // Adjusted for small screens
+    padding: width > 768 ? 8 : 6,
     alignSelf: "flex-start",
-    marginTop: width > 768 ? 4 : 2, // Adjusted for small screens
+    marginTop: width > 768 ? 4 : 2,
     backgroundColor: "transparent",
     borderRadius: 6,
     width: width <= 380 ? 40 : 40,
@@ -850,7 +1024,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f0f0",
     borderRadius: 4,
     overflow: "hidden",
-    marginTop: width > 768 ? 8 : 4, // Adjusted for small screens
+    marginTop: width > 768 ? 8 : 4,
   },
   progressFill: {
     height: "100%",
@@ -858,23 +1032,23 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   questionText: {
-    fontSize: fontSizeNormal, // Adjusted for small screens
-    lineHeight: width > 768 ? 26 : 20, // Adjusted for small screens
+    fontSize: fontSizeNormal,
+    lineHeight: width > 768 ? 26 : 20,
     color: "#333",
-    marginTop: width > 768 ? 10 : 0, // Adjusted for small screens
-    marginBottom: width > 768 ? 10 : 5, // Adjusted for small screens
+    marginTop: width > 768 ? 10 : 0,
+    marginBottom: width > 768 ? 10 : 5,
     maxWidth: 800,
     alignSelf: "center",
     width: "100%",
-    paddingHorizontal: width > 768 ? 8 : 4, // Adjusted for small screens
+    paddingHorizontal: width > 768 ? 8 : 4,
   },
   questionNumber: {
     fontWeight: "600",
-    marginRight: width > 768 ? 8 : 4, // Adjusted for small screens
+    marginRight: width > 768 ? 8 : 4,
   },
   questionImage: {
     alignItems: "center",
-    marginBottom: width > 768 ? 10 : 8, // Adjusted for small screens
+    marginBottom: width > 768 ? 10 : 8,
     maxWidth: 800,
     alignSelf: "center",
     width: "100%",
@@ -883,7 +1057,7 @@ const styles = StyleSheet.create({
     maxWidth: 800,
     alignSelf: "center",
     width: "100%",
-    marginBottom: width > 768 ? 5 : 5, // Adjusted for small screens
+    marginBottom: width > 768 ? 5 : 5,
   },
   bottomButtonsContainer: {
     position: "absolute",
@@ -898,18 +1072,17 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingTop: 5,
     borderColor: "#ddd",
-    borderRadius:15,
+    borderRadius: 15,
   },
   commonButton: {
     padding: width > 768 ? 13 : 10,
-    borderWidth: 1, 
+    borderWidth: 1,
     borderRadius: 8,
-    minHeight: 42, 
-    justifyContent: "center", 
-    alignItems: "center", 
-    marginHorizontal: width > 768 ? 5 : 2, 
+    minHeight: 42,
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: width > 768 ? 5 : 2,
   },
-
   backButton: {
     width: 50,
     maxHeight: 42,
@@ -921,16 +1094,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#ccc",
     borderColor: "#ccc",
   },
-
   submitButton: {
-    flex: 2, // Allow buttons to share equal width
+    flex: 2,
     backgroundColor: blueColor,
     borderColor: blueColor,
     borderWidth: 2,
     maxHeight: 42,
   },
   submitButtonUnchecked: {
-    flex: 1, // Allow buttons to share equal width
+    flex: 1,
     backgroundColor: "#ffffff",
     borderColor: blueColor,
     borderWidth: 2,
@@ -938,29 +1110,33 @@ const styles = StyleSheet.create({
   },
   submitButtonText: {
     color: blueColor,
-    fontSize: fontSizeSmall, // Adjusted for small screens
+    fontSize: fontSizeSmall,
     fontWeight: "bold",
   },
   submitButtonTextUnchecked: {
     color: "#fff",
-    fontSize: fontSizeSmall, // Adjusted for small screens
+    fontSize: fontSizeSmall,
     fontWeight: "bold",
   },
   translateButton: {
     width: 50,
-      maxHeight: 42,
+    maxHeight: 42,
     backgroundColor: blueColor,
     borderColor: blueColor,
   },
+  languageIcon: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
   languageText: {
-    fontSize: fontSizeSmall, // Adjusted for small screens
+    fontSize: fontSizeSmall,
     fontWeight: "600",
     color: "#ffffff",
   },
   sidebar: {
     width: width > 950 ? 300 : "100%",
-    padding: width > 768 ? 24 : 16, // Adjusted for small screens
-    margin: isWeb ? 10 : width > 768 ? 5 : 3, // Adjusted for small screens
+    padding: width > 768 ? 24 : 16,
+    margin: isWeb ? 10 : width > 768 ? 5 : 3,
     marginTop: 0,
     borderRadius: 15,
     backgroundColor: "#ffffff",
@@ -976,12 +1152,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
-    padding: width > 768 ? 16 : 12, // Adjusted for small screens
+    padding: width > 768 ? 16 : 12,
   },
   modalContent: {
     width: width > 950 ? "50%" : "90%",
     maxWidth: 500,
-    padding: width > 768 ? 24 : 16, // Adjusted for small screens
+    padding: width > 768 ? 24 : 16,
     backgroundColor: "#fff",
     borderRadius: 15,
     shadowColor: "#000",
@@ -993,7 +1169,7 @@ const styles = StyleSheet.create({
   // Skeleton styles
   skeletonContainer: {
     flex: 1,
-    padding: width > 768 ? 16 : 12, // Adjusted for small screens
+    padding: width > 768 ? 16 : 12,
     borderRadius: 15,
     maxWidth: 900,
     alignSelf: "center",
@@ -1003,21 +1179,21 @@ const styles = StyleSheet.create({
     height: 24,
     width: "30%",
     backgroundColor: "#e1e1e1",
-    marginBottom: width > 768 ? 16 : 12, // Adjusted for small screens
+    marginBottom: width > 768 ? 16 : 12,
     borderRadius: 8,
   },
   skeletonProgressBar: {
     height: 8,
     width: "100%",
     backgroundColor: "#e1e1e1",
-    marginBottom: width > 768 ? 32 : 24, // Adjusted for small screens
+    marginBottom: width > 768 ? 32 : 24,
     borderRadius: 4,
   },
   skeletonQuestionText: {
     height: 50,
     width: "100%",
     backgroundColor: "#e1e1e1",
-    marginBottom: width > 768 ? 24 : 16, // Adjusted for small screens
+    marginBottom: width > 768 ? 24 : 16,
     borderRadius: 8,
   },
   skeletonImage: {
@@ -1025,24 +1201,24 @@ const styles = StyleSheet.create({
     width: width > 768 ? 500 : 300,
     alignSelf: "center",
     backgroundColor: "#e1e1e1",
-    marginBottom: width > 768 ? 32 : 24, // Adjusted for small screens
+    marginBottom: width > 768 ? 32 : 24,
     borderRadius: 12,
   },
   skeletonAnswerOption: {
     height: 40,
     width: "100%",
     backgroundColor: "#e1e1e1",
-    marginBottom: width > 768 ? 16 : 10, // Adjusted for small screens
+    marginBottom: width > 768 ? 16 : 10,
     borderRadius: 8,
   },
   skeletonBottomButtons: {
     height: 50,
     width: "100%",
     backgroundColor: "#e1e1e1",
-    marginTop: width > 768 ? 24 : 16, // Adjusted for small screens
+    marginTop: width > 768 ? 24 : 16,
     borderRadius: 8,
   },
-
+  // Feedback styles
   feedbackContainer: {
     marginVertical: "3%",
     padding: 7,
@@ -1058,10 +1234,10 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   correctFeedback: {
-    backgroundColor: "#4CAF50", // Nice green
+    backgroundColor: "#4CAF50",
   },
   wrongFeedback: {
-    backgroundColor: "#F44336", // Alert red
+    backgroundColor: "#F44336",
   },
   feedbackIcon: {
     marginRight: 8,
@@ -1073,4 +1249,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+
 export default QuizScreen;

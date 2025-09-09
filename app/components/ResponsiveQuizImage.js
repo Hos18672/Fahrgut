@@ -1,85 +1,49 @@
-import React, { useState, useEffect } from "react";
-import { View, StyleSheet, ActivityIndicator, Dimensions, Modal, TouchableOpacity, Text } from "react-native";
+import React, { useState, useRef } from "react";
+import {
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  Dimensions,
+  Modal,
+  TouchableOpacity,
+  Text,
+  Pressable,
+} from "react-native";
 import { Image } from "expo-image";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
+import ImageViewer from "react-native-image-zoom-viewer";
 
 const ResponsiveQuizImage = ({ imageURL, maxWidth = 0 }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageLoadFailed, setImageLoadFailed] = useState(false);
-  const [isZoomed, setIsZoomed] = useState(false);
-
-  // Animation values for pinch-to-zoom
-  const scale = useSharedValue(1);
-  const savedScale = useSharedValue(1);
-  const translateX = useSharedValue(0);
-  const translateY = useSharedValue(0);
-  const savedTranslateX = useSharedValue(0);
-  const savedTranslateY = useSharedValue(0);
-
-  useEffect(() => {
-    setImageLoaded(false);
-    setImageLoadFailed(false);
-    // Reset zoom when image changes
-    scale.value = 1;
-    savedScale.value = 1;
-    translateX.value = 0;
-    translateY.value = 0;
-    savedTranslateX.value = 0;
-    savedTranslateY.value = 0;
-  }, [imageURL]);
-
-  // Pinch gesture handler
-  const pinchGesture = Gesture.Pinch()
-    .onUpdate((event) => {
-      scale.value = savedScale.value * event.scale;
-    })
-    .onEnd(() => {
-      savedScale.value = scale.value;
-    });
-
-  // Pan gesture handler for moving the image when zoomed
-  const panGesture = Gesture.Pan()
-    .onUpdate((event) => {
-      if (scale.value > 1) {
-        translateX.value = savedTranslateX.value + event.translationX / scale.value;
-        translateY.value = savedTranslateY.value + event.translationY / scale.value;
-      }
-    })
-    .onEnd(() => {
-      savedTranslateX.value = translateX.value;
-      savedTranslateY.value = translateY.value;
-    });
-
-  // Reset zoom on double tap
-  const doubleTap = Gesture.Tap()
-    .numberOfTaps(2)
-    .onEnd(() => {
-      scale.value = withSpring(1);
-      savedScale.value = 1;
-      translateX.value = withSpring(0);
-      translateY.value = withSpring(0);
-      savedTranslateX.value = 0;
-      savedTranslateY.value = 0;
-    });
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: scale.value },
-      { translateX: translateX.value },
-      { translateY: translateY.value },
-    ],
-  }));
-
-  // Combine gestures
-  const composedGestures = Gesture.Simultaneous(pinchGesture, panGesture);
+  const [modalVisible, setModalVisible] = useState(false);
+  const imageContainerRef = useRef(null);
+  const [imageLayout, setImageLayout] = useState(null);
 
   const screenWidth = Dimensions.get("window").width;
   const screenHeight = Dimensions.get("window").height;
+  const targetWidth = screenWidth * 0.95;
+  const targetHeight = screenHeight * 0.8;
+
+  const handleImageLayout = () => {
+    if (imageContainerRef.current && imageContainerRef.current.measure) {
+      imageContainerRef.current.measure((x, y, width, height, pageX, pageY) => {
+        setImageLayout({ x: pageX, y: pageY, width, height });
+      });
+    }
+  };
+
+  const handleOpen = () => {
+    if (!imageLayout) return;
+    setModalVisible(true);
+  };
+
+  const handleClose = () => {
+    setModalVisible(false);
+  };
+
   const imageWidth = Math.min(screenWidth * 0.86, maxWidth || 450);
   const imageHeight = (imageWidth * 2) / 3;
 
-  // Early return after all hooks are called
   if (!imageURL || imageLoadFailed) {
     return <View style={styles.emptyContainer} />;
   }
@@ -87,11 +51,18 @@ const ResponsiveQuizImage = ({ imageURL, maxWidth = 0 }) => {
   return (
     <View style={styles.imageContainerMain}>
       {!imageLoaded && (
-        <ActivityIndicator style={styles.loadingIndicator} size="large" color="#0000ff" />
+        <ActivityIndicator
+          style={styles.loadingIndicator}
+          size="large"
+          color="#0000ff"
+        />
       )}
+
       <TouchableOpacity
-        onPress={() => setIsZoomed(true)}
+        onPress={handleOpen}
+        onLayout={handleImageLayout}
         style={[styles.imageContainer, { width: imageWidth, height: imageHeight }]}
+        ref={imageContainerRef}
       >
         <Image
           source={{ uri: imageURL }}
@@ -102,35 +73,25 @@ const ResponsiveQuizImage = ({ imageURL, maxWidth = 0 }) => {
         />
       </TouchableOpacity>
 
-      {/* Full-screen zoom modal */}
-      <Modal
-        visible={isZoomed}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setIsZoomed(false)}
-      >
-        <View style={styles.modalContainer}>
-          <TouchableOpacity style={styles.closeButton} onPress={() => setIsZoomed(false)}>
-            <Text style={styles.closeButtonText}>×</Text>
-          </TouchableOpacity>
-          <GestureDetector gesture={Gesture.Race(composedGestures, doubleTap)}>
-            <Animated.View
-              style={[
-                styles.zoomedImageContainer,
-                { width: screenWidth * 0.95, height: screenHeight * 0.8 },
-                animatedStyle,
-              ]}
-            >
-              <Image
-                source={{ uri: imageURL }}
-                style={styles.zoomedImage}
-                contentFit="contain"
-                enableLiveTextInteraction={false} // Ensure no interference with gestures
-              />
-            </Animated.View>
-          </GestureDetector>
-        </View>
-      </Modal>
+      {modalVisible && (
+        <Modal transparent animationType="fade" onRequestClose={handleClose}>
+          <View style={styles.modalContainer}>
+            <Pressable style={StyleSheet.absoluteFill} onPress={handleClose} />
+            <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
+              <Text style={styles.closeButtonText}>×</Text>
+            </TouchableOpacity>
+            <ImageViewer
+              imageUrls={[{ url: imageURL }]}
+              enableSwipeDown
+              isPinchEnabled
+              onSwipeDown={handleClose}
+              style={{ width: targetWidth, height: targetHeight }}
+              backgroundColor="transparent"
+              renderIndicator={() => null} // Hide default indicators
+            />
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -148,8 +109,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#f5f5f5",
-    elevation: 4, // Android shadow
-    shadowColor: "#000", // iOS shadow
+    elevation: 4,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -157,7 +118,7 @@ const styles = StyleSheet.create({
   questionImage: {
     width: "100%",
     height: "100%",
-    borderRadius: 12, // Rounded corners for the normal image
+    borderRadius: 12,
   },
   loadingIndicator: {
     position: "absolute",
@@ -168,20 +129,10 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.85)", // Dark background for modal
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.85)",
     padding: 20,
-  },
-  zoomedImageContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden", // Ensure rounded corners are clipped
-  },
-  zoomedImage: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 16, // Rounded corners for zoomed image
   },
   closeButton: {
     position: "absolute",
@@ -193,8 +144,8 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     justifyContent: "center",
     alignItems: "center",
-    elevation: 6, // Android shadow
-    shadowColor: "#000", // iOS shadow
+    elevation: 6,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
@@ -204,7 +155,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: "#333",
     fontWeight: "bold",
-    lineHeight: 44, // Center vertically
+    lineHeight: 44,
     textAlign: "center",
   },
 });

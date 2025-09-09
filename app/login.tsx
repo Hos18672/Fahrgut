@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useSignIn } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import { createClient } from "@supabase/supabase-js";
@@ -12,23 +12,37 @@ import {
   Platform,
   ScrollView,
   Image,
+  Animated,
+  ActivityIndicator,
 } from "react-native";
 import i18n from "i18next";
 import { initI18n } from "./services/initI18n";
-initI18n
+initI18n();
 import { fontSizeSmall } from "./assets/base/styles_assets";
+
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 const supabase = createClient(`${supabaseUrl}`, `${supabaseKey}`);
+
 const LoginScreen = () => {
   const { signIn, setActive, isLoaded } = useSignIn();
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(""); // State to store error messages
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  console.log(supabaseUrl);
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const passwordInputRef = useRef(null); // Ref for password input
+
   const onSignInPress = React.useCallback(async () => {
     if (!isLoaded) return;
+
+    setIsLoading(true);
+    Animated.timing(scaleAnim, {
+      toValue: 0.95,
+      duration: 100,
+      useNativeDriver: true,
+    }).start();
 
     try {
       const signInAttempt = await signIn.create({
@@ -39,12 +53,8 @@ const LoginScreen = () => {
       if (signInAttempt.status === "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
 
-        await setActive({ session: signInAttempt.createdSessionId });
-
-        // Get the user ID from Clerk
         const userId = signInAttempt.createdUserId;
 
-        // Check if the user exists in the Supabase `users` table
         const { data: user, error: userError } = await supabase
           .from("users")
           .select("*")
@@ -55,7 +65,6 @@ const LoginScreen = () => {
           throw userError;
         }
 
-        // If the user does not exist, insert them into the `users` table
         if (!user) {
           const { error: insertError } = await supabase
             .from("users")
@@ -71,10 +80,9 @@ const LoginScreen = () => {
         console.error(JSON.stringify(signInAttempt, null, 2));
         setError("Sign-in could not be completed. Please try again.");
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error(JSON.stringify(err, null, 2));
 
-      // Handle specific Clerk errors
       if (err.errors && err.errors.length > 0) {
         const clerkError = err.errors[0];
         setError(
@@ -85,18 +93,25 @@ const LoginScreen = () => {
       } else {
         setError("An unexpected error occurred. Please try again.");
       }
+    } finally {
+      setIsLoading(false);
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }).start();
     }
-  }, [isLoaded, emailAddress, password]);
+  }, [isLoaded, emailAddress, password, scaleAnim]);
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "padding"} // Use "padding" for both iOS and Android
+      behavior={Platform.OS === "ios" ? "padding" : "padding"}
       style={styles.container}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0} // Adjust offset if needed
+      keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
     >
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
-        keyboardShouldPersistTaps="handled" // Prevent keyboard dismissal on tap
+        keyboardShouldPersistTaps="handled"
       >
         <View style={styles.formContainer}>
           <Image
@@ -107,14 +122,12 @@ const LoginScreen = () => {
           <Text style={styles.title}>{i18n.t("welcome")}</Text>
           <Text style={styles.subtitle}>{i18n.t("signInToContinue")}</Text>
 
-          {/* Display error message */}
           {error ? (
             <View style={styles.errorContainer}>
               <Text style={styles.errorText}>{error}</Text>
             </View>
           ) : null}
 
-          {/* Email Input */}
           <TextInput
             style={styles.input}
             autoCapitalize="none"
@@ -123,22 +136,35 @@ const LoginScreen = () => {
             placeholderTextColor="#999"
             onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
             keyboardType="email-address"
+            returnKeyType="next"
+            onSubmitEditing={() => passwordInputRef.current?.focus()} // Focus password input on "Next"
           />
 
-          {/* Password Input */}
           <TextInput
+            ref={passwordInputRef}
             style={styles.input}
             value={password}
             placeholder={i18n.t("enterPassword")}
             placeholderTextColor="#999"
             secureTextEntry={true}
             onChangeText={(password) => setPassword(password)}
+            returnKeyType="go"
+            onSubmitEditing={onSignInPress} // Trigger sign-in on "Enter"
           />
 
-          {/* Sign In Button */}
-          <TouchableOpacity style={styles.button} onPress={onSignInPress}>
-            <Text style={styles.buttonText}>{i18n.t("signIn")}</Text>
-          </TouchableOpacity>
+          <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+            <TouchableOpacity
+              style={[styles.button, isLoading && styles.buttonLoading]}
+              onPress={onSignInPress}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>{i18n.t("signIn")}</Text>
+              )}
+            </TouchableOpacity>
+          </Animated.View>
 
           {/* Sign Up Link
           <View style={styles.signUpContainer}>
@@ -147,7 +173,7 @@ const LoginScreen = () => {
               <Text style={styles.signUpLink}>Sign up</Text>
             </TouchableOpacity>
           </View>
-           */}
+          */}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -163,11 +189,11 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 20, // Add padding to avoid content being cut off
-    paddingBottom: 100, // Add extra padding at the bottom to accommodate the keyboard
+    paddingVertical: 20,
+    paddingBottom: 100,
   },
-  logo:{
-    width:200,
+  logo: {
+    width: 200,
     height: 200,
     alignSelf: "center",
   },
@@ -213,7 +239,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginVertical: "10%",
-
+  },
+  buttonLoading: {
+    backgroundColor: "#005bb5",
   },
   buttonText: {
     fontSize: fontSizeSmall,

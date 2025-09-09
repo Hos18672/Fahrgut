@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import { useSignUp } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import {
@@ -11,6 +11,8 @@ import {
   Platform,
   ScrollView,
   Alert,
+  Animated,
+  ActivityIndicator,
 } from "react-native";
 import { fontSizeSmall } from "./assets/base/styles_assets";
 
@@ -18,10 +20,20 @@ const SignUpScreen = () => {
   const { signUp, setActive, isLoaded } = useSignUp();
   const [emailAddress, setEmailAddress] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [isLoading, setIsLoading] = useState(false); // Track loading state
   const router = useRouter();
+  const scaleAnim = useRef(new Animated.Value(1)).current; // Animation for button scale
 
   const onSignUpPress = React.useCallback(async () => {
     if (!isLoaded) return;
+
+    setIsLoading(true);
+    // Start button scale animation
+    Animated.timing(scaleAnim, {
+      toValue: 0.95,
+      duration: 100,
+      useNativeDriver: true,
+    }).start();
 
     try {
       console.log("Attempting to create sign-up...");
@@ -46,8 +58,16 @@ const SignUpScreen = () => {
     } catch (err) {
       console.error("Sign-up error:", JSON.stringify(err, null, 2));
       Alert.alert("Error", "An error occurred during sign-up. Please try again.");
+    } finally {
+      setIsLoading(false);
+      // Reset button scale
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }).start();
     }
-  }, [isLoaded, emailAddress, password]);
+  }, [isLoaded, emailAddress, password, scaleAnim]);
 
   return (
     <KeyboardAvoidingView
@@ -80,9 +100,19 @@ const SignUpScreen = () => {
           />
 
           {/* Sign Up Button */}
-          <TouchableOpacity style={styles.button} onPress={onSignUpPress}>
-            <Text style={styles.buttonText}>Sign Up</Text>
-          </TouchableOpacity>
+          <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+            <TouchableOpacity
+              style={[styles.button, isLoading && styles.buttonLoading]}
+              onPress={onSignUpPress}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>Sign Up</Text>
+              )}
+            </TouchableOpacity>
+          </Animated.View>
 
           {/* Login Link */}
           <View style={styles.signUpContainer}>
@@ -149,6 +179,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 15,
+  },
+  buttonLoading: {
+    backgroundColor: "#005bb5", // Slightly darker when loading
   },
   buttonText: {
     fontSize: fontSizeSmall,
