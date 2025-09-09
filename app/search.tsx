@@ -16,7 +16,7 @@ initI18n();
 
 const SearchComponent = () => {
   const [searchValue, setSearchValue] = useState("");
-  const [filteredItems, setFilteredItems] = useState([]);
+  const [filteredItems, setFilteredItems] = useState<Question[]>([]);
   const [allQuestions, setAllQuestions] = useState<Question[]>([]);
   const [showResults, setShowResults] = useState(false);
 
@@ -40,7 +40,7 @@ const SearchComponent = () => {
     }
   }, [searchValue]);
 
-  const handleSearch = (text) => {
+  const handleSearch = (text: string) => {
     setSearchValue(text);
     if (text.trim().length > 0) {
       const results = allQuestions.filter((q) => q?.question_text.toLowerCase().includes(text.toLowerCase()) ||  q?.question_number == text
